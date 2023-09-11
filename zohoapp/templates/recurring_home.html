@@ -256,34 +256,63 @@
         </div>
       </div>
           <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Tax</label></div>
-            <div class="col-sm-12 col-md-6 col-lg-6">
-                  <select  id="tax" name="tax" class="form-control bg-white text-dark" style="margin-left: 11px; width: 602px;color:black;">
-                    <option value="GST0[0%]">GST0[0%]</option>
-                    <option value="GST5[5%]">GST5[5%]</option>
-                    <option value="GST12[12%]">GST12[12%]</option>
-                    <option value="GST18[18%]">GST18[18%]</option>
-                    <option value="GST28[28%]">GST28[28%]</option>
-                  </select>
+            <div class="row">
+              <div class="col-md-3 col-form-label"><label>Tax</label></div>
+              <div class="col-md-3">
+                <select name='tax[]' id='tax1'
+                class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleTaxInput()" style="width: 600px; color: black;">
+                <optgroup class="text-left" label="GST">
+                  <option value="0" selected></option>
+                  <option value="GST0">0% GST(0%)</option>
+                  <option value="GST3">3.0% GST(3%)</option>
+                  <option value="GST5">5.0% GST(5%)</option>
+                  <option value="GST12">12.0% GST(12%)</option>
+                  <option value="GST18">18.0% GST(18%)</option>
+                  <option value="GST28">28.0% GST(28%)</option>
+                </optgroup>
+                <optgroup  class="text-center" label="IGST">
+                  <option value="0">0% IGST(0%)</option>
+                  <option value="IGST3">3.0% IGST(3%)</option>
+                  <option value="IGST5">5.0% IGST(5%)</option>
+                  <option value="IGST12">12.0% IGST(12%)</option>
+                  <option value="IGST18">18.0% IGST(18%)</option>
+                  <option value="IGST28">28.0% IGST(28%)</option>             
+                  </optgroup>
+            </select>
               </div>
-      
+          </div>
+          
+                    
               <div class="form-group row mt-4">
                 <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Notes</label></div>
                 <div class="col-sm-12 col-md-6 col-lg-6">
                   <input type="text" class="form-control bg-white text-dark" id="notes" name="notes" style="margin-left: 16px; width: 603px;color:black;">
               </div>
             </div>
-              <div class="form-group row mt-4">
-                <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
-                <div class="col-sm-12 col-md-6 col-lg-6">
-                <div class="input-group" style="width:617px;">
-                  <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="margin-left:15px;color:black;">
-                    <option value="" selected>Select a customer</option>
-                  </select>
-                  <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"    data-toggle="modal" data-target="#newcustomer" style="height:38px;">Add new customer</button>
+            <div class="form-group row mt-4">
+              <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
+              <div class="col-sm-12 col-md-6 col-lg-6">
+                  <div class="input-group" style="width: 617px;">
+                      <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="color: black;">
+                          <option value="" selected>Select a customer</option>
+                          <!-- Add options for customers here -->
+                      </select>
+                      <div class="input-group-append">
+                          <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newcustomer" style="height: 38px;">Add new customer</button>
+                      </div>
                   </div>
               </div>
+          </div>
+          
+          <div class="form-group row mt-4" id="emailField" style="display: none;">
+              <label for="email" class="col-sm-12 col-md-6 col-lg-3 col-form-label">Customer EmailId</label>
+              <div class="col-sm-12 col-md-12 col-lg-6">
+                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" style="width: 100%; color: black;">
+              </div>
+          </div>
+          
+            
+
             
             <div class="form-group row mt-4">
               <!-- Add a hidden input field for the activation tag with value "active" -->
@@ -296,6 +325,70 @@
           </div>
       </form>
       </div>
+      <script>
+        function toggleTaxInput() {
+          var destinationSelect = document.getElementById("destination");
+          var selectedOption = destinationSelect.options[destinationSelect.selectedIndex].value;
+          
+          var taxSelect = document.getElementById("tax1"); // Assuming you want to change the first tax dropdown
+      
+          if (selectedOption === "[KL]-Kerala") {
+            // Show GST options and hide IGST options
+            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            gstOptgroup.style.display = "block";
+            igstOptgroup.style.display = "none";
+          } else {
+            // Show IGST options and hide GST options
+            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            gstOptgroup.style.display = "none";
+            igstOptgroup.style.display = "block";
+          }
+        }
+      </script>
+
+
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+          $(document).ready(function() {
+              $('#customer-list').change(function() {
+                  var selectedCustomer = $(this).val();
+                  if (selectedCustomer !== '') {
+                      // Show the email input field
+                      $('#emailField').show();
+      
+                      // Fetch the email using AJAX and populate the input field
+                      $.ajax({
+                          url: "{% url 'get_customer_email' %}",
+                          data: { customername: selectedCustomer },
+                          dataType: 'json',
+                          success: function(data) {
+                              if (data.email) {
+                                  $('#email').val(data.email);
+                              } else {
+                                  // Handle the case where no email is found
+                                  $('#email').val('');
+                              }
+                          },
+                          error: function(xhr, status, error) {
+                              console.error(xhr.responseText);
+                          }
+                      });
+                  } else {
+                      // Hide the email input field if no customer is selected
+                      $('#emailField').hide();
+                  }
+              });
+          });
+      </script>
+      
+
+      
+
+
+
+
     
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script>
