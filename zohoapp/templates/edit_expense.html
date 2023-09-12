@@ -114,6 +114,14 @@
         <div class="col-sm-12 col-md-6 col-lg-6">
           <div class="input-group">
             <select class="form-control bg-white text-dark" id="expense_account" name="expense_account">
+              {% for account_type in account_types %}
+              <option value="" disabled class="btn btn text-dark highlight-account-type"><b>{{ account_type }}</b></option>
+              {% for account in accounts %}
+                  {% if account.accountType == account_type %}
+                      <option value="{{ account.id }}"> {{ account.accountName }}</option>
+                  {% endif %}
+              {% endfor %}
+          {% endfor %}
               {% for a in accounts %}
                   {% if a.id == selected_account.id %}
                       <option value="{{ a.id }}" selected>{{ a.accountName }}</option>
@@ -121,14 +129,7 @@
                       <option value="{{ a.id }}">{{ a.accountName }}</option>
                   {% endif %}
               {% endfor %}
-              {% for account_type in account_types %}
-                  <option value="" disabled class="btn btn text-dark highlight-account-type"><b>{{ account_type }}</b></option>
-                  {% for account in accounts %}
-                      {% if account.accountType == account_type %}
-                          <option value="{{ account.id }}"> {{ account.accountName }}</option>
-                      {% endif %}
-                  {% endfor %}
-              {% endfor %}
+            
           </select>
           
         
@@ -232,16 +233,20 @@
           <div class="col-sm-12 col-md-6 col-lg-6">
             <input type="text" name="gst_trt_inp" id="gst_trt_inp" class="form-control bg-white text-dark" value="{{expense.vendor.gst_treatment}}" style="margin-left: 6px; width: 602px;color:black;">
         
-            <div id="textboxContainer" style="display: block;">
+            <div id="textboxContainer" >
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vendor GSTIN</label></div>
-              {% if expense.vendor %}
-                  <input type="text" id="gstin_inp" class="form-control" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information"  style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
-              {% else %}
-                  <!-- Handle the case when expense.vendor is None (e.g., display a message or a default value) -->
-                  <input type="text" id="gstin_inp" class="form-control" value="Vendor not found" name="gstin_inp" placeholder="Enter additional information"  style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
-              {% endif %}
-          </div>
+              
+                <input type="text" id="gst_num_inp" class="form-control" value="{{ expense.gst}}" name="gstin_inp" placeholder="Enter additional information"  style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
+              
+             
+              </div>
           
+            </div>
+            <div class="form-group row mt-4" id="emailid" >
+              <label for="email" class="col-sm-12 col-md-6 col-lg-3 col-form-label">Vendor EmailId</label>
+              <div class="col-sm-12 col-md-12 col-lg-6">
+                  <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" value="{{ expense.vendormail}}" style="width: 100%; color: black;">
+              </div>
           </div>
         </div>
     
@@ -335,6 +340,13 @@
                   <button class="btn btn-primary" type="button"    data-toggle="modal" data-target="#newcustomer" style="height:38px;">Add new customer</button>
                 </div>
             </div>
+            <div class="form-group row mt-4" id="emailField" >
+              <label for="email" class="col-sm-12 col-md-12 col-lg-3 col-form-label">Customer EmailId</label>
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value=" {{expense.customeremail}}" style="width: 100%; color: black;">
+              </div>
+          </div>
+          
           
           <div class="form-group row mt-4">
             <!-- Add a hidden input field for the activation tag with value "active" -->
@@ -347,6 +359,42 @@
         </div>
     </form>
     </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+          $(document).ready(function() {
+              $('#customer-list').change(function() {
+                  var selectedCustomer = $(this).val();
+                  if (selectedCustomer !== '') {
+                      // Show the email input field
+                      $('#emailField').show();
+      
+                      // Fetch the email using AJAX and populate the input field
+                      $.ajax({
+                          url: "{% url 'get_customer_email' %}",
+                          data: { customername: selectedCustomer },
+                          dataType: 'json',
+                          success: function(data) {
+                              if (data.email) {
+                                  $('#email').val(data.email);
+                              } else {
+                                  // Handle the case where no email is found
+                                  $('#email').val('');
+                              }
+                          },
+                          error: function(xhr, status, error) {
+                              console.error(xhr.responseText);
+                          }
+                      });
+                  } else {
+                      // Hide the email input field if no customer is selected
+                      $('#emailField').hide();
+                  }
+              });
+          });
+      </script>
+      
     <script>
       function toggleTaxInput() {
         var destinationSelect = document.getElementById("destination");
@@ -403,44 +451,54 @@
       }
   </script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      // Event listener for the vendor dropdown
-      $('#vendorSelect').on('change', function() {
-          // Get the selected vendor's ID
-          var selectedVendorId = $(this).val();
-  
-          // Check if a vendor is selected
-          if (selectedVendorId !== '') {
-              // Send an AJAX request to fetch the GST treatment and GST number for the selected vendor
-              $.ajax({
-                  url: '/get_vendor_gst/' + selectedVendorId, // Replace with the actual URL to fetch GST treatment and GST number
-                  method: 'GET',
-                  success: function(data) {
-                      console.log('Received data:', data); // Add this line to check the received data
-                      // Update the GST treatment and GST number input fields with the fetched data
-                      $('#gst_trt_inp').val(data.gst_treatment);
-                      $('#gst_num_inp').val(data.gst_number);
-                  },
-                  error: function(error) {
-                      console.log('Error fetching GST treatment and GST number:', error);
-                  }
-              });
-          } else {
-              // Clear the GST treatment and GST number input fields if no vendor is selected
-              $('#gst_trt_inp').val('');
-              $('#gst_num_inp').val('');
-          }
+      <script>
+      $(document).ready(function() {
+          // Event listener for the vendor dropdown
+          $('#vendorSelect').on('change', function() {
+              // Get the selected vendor's ID
+              var selectedVendorId = $(this).val();
+      
+              // Check if a vendor is selected
+              if (selectedVendorId !== '') {
+                  // Send an AJAX request to fetch the GST treatment, GST number, and email for the selected vendor
+                  $.ajax({
+                      url: '/get_vendor_gst/' + selectedVendorId, // Replace with the actual URL to fetch vendor info
+                      method: 'GET',
+                      success: function(data) {
+                          console.log('Received data:', data);
+      
+                          // Update the GST treatment input field with the fetched data
+                          $('#gst_trt_inp').val(data.gst_treatment);
+      
+                          // Show or hide the GST number input field based on GST treatment
+                          if (data.gst_treatment === 'unregistered Business') {
+                              $('#textboxContainer').hide();
+                          } else {
+                              $('#textboxContainer').show();
+                              $('#gst_num_inp').val(data.gst_number); // Update GST number
+                          }
+      
+                          // Display the email input field with the fetched email
+                          $('#vemail').val(data.email);
+                          $('#emailid').show(); // Show the email input field container
+                      },
+                      error: function(error) {
+                          console.log('Error fetching data:', error);
+                      }
+                  });
+              } else {
+                  // Clear the input fields and hide the GST number input field if no vendor is selected
+                  $('#gst_trt_inp').val('');
+                  $('#gst_num_inp').val('');
+                  $('#vemail').val('');
+                  $('#textboxContainer').hide();
+                  $('#emailid').hide(); // Hide the email input field container
+              }
+          });
+      
+          // Rest of your JavaScript code...
       });
-  
-      // Rest of your JavaScript code...
-  });
-  
-  </script>
-    
-    
-    
- 
+      </script>
        
       
       

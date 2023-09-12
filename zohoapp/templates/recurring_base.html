@@ -87,6 +87,7 @@
                         <th>Ends On</th>
                         <th>Notes</th>
                         <th id="customerNameHeader">Customer</th>
+                        <th>Customer EmailId </th>
                     </tr>
                 </thead>
                 
@@ -102,6 +103,7 @@
                         <td>{{ e.ends_on }}</td>
                         <td>{{ e.notes }}</td>
                         <td>{{ e.customer.Firstname }} {{ e.customer.Lastname }}</td>
+                        <td>{{ e.customeremail }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

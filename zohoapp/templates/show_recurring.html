@@ -302,13 +302,13 @@
                 </div>
                 <div class="border-bottom"></div>
 
-                <div id="expenses-container" class="row mt-5 bills">
+                <div id="expenses-container" class="row mt-5 bills overflow-auto">
                   {% for e in expenses %}
-                        <a href="" class="my-3">
+                        <a href="{% url 'show_recurring' e.id %}" class="my-3">
                             
                             <div class="row mt-3">
                                 <div class="col-md-7">
-                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname" >{{e.profile_name}} </label><br>
+                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname" >{{e.profile_name}}</label><br>
                                         <!-- <label style="color: rgb(129, 126, 126); font-size: 15px;" class="mx-3 px-2"># RB- {{ b.id }} </label> -->
                                         <label style="color: rgb(129, 126, 126); font-size: 15px; "class="mx-2 px-2"> {{ e.start_date }} </label>
                                 </div>
@@ -372,6 +372,12 @@
                                 {% endif %}
                             </div>
                         </div>
+                        <div class="m-0">
+                            <div class="dropdown m-0 p-0">
+                                <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;margin-top:-3.8rem;margin-left:50px;" class="expense-toggle-button btn btn-warning px-2 py-2" href="#" data-expense-id="{{ expense.id }}">{{ expense.active|yesno:"Active,Inactive" }}</a>
+                            </div>
+                        </div>
+                        
                     </div>
 
                 </div>
@@ -630,7 +636,7 @@
                                 <div class="col-md-6 mt-3">
                                     <span style="font-size: 18px; color: #434141;">{{ gst_or_igst }} - </span>
                                     {% comment %} {% for bi in tax %} {% endcomment %}
-                                        <input type="text" value="{{expense.tax }}" style="font-size: 12px; color: #434141; width: 55px;" class="tax 1 tx">
+                                        <input type="text" value="{{expense.tax }}%" style="font-size: 18px; color: #434141; width: 65px;" class="tax 1 tx">
                                     <span class="text-muted"></span><br><span style="margin-left: 55px;"></span>
                                     {% comment %} {% endfor %} {% endcomment %}
                                 </div>
@@ -937,6 +943,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.js"></script>
  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery library -->
+
+<script>
+$(document).ready(function() {
+    // Add a click event listener to the expense toggle button
+    $(".expense-toggle-button").on("click", function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+        var expenseId = $(this).data("expense-id"); // Get the expense ID from the button's data attribute
+
+        // Send an AJAX request to toggle the status
+        $.ajax({
+            type: "POST",
+            url: "{% url 'toggle_expense_status' expense.id %}", // Use the new URL with the expense ID
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function(response) {
+                // Update the status text
+                $(".expense-toggle-button[data-expense-id='" + expenseId + "']").text(response.status);
+            },
+            error: function() {
+                alert("Status update failed. Please try again later.");
+            }
+        });
+    });
+});
+</script>
 
 
 <script>
