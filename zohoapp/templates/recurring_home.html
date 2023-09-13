@@ -980,7 +980,7 @@ $(document).ready(function() {
             <div class="row mt-2 m-0 p-0 mb-2">
               <div class="col-md-9"> </div>
               <div class="col-md-3 text-right  m-0 p-0">
-                <input type="checkbox" onclick="addressSame()" id="csokay" name="csokay">
+                <input type="checkbox" onclick="address()" id="csokay" name="csokay">
                 <label for="csokay" style="color: #909091;">Same As Billing Address</label>
               </div>
             </div>
@@ -1546,7 +1546,7 @@ $(document).ready(function() {
                 </div>
                 <div class="col-md-6 mt-2">
                   <div class="d-flex">
-                    <select class="form-control text-dark bg-light" id="v_terms" name="v_terms" required>
+                    <select class="form-control text-dark bg-light" id="paymentTermsDropdown" name="v_terms" required>
                       <option selected value="15">NET 15</option>
                       <option value="30">NET 30</option>
                       <option value="45">NET 45</option>
@@ -1558,7 +1558,7 @@ $(document).ready(function() {
                       <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
                       {% endfor %}
                     </select>                
-                    <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   
+                    <a href="#" class="btn btn-outline-secondary py-2 my-1" id="openPaymentModalBtn" data-target="#newpayment" data-toggle="modal">+</a>   
                   </div>
                 </div>       
               </div>
@@ -1833,6 +1833,194 @@ $(document).ready(function() {
     </div>  
   </div>  
 <!-- end modal -->
+
+<div class="modal fade" id="newpayment">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
+      <div class="modal-header " style="background: rgb(32, 35, 37);">
+          <h3 class="m-3 text-uppercase">Add Payment Term</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body" style="background: rgb(32, 35, 37);">
+        <div class="card p-3 m-3">
+          <form action="" method="post" class="needs-validation"  id="paymentTermsForm">
+            {% csrf_token %}
+            <div class="row mt-2">
+              <div class="col-md-2 mt-2"></div>
+              <div class="col-md-4 mt-2">
+                <center><label for="termname" style="color: rgb(190, 88, 88);">Term Name *</label></center>
+              </div>
+
+              <div class="col-md-4 mt-2">
+                <center><label for="termdays" style="color: rgb(190, 88, 88);">Number of Days *</label></center>
+              </div>
+              <div class="col-md-2 mt-2"></div>
+            </div>
+
+
+            <div class="row mt-2">
+              <div class="col-md-2 mt-2"></div>
+
+              <div class="col-md-4 mt-2">
+                <input type="text" class="form-control text-dark bg-light" id="term_name" name="term_name" required>      
+              </div>
+
+              <div class="col-md-4 mt-2">
+                <input type="text" class="form-control text-dark bg-light" id="term_days" name="term_days" required>
+              </div>
+              <div class="col-md-2 mt-2"></div>
+
+            </div>
+            
+            <div class="row mt-5">
+              <div class="col-md-4"></div>
+              <div class="col-md-4">
+                <div class="d-flex">
+                  <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
+                  type="submit"   id="paySave">Save
+                  </button> 
+                  
+
+                  <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
+                    data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">Cancel</span>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-4"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+      $("#paymentTermsForm").on("submit", function (event) {
+          event.preventDefault();
+          var termName = $("#term_name").val();
+          var termDays = $("#term_days").val();
+
+          if (!termName || !termDays) {
+              alert("Please fill in all required fields.");
+              return;
+          }
+
+          var formData = $(this).serialize();
+
+          $.ajax({
+              url: "{% url 'custmr_payment' %}",
+              type: "POST",
+              data: formData,
+              headers: { "X-CSRFToken": "{{ csrf_token }}" },
+              success: function (data) {
+                  console.log("AJAX Success:", data);
+
+                  if (data.success) {
+                      alert("Payment term added successfully!");
+                      $("#term_name").val('');
+                      $("#term_days").val(''); // Clear both input fields
+                      updatePaymentTermsDropdown(data.term_name, data.term_id);
+                  } else {
+                      alert("Payment term addition failed!");
+                  }
+              },
+              error: function (error) {
+                  console.log("AJAX Error:", error);
+              }
+          });
+      });
+
+      function updatePaymentTermsDropdown(termName, termId) {
+        console.log('updatePaymentTermsDropdown called');
+        console.log('termName:', termName);
+        console.log('termId:', termId);
+        // Append the new payment term to the select dropdown
+        var dropdown = $("#paymentTermsDropdown");
+        var option = new Option(termName, termId); // Set termId as the value
+        dropdown.append(option);
+    
+        // Optionally, you can select the newly added option
+        dropdown.val(termId);
+      }
+  });
+</script>
+
+
+
+<script>
+  function addressSame() {
+    const billingStreet = document.getElementById("vstreet").value;
+    const billingCity = document.getElementById("vcity").value;
+    const billingState = document.getElementById("vstate").value;
+    const billingCountry = document.getElementById("vcountry").value;
+    const billingPincode = document.getElementById("vpincode").value;
+    const billingPhone = document.getElementById("vphone").value;
+    const billingFax = document.getElementById("vfax").value;
+  
+    if (document.getElementById("vokay").checked) {
+      // Set shipping address fields to billing address fields
+      document.getElementById("vsstreet").value = billingStreet;
+      document.getElementById("vscity").value = billingCity;
+      document.getElementById("vsstate").value = billingState;
+      document.getElementById("vscountry").value = billingCountry;
+      document.getElementById("vspincode").value = billingPincode;
+      document.getElementById("vsphone").value = billingPhone;
+      document.getElementById("vsfax").value = billingFax;
+    } else {
+      // Clear the shipping address fields if checkbox is unchecked
+      document.getElementById("vsstreet").value = "";
+      document.getElementById("vscity").value = "";
+      document.getElementById("vsstate").value = "";
+      document.getElementById("vscountry").value = "";
+      document.getElementById("vspincode").value = "";
+      document.getElementById("vsphone").value = "";
+      document.getElementById("vsfax").value = "";
+    }
+  }
+  
+
+</script>
+<script>
+  function address() {
+    const billingStreet1 = document.getElementById("cstreet1").value;
+    const billingStreet2 = document.getElementById("cstreet2").value;
+    const billingCity = document.getElementById("ccity").value;
+    const billingState = document.getElementById("cstate").value;
+    const billingCountry = document.getElementById("ccountry").value;
+    const billingPincode = document.getElementById("cpincode").value;
+    const billingPhone = document.getElementById("cphone").value;
+    const billingFax = document.getElementById("cfax").value;
+  
+    if (document.getElementById("csokay").checked) {
+      // Set shipping address fields to billing address fields
+      document.getElementById("csstreet1").value = billingStreet1;
+      document.getElementById("csstreet2").value = billingStreet2;
+      document.getElementById("cscity").value = billingCity;
+      document.getElementById("csstate").value = billingState;
+      document.getElementById("cscountry").value = billingCountry;
+      document.getElementById("cspincode").value = billingPincode;
+      document.getElementById("csphone").value = billingPhone;
+      document.getElementById("csfax").value = billingFax;
+    } else {
+      // Clear the shipping address fields if checkbox is unchecked
+      document.getElementById("csstreet1").value = "";
+      document.getElementById("csstreet2").value = "";
+      document.getElementById("cscity").value = "";
+      document.getElementById("csstate").value = "";
+      document.getElementById("cscountry").value = "";
+      document.getElementById("cspincode").value = "";
+      document.getElementById("csphone").value = "";
+      document.getElementById("csfax").value = "";
+    }
+  }
+  
+</script>
 
 <script>
   $(document).ready(function() {
