@@ -341,7 +341,7 @@
                         <a href="{% url 'edit_expense' expense.id %}" class=" fa fa-pencil btns px-2 py-2"
                               data-toggle="tooltip" title="EDIT"> </a>
                         <a href="{% url 'delete_expense' expense.id %} " class="delete fa fa-trash btns px-2 py-2"
-                         data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this Recurring Bill?');"> </a>
+                         data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this Recurring Expense?');"> </a>
                     </div>
 
                     <div class="mx-1">
@@ -788,7 +788,7 @@
                             </div>
 
 
-                            <div class="container-fluid">
+                            <div class="container-fluid overflow-y:scroll;">
                                 <div class="comments">
                                     {% for com in comments %} {# Use 'comments' instead of 'comment' #}
                                         <div class="comment">
@@ -797,11 +797,12 @@
                                             </div>
                                             <div class="comment-content">
                                                 <p class="text-uppercase">{{ com.comment }}</p>
+                                                <a href="{% url 'delete_expense_comment' expense.id com.id %}" class="btn btn-danger btn-sm" style="margin-left:350px;margin-top:-80px;">Delete</a>
+
                                             </div>
-                                            <div class="comment-actions">
-                                                <a href="" class="btn btn-danger btn-sm">Delete</a>
+                                            {% comment %} <div class="comment-actions">
                                                 <!-- Add other comment actions like Reply, Like, etc. -->
-                                            </div>
+                                            </div> {% endcomment %}
                                         </div>
                                     {% endfor %}
                                 </div>

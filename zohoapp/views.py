@@ -685,7 +685,7 @@ def add_vendor(request):
         designation=request.POST['v_desg']
         department=request.POST['v_dpt']
         gst_treatment=request.POST['v_gsttype']
-        
+        gst_number=request.POST['v_gstin']
         pan_number=request.POST['v_pan']
             
         source_supply=request.POST['v_sourceofsupply']
@@ -724,7 +724,7 @@ def add_vendor(request):
                                  department=department,
                                  gst_treatment=gst_treatment,
                                  pan_number=pan_number,
-                                 
+                                 gst_number=gst_number,
                                  source_supply=source_supply,
                                  currency=currency,
                                  opening_bal=opening_bal,
@@ -759,6 +759,7 @@ def add_vendor(request):
         'success': True,  # Indicate success
         'vendorId': vendor_data.id,
         'gstTreatment': gst_treatment, 
+        'gstnum':gst_number,
         'vendorName':vendorname,
     }
         return JsonResponse(response_data)
@@ -777,7 +778,7 @@ def get_vendor_list(request):
             'id': option.id,
             'name': f"{option.salutation} {option.first_name} {option.last_name}",
             'gstTreatment': option.gst_treatment,
-            
+            'gstnumber':option.gst_number,
         }
         options.append(vendor_info)
 
@@ -2529,6 +2530,7 @@ def recurringhome(request):
     selected_vendor = vendor_table.objects.filter(id=selected_vendor_id).first()
     gst_treatment = selected_vendor.gst_treatment if selected_vendor else ''
     customers=customer.objects.all()
+    payments=payment_terms.objects.all()
    
     print('vendor',vendors)
     return render(request, 'recurring_home.html', {
@@ -2539,6 +2541,7 @@ def recurringhome(request):
         'account_types': account_types,
         'gst_treatment':gst_treatment,
         'customers':customers,
+        'payments':payments,
     })
 
 @login_required(login_url='login')
@@ -2563,13 +2566,15 @@ def add_expense(request):
         vendor_id = request.POST['vendor']
         vendor = get_object_or_404(vendor_table, pk=vendor_id)
         gst_treatment=request.POST['gst_trt_inp']
-        gst = request.POST['gstin_inp']
+        gst = request.POST.get('gstin_inp')
+        vmail=request.POST['vmail']
         destination = request.POST['destination']
-        tax = request.POST['tax']
+        tax = request.POST['tax[]']
         notes = request.POST['notes']
         customer_id = request.POST['customername']
         customer_obj = get_object_or_404(customer, pk=customer_id)
         custname=f"{customer_obj.Firstname} {customer_obj.Lastname}"
+        custemail=request.POST['mail']
 
         # Handle the ends_on field
         ends_on = request.POST.get('ends_on')
@@ -2598,6 +2603,8 @@ def add_expense(request):
             tax=tax,
             notes=notes,
             customer= customer_obj,
+            customeremail=custemail,
+            vendormail= vmail,
             activation_tag="active" # Set the activation_tag to "active"
         )
         expense.save()
@@ -2607,6 +2614,13 @@ def add_expense(request):
         vendors = vendor_table.objects.all()
         accounts = Account.objects.all()  
         return render(request, 'add_expense.html', {'vendors': vendors,'accounts':accounts})
+
+def toggle_expense_status(request, expense_id):
+    expense = get_object_or_404(Expense, id=expense_id)
+    expense.activation_tag = "inactive" if expense.activation_tag == "active" else "active"
+    expense.save()
+    return JsonResponse({'status': expense.activation_tag})
+
 
 
 @login_required(login_url='login')
@@ -2624,6 +2638,7 @@ def show_recurring(request, expense_id):
     accounts = Account.objects.all()
     account_types = set(Account.objects.values_list('accountType', flat=True))
     print('expense',expense_id)
+    print('account_types',account_types)
 
     search_query = request.GET.get('search_query')
     search_date = request.GET.get('search_date')
@@ -2641,8 +2656,9 @@ def show_recurring(request, expense_id):
     comments = Comment.objects.filter(profile_name=expense.profile_name, expense=expense)
     vendor = vendor_table.objects.get(id=expense.vendor_id)
     customers = customer.objects.get(id=expense.customer_id)
+    vendors = vendor_table.objects.all()
 
-    return render(request, 'show_recurring.html', {'expense': expense,'expense.id':expense_id, 'expenses': expenses, 'comments': comments, 'company': company, 'vendor': vendor, 'customer': customers,'account':accounts,'account_types':account_types})
+    return render(request, 'show_recurring.html', {'expense': expense,'expense.id':expense_id, 'expenses': expenses, 'comments': comments, 'company': company, 'vendor': vendor, 'customer': customers,'account':accounts,'account_types':account_types,'vendors':vendors})
 def samplee(request):
     print('x')
     if request.method=='POST':
@@ -2684,19 +2700,31 @@ def expense_comment(request,expense_id):
 def get_vendor_gst(request, vendor_id):
     try:
         vendor = vendor_table.objects.get(pk=vendor_id)
-        return JsonResponse({'gst_treatment': vendor.gst_treatment})
+        return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email})
     except vendor_table.DoesNotExist:
-        return JsonResponse({'gst_treatment': ''})
+        return JsonResponse({'gst_treatment': '','gst_number':'','email':''})
+
 
 
 
 @login_required(login_url='login')
 def delete_expense_comment(request, expense_id, comment_id):
-    # comment = get_object_or_404(Comment, id=comment_id)
-    comment=Comment.objects.get(id=comment_id, expense_id=expense_id,)
-    if comment.expense.id == expense_id:
-        comment.delete()
-    return redirect('show_recurring', expense_id=expense_id)
+    
+        try:
+            comment = get_object_or_404(Comment, id=comment_id, expense__id=expense_id)
+            
+            # Retrieve the corresponding expense object for the comment
+            expense = comment.expense
+
+            # Check if the profile_name in the expense matches the user's profile name
+            if expense.profile_name == comment.profile_name:
+                comment.delete()
+        except Comment.DoesNotExist:
+            pass  # Comment does not exist, no need to delete
+
+        return redirect('show_recurring', expense_id=expense_id)
+    
+
     
     
 def expense_details(request):
@@ -2710,6 +2738,8 @@ def edit_expense(request, expense_id):
     accounts = Account.objects.all()
     account_types = set(Account.objects.values_list('accountType', flat=True))
     selected_account = expense.expense_account
+    payments=payment_terms.object.all()
+    print('account_types',account_types)
 
 
     if request.method == 'POST':
@@ -2718,7 +2748,7 @@ def edit_expense(request, expense_id):
         expense.start_date = request.POST.get('start_date')
         expense.ends_on = request.POST.get('ends_on')
         expense_account_id = request.POST.get('expense_account')
-        expense.expense_account = Account.objects.get(id=expense_account_id)
+        selected_account = Account.objects.get(id=expense_account_id)
         expense.expense_type = request.POST.get('expense_type')
         expense.hsn = request.POST['goods_label']
         expense.sac = request.POST['services_label']
@@ -2728,13 +2758,18 @@ def edit_expense(request, expense_id):
         expense.vendor_id = request.POST.get('vendor')
         expense.expense_type = request.POST.get('expense_type')
         expense.gst_treatment= request.POST.get('gst_trt_inp')
-        expense.gst=request.POST.get('gstin_inp')
+        if expense.gst_treatment=='unregistered Business':
+            expense.gst='None'
+        else:
+            expense.gst=request.POST.get('gstin_inp')
+        expense.vendormail=request.POST.get('vmail')
         expense.destination = request.POST.get('destination')
-        expense.tax = request.POST.get('tax')
+        expense.tax = request.POST.get('tax[]')
         expense.notes = request.POST.get('notes')
         customer_id = request.POST.get('customername')  # Get the customer ID from POST data
         customer_obj = get_object_or_404(customer, pk=customer_id)  # Fetch the customer object
         expense.customername = customer_obj.customerName  # Set the customer name in the expense object
+        expense.customeremail=request.POST.get('mail')
         
         
         print("Expense GST:", expense.gst)
@@ -2742,14 +2777,14 @@ def edit_expense(request, expense_id):
         expense.save()
         return redirect('recurringbase')
     else:
-        selected_account = expense.expense_account
-        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'  account_types':  account_types})
+      
+        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'  account_types':  account_types,'payments':payments})
 
         
 @login_required(login_url='login')
 def newexp(request):
     return render(request,'create_expense.html')
-
+@login_required(login_url='login')
 def save_data(request):
     if request.method == 'POST':
         account_type = request.POST.get('accountType')
@@ -2815,9 +2850,9 @@ def entr_custmr(request):
             crncy=request.POST.get('c_curn')
             obal=request.POST.get('c_open')
 
-            # select=request.POST.get('c_terms')
-            # pterms=payment_terms.objects.get(id=select)
-            pterms=request.POST.get('c_terms')
+            select=request.POST.get('c_terms')
+            pterms=payment_terms.objects.get(id=select)
+            
             print(pterms)
 
            
@@ -2840,6 +2875,7 @@ def entr_custmr(request):
             print(sfax)
 
             u = User.objects.get(id = request.user.id)
+          
 
           
             ctmr=customer(customerType=type,Name=Name,
@@ -2859,12 +2895,35 @@ def entr_custmr(request):
             new_customer_data = {
             'id': ctmr.id,
             'name': ctmr.Firstname + ' ' + ctmr.Lastname,
+            'email':ctmr.customerEmail,
+            
+
             # Add other fields as needed
         }
             return JsonResponse(new_customer_data)
-        return render(request,'recurring_home.html')    
+        payments=payment_terms.objects.all()
+        return render(request,'recurring_home.html',{'payments':payments})  
+
         
-from django.http import JsonResponse
+
+
+def get_customer_email(request):
+    print('customer')
+    if request.method == 'GET':
+        customer_id = request.GET.get('customername')
+        try:
+            custmer = customer.objects.get(id=customer_id)
+            email = custmer.customerEmail
+            print('email',email)
+            return JsonResponse({'email': email})
+        except custmer.DoesNotExist:
+            # Handle the case where the customer does not exist
+            return JsonResponse({'error': 'Customer not found'}, status=404)
+    else:
+        # Handle other HTTP methods if necessary
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+        
+
 
 def get_customer_names(request):
     customers = customer.objects.all()
@@ -2899,6 +2958,21 @@ def get_profile_details(request, profile_id):
     }
     return JsonResponse(data)    
     
+
+
+
+
+def custmr_payment(request):
+    if request.method == 'POST':
+        user = request.user
+        name = request.POST.get('term_name')
+        days = request.POST.get('term_days')
+        payment = payment_terms(Terms=name, Days=days, user=user)
+        payment.save()
+        return JsonResponse({'success': True, 'term_name': name, 'term_id': payment.id})
+    else:
+        return JsonResponse({'success': False})
+
     
 @login_required(login_url='login')
 def view_sales_order(request):

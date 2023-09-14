@@ -67,7 +67,7 @@
         <div class="form-group row mt-4">
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Profile Name</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
-              <input  type="text" class="form-control bg-white text-dark"  name="profile_name"   value="{{ expense.profile_name }}" required>     
+              <input  type="text" class="form-control bg-white text-dark"  name="profile_name"   value="{{ expense.profile_name }}" required style="width:100%">     
               <div class="invalid-feedback">Please fill out this field.</div>   
 
           </div>
@@ -178,7 +178,7 @@
                 <option value="INR" >INR</option>
               </select>
             </div>
-            <option value="INR" ></option><input type="text"  value="{{ expense.amount }}"  id="amount" name="amount" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;margin-top:-57px;width: 603px;margin-left: 48px;width: 547px;">
+            <option value="INR" ></option><input type="text"  value="{{ expense.amount }}"  id="amount" name="amount" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;margin-top:-57px;margin-left: 48px;width: 500px;">
           </div>
         </div>
         <div class="form-group row mt-4">
@@ -213,7 +213,7 @@
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vendor</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
             <div class="input-group">
-              <select name="vendor" id="vendorSelect" class="form-control text-dark bg-light">
+              <select name="vendor" id="vendorSelect" class="form-control text-dark bg-light" >
                 <option value="" class="text-dark bg-light"></option>
                 {% for vendor in vendors %}
                 <option value="{{ vendor.id }}" {% if vendor.id == expense.vendor_id %}selected{% endif %}
@@ -231,12 +231,12 @@
         <div class="form-group row mt-4">
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>GST Treatment</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
-            <input type="text" name="gst_trt_inp" id="gst_trt_inp" class="form-control bg-white text-dark" value="{{expense.vendor.gst_treatment}}" style="margin-left: 6px; width: 602px;color:black;">
+            <input type="text" name="gst_trt_inp" id="gst_trt_inp" class="form-control bg-white text-dark" value="{{expense.vendor.gst_treatment}}" style="margin-left: 6px; width: 547px;color:black;">
         
             <div id="textboxContainer" >
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vendor GSTIN</label></div>
               
-                <input type="text" id="gst_num_inp" class="form-control" value="{{ expense.gst}}" name="gstin_inp" placeholder="Enter additional information"  style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
+                <input type="text" id="gst_num_inp" class="form-control" value="{{ expense.gst}}" name="gstin_inp" placeholder="Enter additional information"  style="background-color:#2c2e33;margin-left: 6px; width: 547px;color:black;">
               
              
               </div>
@@ -245,7 +245,7 @@
             <div class="form-group row mt-4" id="emailid" >
               <label for="email" class="col-sm-12 col-md-6 col-lg-3 col-form-label">Vendor EmailId</label>
               <div class="col-sm-12 col-md-12 col-lg-6">
-                  <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" value="{{ expense.vendormail }}"  style="width: 100%; color: black;">
+                  <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" value="{{ expense.vendormail }}"  style="width:547px; color: black;margin-left: 10px;">
               </div>
           </div>
         </div>
@@ -253,7 +253,7 @@
        <div class="form-group row mt-4">
         <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Destination of supply</label></div>
         <div class="col-sm-12 col-md-6 col-lg-6">
-            <select name="destination" id="destination" class="form-control bg-white text-dark" style="margin-left: 6px; width: 602px;color:black;">
+            <select name="destination" id="destination" class="form-control bg-white text-dark" style="margin-left: 6px; width: 547px;color:black;">
              
               <option value="[AN]-Andaman And Nicobar Islands" {% if expense.destination == "[AN]-Andaman And Nicobar Islands" %}selected{% endif %}>[AN]-Andaman And Nicobar Islands</option>
               <option value="[AD]-Andhra Pradesh" {% if expense.destination == "[AD]-Andhra Pradesh" %}selected{% endif %}>[AD]-Andhra Pradesh</option>
@@ -300,7 +300,7 @@
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Tax</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
               <select name='tax[]' id='tax1'
-              class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleTaxInput()" style="width: 600px; color: black;">
+              class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleTaxInput()" style="width: 547px; color: black;margin-left: 10px;">
               <optgroup class="text-left" label="GST">
                 <option value="0" selected>Tax</option>
                 <option value="GST0"  {% if expense.tax == "GST0" %}selected{% endif %}>0% GST(0%)</option>
@@ -324,13 +324,13 @@
             <div class="form-group row mt-4">
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Notes</label></div>
               <div class="col-sm-12 col-md-6 col-lg-6">
-                <input type="text" class="form-control bg-white text-dark" value="{{ expense.notes }}" id="notes" name="notes" style="margin-left: 16px; width: 603px;color:black;">
+                <input type="text" class="form-control bg-white text-dark" value="{{ expense.notes }}" id="notes" name="notes" style="margin-left: 10px; width:547px;color:black;">
             </div>
           </div>
             <div class="form-group row mt-4">
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
               <div class="col-sm-12 col-md-6 col-lg-6">
-              <div class="input-group" style="width:617px;">
+              <div class="input-group" style="width:100%;">
                 <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="margin-left:15px;color:black;">
                   {% for cust in customers %}
                       <option value="{{ cust.id }}" {% if expense.customername == cust.customerName %}selected{% endif %}>{{ cust.Firstname }}{{ cust.Lastname }}</option>
@@ -343,7 +343,7 @@
             <div class="form-group row mt-4" id="emailField" >
               <label for="email" class="col-sm-12 col-md-12 col-lg-3 col-form-label">Customer EmailId</label>
               <div class="col-sm-12 col-md-12 col-lg-12">
-                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value=" {{expense.customeremail}}" style="width: 100%; color: black;">
+                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value=" {{expense.customeremail}}" style="width: 100%; color: black;margin-left:15px">
               </div>
           </div>
           
@@ -671,7 +671,8 @@
       </div>
       <div class="modal-body" style="background: rgb(32, 35, 37);">
         <div class="card p-3 m-3">
-          <form action="" method="post" class="needs-validation" novalidate autocomplete="off" id="modalCustomer">
+          <form action="" method="post" class="needs-validation"  id="customerForm">
+            {% csrf_token %}
     
             <div class="row mt-2">
               <div class="col-md-3 mt-2">
@@ -971,7 +972,7 @@
             <div class="row mt-2 m-0 p-0 mb-2">
               <div class="col-md-9"> </div>
               <div class="col-md-3 text-right  m-0 p-0">
-                <input type="checkbox" onclick="addressSame()" id="csokay" name="csokay">
+                <input type="checkbox" onclick="address()" id="csokay" name="csokay">
                 <label for="csokay" style="color: #909091;">Same As Billing Address</label>
               </div>
             </div>
@@ -1226,7 +1227,7 @@
               <div class="col-md-4">
                 <div class="d-flex">
                   <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                  type="submit" data-dismiss="modal" id="customerSave">Submit
+                  type="submit" data-dismiss="modal" id="addCustomerButton">Submit  
                   </button> 
 
                   <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
@@ -1243,6 +1244,163 @@
       </div>
   </div>  
 </div>  
+<div class="modal fade" id="newpayment">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
+      <div class="modal-header " style="background: rgb(32, 35, 37);">
+          <h3 class="m-3 text-uppercase">Add Payment Term</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body" style="background: rgb(32, 35, 37);">
+        <div class="card p-3 m-3">
+          <form action="" method="post" class="needs-validation"  id="paymentTermsForm">
+            {% csrf_token %}
+            <div class="row mt-2">
+              <div class="col-md-2 mt-2"></div>
+              <div class="col-md-4 mt-2">
+                <center><label for="termname" style="color: rgb(190, 88, 88);">Term Name *</label></center>
+              </div>
+
+              <div class="col-md-4 mt-2">
+                <center><label for="termdays" style="color: rgb(190, 88, 88);">Number of Days *</label></center>
+              </div>
+              <div class="col-md-2 mt-2"></div>
+            </div>
+
+
+            <div class="row mt-2">
+              <div class="col-md-2 mt-2"></div>
+
+              <div class="col-md-4 mt-2">
+                <input type="text" class="form-control text-dark bg-light" id="term_name" name="term_name" required>      
+              </div>
+
+              <div class="col-md-4 mt-2">
+                <input type="text" class="form-control text-dark bg-light" id="term_days" name="term_days" required>
+              </div>
+              <div class="col-md-2 mt-2"></div>
+
+            </div>
+            
+            <div class="row mt-5">
+              <div class="col-md-4"></div>
+              <div class="col-md-4">
+                <div class="d-flex">
+                  <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
+                  type="submit"   id="paySave">Save
+                  </button> 
+                  
+
+                  <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
+                    data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">Cancel</span>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-4"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+      $("#paymentTermsForm").on("submit", function (event) {
+          event.preventDefault();
+          var termName = $("#term_name").val();
+          var termDays = $("#term_days").val();
+
+          if (!termName || !termDays) {
+              alert("Please fill in all required fields.");
+              return;
+          }
+
+          var formData = $(this).serialize();
+
+          $.ajax({
+              url: "{% url 'custmr_payment' %}",
+              type: "POST",
+              data: formData,
+              headers: { "X-CSRFToken": "{{ csrf_token }}" },
+              success: function (data) {
+                  console.log("AJAX Success:", data);
+
+                  if (data.success) {
+                      alert("Payment term added successfully!");
+                      $("#term_name").val('');
+                      $("#term_days").val(''); // Clear both input fields
+                      updatePaymentTermsDropdown(data.term_name, data.term_id);
+                  } else {
+                      alert("Payment term addition failed!");
+                  }
+              },
+              error: function (error) {
+                  console.log("AJAX Error:", error);
+              }
+          });
+      });
+
+      function updatePaymentTermsDropdown(termName, termId) {
+        console.log('updatePaymentTermsDropdown called');
+        console.log('termName:', termName);
+        console.log('termId:', termId);
+        // Append the new payment term to the select dropdown
+        var dropdown = $("#paymentTermsDropdown");
+        var option = new Option(termName, termId); // Set termId as the value
+        dropdown.append(option);
+    
+        // Optionally, you can select the newly added option
+        dropdown.val(termId);
+      }
+  });
+</script>
+
+
+
+
+
+
+<script>
+  function address() {
+    const billingStreet1 = document.getElementById("cstreet1").value;
+    const billingStreet2 = document.getElementById("cstreet2").value;
+    const billingCity = document.getElementById("ccity").value;
+    const billingState = document.getElementById("cstate").value;
+    const billingCountry = document.getElementById("ccountry").value;
+    const billingPincode = document.getElementById("cpincode").value;
+    const billingPhone = document.getElementById("cphone").value;
+    const billingFax = document.getElementById("cfax").value;
+  
+    if (document.getElementById("csokay").checked) {
+      // Set shipping address fields to billing address fields
+      document.getElementById("csstreet1").value = billingStreet1;
+      document.getElementById("csstreet2").value = billingStreet2;
+      document.getElementById("cscity").value = billingCity;
+      document.getElementById("csstate").value = billingState;
+      document.getElementById("cscountry").value = billingCountry;
+      document.getElementById("cspincode").value = billingPincode;
+      document.getElementById("csphone").value = billingPhone;
+      document.getElementById("csfax").value = billingFax;
+    } else {
+      // Clear the shipping address fields if checkbox is unchecked
+      document.getElementById("csstreet1").value = "";
+      document.getElementById("csstreet2").value = "";
+      document.getElementById("cscity").value = "";
+      document.getElementById("csstate").value = "";
+      document.getElementById("cscountry").value = "";
+      document.getElementById("cspincode").value = "";
+      document.getElementById("csphone").value = "";
+      document.getElementById("csfax").value = "";
+    }
+  }
+  
+</script>
 <div class="modal fade" id="newvendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document" >
     <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
@@ -1379,15 +1537,15 @@
               </div> 
                     
             </div>
-            {% comment %} <div class="row" id="gstinRow" >
+            <div class="row gstrow d-none">
               <div class="col-md-3 mt-2">
-                <label for="v_gstin" style="color:rgb(190, 88, 88);margin-top:15px;">GSTIN</label>
+                <label id="glbl" style="color:rgb(190, 88, 88);">GSTIN/UIN *</label>
               </div>
               <div class="col-md-6 mt-2">
-                <input type="text" class="form-control text-dark bg-light" id="v_gstin" name="v_gstin" placeholder="29APPCK7465F1Z1" style="margin-left:10px;margin-top:-5px;width:480px;">
-              </div>
-            </div> {% endcomment %}
-
+                <input type="text" class="form-control text-dark bg-light" id="v_gstin" name="v_gstin" placeholder="29APPCK7465F1Z1">
+                <label id="gst_label"></label>
+              </div>       
+            </div>
            
             <div class="row">
               <div class="col-md-3 mt-2">
@@ -1833,7 +1991,7 @@ function addressSame() {
             }
         });
     </script>
-
+    
 
 
 
@@ -1885,57 +2043,56 @@ function addressSame() {
 
 
 <!-- Include jQuery library -->
-  
-  <script>
-  $(document).ready(function() {
-      // Handle clicking the "Add Customer" button in the modal
-      $("#addCustomerButton").on("click", function() {
-          var formData = $("#customerForm").serialize(); // Replace "customerForm" with the actual form ID
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Handle clicking the "Add Customer" button in the modal
+    $("#addCustomerButton").on("click", function() {
+        var formData = $("#customerForm").serialize(); // Replace "customerForm" with the actual form ID
 
-          $.ajax({
-              url: "{% url 'entr_custmr' %}", // Change to the actual URL
-              type: "POST",
-              data: formData,
-              success: function(data) {
-                  // Clear the form fields
-                  $("#customerForm")[0].reset();
+        $.ajax({
+            url: "{% url 'entr_custmr' %}", // Change to the actual URL
+            type: "POST",
+            data: formData,
+            success: function(data) {
+                // Clear the form fields
+                $("#customerForm")[0].reset();
 
-                  // Close the modal
-                  $("#newcustomer").modal("hide");
+                // Close the modal
+                $("#newcustomer").modal("hide");
 
-                  // Update the customer dropdown list
-                  updateCustomerDropdown();
-              },
-              error: function(error) {
-                  console.log("Error:", error);
-              }
-          });
-      });
+                // Update the customer dropdown list
+                updateCustomerDropdown();
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    });
 
-      // Function to update the customer dropdown list
-      function updateCustomerDropdown() {
-          var customerListSelect = $("#customer-list");
+    // Function to update the customer dropdown list
+    function updateCustomerDropdown() {
+        var customerListSelect = $("#customer-list");
 
-          $.ajax({
-              url: "{% url 'get_customer_names' %}", // Change to the actual URL
-              type: "GET",
-              success: function(data) {
-                  customerListSelect.empty();
-                  data.forEach(function(customer) {
-                      customerListSelect.append("<option value='" + customer.id + "'>" + customer.name + "</option>");
-                  });
-              },
-              error: function(error) {
-                  console.log("Error:", error);
-              }
-          });
-      }
+        $.ajax({
+            url: "{% url 'get_customer_names' %}", // Change to the actual URL
+            type: "GET",
+            success: function(data) {
+                customerListSelect.empty();
+                data.forEach(function(customer) {
+                    customerListSelect.append("<option value='" + customer.id + "'>" + customer.name + "</option>");
+                });
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    }
 
-      // Initial update of the customer dropdown list
-      updateCustomerDropdown();
-  });
-  </script>
-
+    // Initial update of the customer dropdown list
+    updateCustomerDropdown();
+});
+</script>
  
 
 
