@@ -114,21 +114,33 @@
         <div class="col-sm-12 col-md-6 col-lg-6">
           <div class="input-group">
             <select class="form-control bg-white text-dark" id="expense_account" name="expense_account">
-              {% for account_type in account_types %}
-              <option value="" disabled class="btn btn text-dark highlight-account-type"><b>{{ account_type }}</b></option>
+              {% for account_type in items %}
+              <optgroup label="{{ account_type }}">
+                {% for account in accounts %}
+                {% if account.accountType == account_type %}
+                {% if account.id == selected_account.id %}
+                <option value="{{ account.id }}" selected> {{ account.accountName }}</option>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+            </optgroup>
+            {% endfor %}
+          
+            {% comment %} {% for account_type in items %} 
               {% for account in accounts %}
                   {% if account.accountType == account_type %}
                       <option value="{{ account.id }}"> {{ account.accountName }}</option>
                   {% endif %}
               {% endfor %}
-          {% endfor %}
-              {% for a in accounts %}
+          {% endfor %} {% endcomment %}
+              {% comment %} {% for a in accounts %}
                   {% if a.id == selected_account.id %}
                       <option value="{{ a.id }}" selected>{{ a.accountName }}</option>
                   {% else %}
                       <option value="{{ a.id }}">{{ a.accountName }}</option>
-                  {% endif %}
-              {% endfor %}
+                  {% endif %} 
+                  {% endfor %}
+              {% endcomment %}
             
           </select>
           
@@ -628,6 +640,7 @@
         function updateDropdown(response) {
             var expenseAccountDropdown = $("#expense_account");
             var accountType = response.account_type;
+            console.log(accountType)
             var accountName = response.account_name;
             var accountId = response.acc_id;
 
