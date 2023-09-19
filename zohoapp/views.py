@@ -2661,7 +2661,7 @@ def add_expense(request):
         notes = request.POST['notes']
         customer_id = request.POST['customername']
         customer_obj = get_object_or_404(customer, pk=customer_id)
-        custname=f"{customer_obj.Firstname} {customer_obj.Lastname}"
+       
         custemail=request.POST['mail']
 
         # Handle the ends_on field
@@ -2690,7 +2690,7 @@ def add_expense(request):
             destination=destination,
             tax=tax,
             notes=notes,
-            customer= customer_obj,
+            customername= customer_obj.customerName,
             customeremail=custemail,
             vendormail= vmail,
             activation_tag="active" # Set the activation_tag to "active"
@@ -2829,7 +2829,9 @@ def edit_expense(request, expense_id):
     payments=payment_terms.objects.all()
     print('account_types',account_types)
     print(payments)
-
+    print(customers)
+    print("Expense GST:", expense.gst)
+    print('expense.customer_id',expense.customer_id)
 
     if request.method == 'POST':
         expense.profile_name = request.POST.get('profile_name')
@@ -2855,16 +2857,18 @@ def edit_expense(request, expense_id):
         expense.destination = request.POST.get('destination')
         expense.tax = request.POST.get('tax[]')
         expense.notes = request.POST.get('notes')
-        customer_id = request.POST.get('customername')  # Get the customer ID from POST data
+        customer_id= request.POST.get('customername')  # Get the customer ID from POST data
         customer_obj = get_object_or_404(customer, pk=customer_id)  # Fetch the customer object
-        expense.customername = customer_obj.customerName  # Set the customer name in the expense object
+        expense.customername     = customer_obj.customerName 
         expense.customeremail=request.POST.get('mail')
         
         
-        print("Expense GST:", expense.gst)
+        
 
         expense.save()
+        
         return redirect('recurringbase')
+    
     else:
       
         return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments})
@@ -2909,17 +2913,19 @@ def profileshow(request,expense_id):
 
     return render(request, 'show_recurring.html', {'expenses': expenses,'expense':expense})    
 @login_required(login_url='login')   
-def entr_custmr(request):
+def entr_recurring_custmr(request):
   if request.user.is_authenticated:
         if request.method=='POST':
             print('customer is entered')
            
-            type=request.POST.get('type')
-            Name=request.POST.get('ctitle')
-            print(Name)
-            fname=request.POST.get('cfirstname')
-            print(fname)
-            lname=request.POST.get('clastname')
+            type=request.POST.get('radioCust')
+            # Name=request.POST.get('ctitle')
+            # print(Name)
+            # fname=request.POST.get('cfirstname')
+            # print(fname)
+            # lname=request.POST.get('clastname')
+            fullname=request.POST.get('cdisplayname')
+            print(fullname)
             company=request.POST.get('ccompany_name')
             email=request.POST.get('cemail')
             wphone=request.POST.get('cw_mobile')
@@ -2967,7 +2973,7 @@ def entr_custmr(request):
           
 
           
-            ctmr=customer(customerType=type,Name=Name,
+            ctmr=customer(customerType=type,customerName=fullname,
                         companyName=company,customerEmail=email,customerWorkPhone=wphone,
                          customerMobile=mobile,skype=skname,designation=desg,department=dept,
                            website=wbsite,GSTTreatment=gstt,placeofsupply=posply, Taxpreference=tax1,
@@ -2975,15 +2981,15 @@ def entr_custmr(request):
                                 Facebook=facebook,Twitter=twitter,GSTIN= gstin,
                                  country=bcountry,bAddress1=baddrs1,bAddress2=baddrs2,
                                   bcity=bcity,state=bstate,zipcode= bpincode,phone1=bphone,
-                                   fax=bfax,Firstname=fname,sAddress1=saddrs1,sAddress2=saddrs2,scity= scity,sstate=sstate,
-                                     scountry= scountry, szipcode=spincode,sphone1=sphone,sfax=sfax,Lastname=lname,user=u )
+                                   fax=bfax,sAddress1=saddrs1,sAddress2=saddrs2,scity= scity,sstate=sstate,
+                                     scountry= scountry, szipcode=spincode,sphone1=sphone,sfax=sfax,user=u )
            
             ctmr.save()  
             print(ctmr)
             
             new_customer_data = {
             'id': ctmr.id,
-            'name': ctmr.Firstname + ' ' + ctmr.Lastname,
+            'name': ctmr.customerName,
             'email':ctmr.customerEmail,
             
 
@@ -3016,7 +3022,7 @@ def get_customer_email(request):
 @login_required(login_url='login')
 def get_customer_names(request):
     customers = customer.objects.all()
-    customer_names = [{'id': c.id, 'name':f'{c.Firstname} {c.Lastname}'} for c in customers]
+    customer_names = [{'id': c.id, 'name':c.customerName} for c in customers]
     return JsonResponse(customer_names, safe=False)    
 @login_required(login_url='login')   
 def delete_expense(request, expense_id):
@@ -5575,63 +5581,66 @@ def customer_dropdown(request):
 
     return JsonResponse(options)
     
-    
+@login_required(login_url='login')    
 def entr_custmrA(request):
     if request.user.is_authenticated:
         if request.method=='POST':
+            cr_data=customer()
+            print('hii')
+            print(cr_data)
             type=request.POST.get('type')
-            Name=request.POST['ctitle']
-            fname=request.POST['cfirstname']
-            lname=request.POST['clastname']
-            company=request.POST['ccompany_name']
-            email=request.POST.get('cemail')
-            wphone=request.POST.get('cw_mobile')
-            mobile=request.POST.get('cp_mobile')
-            facebook=request.POST.get('facebook')
-            twitter=request.POST.get('twitter')
-            wbsite=request.POST.get('website')
-            skname=request.POST.get('cskype')
-            desg=request.POST.get('c_desg')      
-            dept=request.POST.get('c_dpt')
-            
-
-            gstt=request.POST.get('c_gsttype')
-            gstin=request.POST.get('v_gstin')
-            posply=request.POST.get('placesupply')
-            tax1=request.POST.get('radioCust1')
-            crncy=request.POST.get('c_curn')
-            obal=request.POST.get('c_open')
-
-            select=request.POST.get('c_terms')
-            pterms=payment_terms.objects.get(id=select)
-            pterms=request.POST.get('c_terms')
-
+            txtFullName=request.POST['txtFullName']
+            cpname=request.POST['cpname']
            
-            addrs1=request.POST.get('cstreet1')
-            addrs2=request.POST.get('csstreet2')
-            bct=request.POST.get('ccity')
-            bst=request.POST.get('cstate')
-            bzip=request.POST.get('cpincode')
-            bpon=request.POST.get('cphone')
-            bcountry=request.POST.get('ccountry')
-            bfx=request.POST.get('cfax')
+            email=request.POST.get('email')
+            wphone=request.POST.get('wphone')
+            mobile=request.POST.get('mobile')
+            skname=request.POST.get('skname')
+            desg=request.POST.get('desg')      
+            dept=request.POST.get('dept')
+            wbsite=request.POST.get('wbsite')
 
-            sal=request.POST.get('sal')
-            ftname=request.POST.get('ftname')
-            ltname=request.POST.get('ltname')
-            mail=request.POST.get('mail')
-            bworkpn=request.POST.get('bworkpn')
-            bmobile=request.POST.get('bmobile')
+            gstt=request.POST.get('v_gsttype')
+            
+            x=request.POST.get('v_gsttype')
+            if x=="Unregistered Business-not Registered under GST":
+                # pan=request.POST.get('pan_number')
+                gstin="null"
+            else:
+                gstin=request.POST.get('v_gstin')
+                # pan=request.POST.get('pan_number')
+           
+            posply=request.POST.get('posply')
+            tax1=request.POST.get('tax1')
+            crncy=request.POST.get('crncy')
+            obal=request.POST.get('obal')
 
-            bskype=request.POST.get('bskype')
-            bdesg=request.POST.get('bdesg')
-            bdept=request.POST.get('bdept')
+            select=request.POST.get('pterms')
+            pterms=payment_terms.objects.get(id=select)
+            pterms=request.POST.get('pterms')
+
+            plst=request.POST.get('plst')
+            plang=request.POST.get('plang')
+            fbk=request.POST.get('fbk')
+            twtr=request.POST.get('twtr')
+        
+            atn=request.POST.get('atn')
+            ctry=request.POST.get('ctry')
+            
+            addrs=request.POST.get('addrs')
+            addrs1=request.POST.get('addrs1')
+            bct=request.POST.get('bct')
+            bst=request.POST.get('bst')
+            bzip=request.POST.get('bzip')
+            bpon=request.POST.get('bpon')
+            bfx=request.POST.get('bfx')
+            remark=request.POST.get('remark')
             u = User.objects.get(id = request.user.id)
 
           
-            ctmr=customer(customerName=fname,
+            ctmr=customer(customerName=txtFullName,
                           customerType=type,
-                        companyName=company,
+                        companyName=cpname,
                         customerEmail=email,
                         customerWorkPhone=wphone,
                          customerMobile=mobile,skype=skname,
@@ -5642,19 +5651,39 @@ def entr_custmrA(request):
                            placeofsupply=posply, Taxpreference=tax1,
                              currency=crncy,OpeningBalance=obal,
                              PaymentTerms=pterms,
-                                
-                                Facebook=facebook,
-                                Twitter=twitter,
-                                 country=bcountry,Address1=addrs1,Address=addrs2,
+                                PriceList=plst,PortalLanguage=plang,
+                                Facebook=fbk,
+                                Twitter=twtr,
+                                 Attention=atn,country=ctry,Address1=addrs,Address2=addrs1,
                                   city=bct,state=bst,zipcode=bzip,phone1=bpon,
-                                   fax=bfx,CPsalutation=sal,Firstname=ftname,
-                                    Lastname=ltname,CPemail=mail,CPphone=bworkpn,
-                                    CPmobile= bmobile,CPskype=bskype,CPdesignation=bdesg,
-                                     CPdepartment=bdept,user=u )
-            ctmr.save()  
+                                   fax=bfx,
+                                user=u )
+            ctmr.save() 
+ 
+            #  ...........................adding multiple rows of table to model  ........................................................       
+            CPsalutation =request.POST.getlist('sal[]')
+            Firstname=request.POST.getlist('ftname[]')
+            Lastname =request.POST.getlist('ltname[]')
+            CPemail =request.POST.getlist('mail[]')
+            CPphone=request.POST.getlist('bworkpn[]')
+            CPmobile=request.POST.getlist('bmobile[]')
+            CPskype=request.POST.getlist('bskype[]')
+            CPdesignation=request.POST.getlist('bdesg[]')
+            CPdepartment=request.POST.getlist('bdept[]') 
             
-            return redirect("add_customer")
-        return render(request,'customer.html')
+            cdata=customer.objects.get(id=ctmr.id)
+            Customr=cdata 
+            
+            if len(CPsalutation)==len(Firstname)==len(Lastname)==len(CPemail)==len(CPphone)==len(CPmobile)==len(CPskype)==len(CPdesignation)==len(CPdepartment):
+                mapped2=zip(CPsalutation,Firstname,Lastname,CPemail,CPphone,CPmobile,CPskype,CPdesignation,CPdepartment)
+                mapped2=list(mapped2)
+                print(mapped2)
+                for ele in mapped2:
+                    created = customer_contact_person_table.objects.get_or_create(CPsalutation=ele[0],Firstname=ele[1],Lastname=ele[2],CPemail=ele[3],
+                            CPphone=ele[4],CPmobile=ele[5],CPskype=ele[6],CPdesignation=ele[7],CPdepartment=ele[8],user=u,Customr=Customr)
+            
+            return redirect("view_customr")
+        return render(request,'view_customer.html')
 def payment_termA(request):
     if request.method=='POST':
         term=request.POST.get('term')

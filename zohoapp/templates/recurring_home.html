@@ -299,9 +299,12 @@
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
               <div class="col-sm-12 col-md-6 col-lg-6">
                   <div class="input-group" style="width: 617px;">
+                    
                       <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="color: black;">
+                        {% for c in customers %}
                           <option value="" selected>Select a customer</option>
-                          <!-- Add options for customers here -->
+                          <option value="{{ c.id }}"  >{{ c.Firstname }} {{ c.Lastname }}</option>
+                        {% endfor %}
                       </select>
                       <div class="input-group-append">
                           <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newcustomer" style="height: 38px;">Add new customer</button>
@@ -724,10 +727,11 @@ $(document).ready(function() {
             <div class="row mt-2">
               <div class="col-md-3 mt-2">
                 <label for="clname">Last name</label>
-                <label id="cdisplayname" name = "cdisplayname" hidden></label>
+                <label for="cdisplayname" name = "cdisplayname" hidden></label>
               </div>
               <div class="col-md-6 mt-2">
                 <input type="text" class="form-control text-dark bg-light" id="clname" name="clastname">
+                <input type="hidden"  id="cdisplayname" name="cdisplayname">
               </div>
             </div>
 
@@ -1258,7 +1262,19 @@ $(document).ready(function() {
 
 <!--End Cutomer-->
 
-
+<script>
+  $(document).ready(function() {
+    $("#cfname, #clname").change(function() {
+      // Assuming #title is an input field containing a title (e.g., Mr., Mrs., etc.)
+      var title = $("#ctitle").val() || ""; // Use an empty string if title is not provided
+      var firstName = $("#cfname").val() || "";
+      var lastName = $("#clname").val() || "";
+      var fullName = title + " " + firstName + " " + lastName;
+      $("#cdisplayname").val(fullName);
+      console.log(fullName)
+    });
+  });
+</script>
 
 
 <!-- Include jQuery library -->
@@ -1270,7 +1286,7 @@ $(document).ready(function() {
           var formData = $("#customerForm").serialize(); // Replace "customerForm" with the actual form ID
 
           $.ajax({
-              url: "{% url 'entr_custmr' %}", // Change to the actual URL
+              url: "{% url 'entr_recurring_custmr' %}", // Change to the actual URL
               type: "POST",
               data: formData,
               success: function(data) {
@@ -1355,6 +1371,7 @@ $(document).ready(function() {
                 </div>
                 <div class="col-md-6 mt-2">
                   <input type="text" class="form-control text-dark bg-light" id="lname" name="lastname">
+                  
                 </div>
               </div>
 
@@ -1897,8 +1914,6 @@ $(document).ready(function() {
     </div>
   </div>  
 </div>  
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
   $(document).ready(function () {
       $("#paymentTermsForm").on("submit", function (event) {
@@ -1924,13 +1939,14 @@ $(document).ready(function() {
                   if (data.success) {
                       alert("Payment term added successfully!");
                       $("#term_name").val('');
-                      $("#term_days").val(''); // Clear both input fields
-                      updatePaymentTermsDropdown(data.term_name, data.term_id);
-                     
+                      $("#term_days").val('');
+
+                      // Call the function to update the dropdown
+                      updatePaymentTermsDropdown(data.term_id, data.term_name);
 
                       // Clear the form fields
                       $("#paymentTermsForm")[0].reset();
-      
+
                       // Close the modal
                       $('#newpayment').modal('hide');
                       closeForm();
@@ -1944,24 +1960,29 @@ $(document).ready(function() {
           });
       });
 
-      function updatePaymentTermsDropdown(termName, termId) {
+      function updatePaymentTermsDropdown(termId, termName) {
         console.log('updatePaymentTermsDropdown called');
         console.log('termName:', termName);
         console.log('termId:', termId);
+
         // Append the new payment term to the select dropdown
-        var dropdown = $("#paymentTermsDropdown");
-        var option = new Option(termName, termId); // Set termId as the value
-        dropdown.append(option);
-    
+        var dropdown = document.getElementById("paymentTermsDropdown");
+        var option = document.createElement("option");
+        option.value = termId;
+        option.text = termName;
+        dropdown.appendChild(option);
+
         // Optionally, you can select the newly added option
-        dropdown.val(termId);
+        dropdown.value = termId;
       }
   });
+
   function closeForm() {
     let formContainer = document.getElementById("newpayment");
     formContainer.style.display = "none";
-}
+  }
 </script>
+
 
 
 
@@ -2131,7 +2152,7 @@ $(document).ready(function() {
                 var formData = $("#vendorForm").serialize();
     
                 $.ajax({
-                    url: "{% url 'add_vendor' %}",
+                    url: "{% url 'add_recurring_vendor' %}",
                     type: "POST",
                     data: formData,
                     headers: { "X-CSRFToken": "{{ csrf_token }}" },
