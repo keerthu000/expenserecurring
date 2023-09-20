@@ -128,7 +128,7 @@
           
           
               <div class="input-group-append">
-                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newAccountModal" class="text-capitalize"  style="height:38px;">New Account</button>
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newAccountModal" id="openModalBtn" class="text-capitalize"  style="height:38px;">New Account</button>
               </div>
             </div>
           </div>
@@ -301,9 +301,10 @@
                   <div class="input-group" style="width: 617px;">
                     
                       <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="color: black;">
+                        <option value="" selected class="text-dark bg-light">Select a customer</option>
                         {% for c in customers %}
-                          <option value="" selected>Select a customer</option>
-                          <option value="{{ c.id }}"  >{{ c.Firstname }} {{ c.Lastname }}</option>
+                          
+                          <option value="{{ c.id }}"  >{{ c.customerName }}</option>
                         {% endfor %}
                       </select>
                       <div class="input-group-append">
@@ -525,21 +526,31 @@ $(document).ready(function() {
                   <div class="form-group col-md-6">
                     <label for="accountType">Account Type:</label>
                     <select class="form-control bg-white text-dark" id="accountType" name="accountType" required>
-                      <option value="">Select an Account</option>
-                
+                      <option value=""  class="btn btn text-dark   highlight-account-type">Select an Account</option>
+                      <option value=""  ><b>Assets</b></option>
                       <option value="Other Current Asset">Other Current Asset</option>
-                    
+                      <option value="Cash">Cash </option>
+                      <option value="Bank">Bank </option>
+                      <option value="Stock">Stock </option>
+                      <option value="Payment Clearing">Payment Clearing </option>
                       <option value="Fixed Asset">Fixed Asset</option>
                       
                       <option value=""  disabled class="btn btn text-dark   highlight-account-type"><b>Liability</b></option>
                       <option value="Other Liability">Other Liability</option>
                       <option value="Other Current Liability">Other Current Liability</option>
-                      
+                      <option value="Credit Card">Credit Card</option>
+                      <option value="Long Term Liability">Long Term Liability</option>
+                      <option value="Overseas Tax Pyable">Overseas Tax Pyable</option>
                       
                       <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Expense</b></option>
                       <option value="Expenses">Expenses</option>
                       <option value="Cost Of Goods Sold">Cost Of Goods Sold</option>
                       <option value="Other Expense">Other Expense</option>
+                      <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Equatity</b></option>
+                      <option value="Equality">Equatity</option>
+                      <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Income</b></option>
+                      <option value="Income">Income</option>
+                      <option value="other Income">Other Income</option>
                     
                     
                     </select>
@@ -612,7 +623,7 @@ $(document).ready(function() {
         var formData = new FormData($(this)[0]);
 
         $.ajax({
-            url: "{% url 'save_data' %}",  // Replace with your Django URL
+            url: "{% url 'save_recurring_data' %}",  // Replace with your Django URL
             type: "POST",
             data: formData,
             processData: false,

@@ -456,11 +456,13 @@
 
                             <div class="col-5">
                                 <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p>
-                                <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.Firstname}}{{customer.Lastname}}</h6>
+                                
+                                <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.customerName}}</h6>
                                 <p class="address col-6 mx-3 p-2" style="margin-left: -14px;">{{customer.bAddress1}} <br>
                                     {{customer.bAddress2}}<br>
                                     {{customer.bcity}}<br>
                                     {{customer.state}}<br>
+                              
 
                                     
                                 </p>
@@ -831,7 +833,7 @@
                     <div class="card p-0 m-0">
                         <form action="" id="modalAddfile">
                             <div class="row mt-2 mx-5 text-center">
-                                <input type="hidden" value="{{.id}}" id="file_id">
+                                <input type="hidden" value="{{expense.id}}" id="file_id">
                                 <input type="file" class="form-control text-dark bg-light" name="file" id="filess" style="width: 400px;">
 
                             </div>
