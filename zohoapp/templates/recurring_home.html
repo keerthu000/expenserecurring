@@ -335,6 +335,28 @@
           </div>
       </form>
       </div>
+
+      <script>
+        // Get references to the input elements
+        var startDateInput = document.getElementById("start_date");
+        var endsOnInput = document.getElementById("ends_on");
+    
+        // Listen for changes in the "Start Date" input
+        startDateInput.addEventListener("change", function () {
+            // Parse the selected date
+            var selectedStartDate = new Date(startDateInput.value);
+    
+            // Calculate the date one day after the selected "Start Date"
+            var oneDayAfterStartDate = new Date(selectedStartDate);
+            oneDayAfterStartDate.setDate(selectedStartDate.getDate() + 1);
+    
+            // Format the date in yyyy-mm-dd for setting as min
+            var formattedDate = oneDayAfterStartDate.toISOString().split("T")[0];
+    
+            // Update the "Ends On" input's min attribute
+            endsOnInput.min = formattedDate;
+        });
+    </script>
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script>
       $(document).ready(function() {
@@ -504,9 +526,36 @@ $(document).ready(function() {
             dateInput.disabled = false;
         }
     }
+    
   
     </script>
       
+
+    <script>
+      function toggleDate() {
+          var endsOnInput = document.getElementById("ends_on");
+          var neverExpireCheckbox = document.getElementById("never-expire-checkbox");
+          var startDateInput = document.getElementById("start_date");
+  
+          if (neverExpireCheckbox.checked) {
+              endsOnInput.disabled = true;
+              endsOnInput.value = ""; // Clear the "Ends On" date
+          } else {
+              endsOnInput.disabled = false;
+          }
+      }
+  
+      // Add an event listener to the "Start Date" input to prevent selecting the same date in "Ends On"
+      var startInput = document.getElementById("start_date");
+      var endsOnInput = document.getElementById("ends_on");
+  
+      startInput.addEventListener("change", function () {
+          // Disable the "Ends On" date input if it matches the "Start Date"
+          if (startInput.value === endsOnInput.value) {
+              endsOnInput.value = ""; // Clear the "Ends On" date
+          }
+      });
+  </script>
       
     <div class="modal fade" id="newAccountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
       <!-- Modal content here -->
@@ -965,13 +1014,7 @@ $(document).ready(function() {
               <div class="col-md-6 mt-2">
                 <div class="d-flex">
                   <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
-                    <option selected value="15">NET 15</option>
-                    <option value="30">NET 30</option>
-                    <option value="45">NET 45</option>
-                    <option value="60">NET 60</option>
-                    <option value="90">NET 90</option>
-                    <option value="">Due end of the month</option>
-                    <option value="recpt">Due on receipt</option>
+                    
                     {% for p in payments %}
                     <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
                     {% endfor %}
@@ -1575,13 +1618,7 @@ $(document).ready(function() {
                 <div class="col-md-6 mt-2">
                   <div class="d-flex">
                     <select class="form-control text-dark bg-light" id="paymentTermsDropdown" name="v_terms" required>
-                      <option selected value="15">NET 15</option>
-                      <option value="30">NET 30</option>
-                      <option value="45">NET 45</option>
-                      <option value="60">NET 60</option>
-                      <option value="90">NET 90</option>
-                      <option value="">Due end of the month</option>
-                      <option value="recpt">Due on receipt</option>
+                     
                       {% for p in payments %}
                       <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
                       {% endfor %}
@@ -1907,7 +1944,7 @@ $(document).ready(function() {
               <div class="col-md-4">
                 <div class="d-flex">
                   <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                  type="submit"   id="paySave">Save
+                  type="submit"  id="paySave">Save
                   </button> 
                   
 
@@ -1925,75 +1962,56 @@ $(document).ready(function() {
     </div>
   </div>  
 </div>  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $(document).ready(function () {
-      $("#paymentTermsForm").on("submit", function (event) {
-          event.preventDefault();
-          var termName = $("#term_name").val();
-          var termDays = $("#term_days").val();
+    $(document).ready(function() {
+        // AJAX for adding payment term
+        $("#paymentTermForm").submit(function(event) {
+            event.preventDefault();
+            var formData = $(this).serialize();
+            $.ajax({
+                url: "{% url 'custmr_payment' %}",
+                type: "POST",
+                data: formData,
+                success: function(data) {
+                    if (data.success) {
+                        // Clear the form and reload the dropdown on success
+                        $("#paymentTermForm")[0].reset();
+                        loadPaymentTerms();
+                    } else {
+                        // Handle form validation errors
+                        console.log(data.errors);
+                    }
+                },
+                error: function(error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
 
-          if (!termName || !termDays) {
-              alert("Please fill in all required fields.");
-              return;
-          }
+        // Function to load payment terms into the dropdown
+        function loadPaymentTerms() {
+            $.ajax({
+                url: "{% url 'payment_view' %}",
+                type: "GET",
+                success: function(data) {
+                    $("#paymentTermsDropdown").empty();
+                    $.each(data, function(index, payment_term) {
+                        $("#paymentTermsDropdown").append('<option value="' + payment_term.id + '">' + payment_term.Terms + '</option>');
+                    });
+                },
+                error: function(error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
 
-          var formData = $(this).serialize();
+        // Initial load of payment terms
+        loadPaymentTerms();
 
-          $.ajax({
-              url: "{% url 'custmr_payment' %}",
-              type: "POST",
-              data: formData,
-              headers: { "X-CSRFToken": "{{ csrf_token }}" },
-              success: function (data) {
-                  console.log("AJAX Success:", data);
-
-                  if (data.success) {
-                      alert("Payment term added successfully!");
-                      $("#term_name").val('');
-                      $("#term_days").val('');
-
-                      // Call the function to update the dropdown
-                      updatePaymentTermsDropdown(data.term_id, data.term_name);
-
-                      // Clear the form fields
-                      $("#paymentTermsForm")[0].reset();
-
-                      // Close the modal
-                      $('#newpayment').modal('hide');
-                      closeForm();
-                  } else {
-                      alert("Payment term addition failed!");
-                  }
-              },
-              error: function (error) {
-                  console.log("AJAX Error:", error);
-              }
-          });
-      });
-
-      function updatePaymentTermsDropdown(termId, termName) {
-        console.log('updatePaymentTermsDropdown called');
-        console.log('termName:', termName);
-        console.log('termId:', termId);
-
-        // Append the new payment term to the select dropdown
-        var dropdown = document.getElementById("paymentTermsDropdown");
-        var option = document.createElement("option");
-        option.value = termId;
-        option.text = termName;
-        dropdown.appendChild(option);
-
-        // Optionally, you can select the newly added option
-        dropdown.value = termId;
-      }
-  });
-
-  function closeForm() {
-    let formContainer = document.getElementById("newpayment");
-    formContainer.style.display = "none";
-  }
+       
+    });
 </script>
-
 
 
 
@@ -2195,23 +2213,6 @@ $(document).ready(function() {
         });
     </script>
     
-
-    <script>
-      function toggleDateInput() {
-        var checkbox = document.getElementById("never-expire-checkbox");
-        var dateInput = document.getElementById("ends_on");
-        
-        if (checkbox.checked) {
-            dateInput.disabled = true;
-           
-           // $("#terms").val("recpt");
-        } 
-        else {
-            dateInput.disabled = false;
-        }
-    }
-  
-    </script>
 
 
 

@@ -337,6 +337,8 @@ def base(request):
         Account(accountType='Expenses',accountName='Advertising & Marketing',description='Advertising & Marketing').save()
     if not Account.objects.filter(accountName='Automobile Expense').exists():
         Account(accountType='Expenses',accountName='Automobile Expense',description='Automobile Expense').save()
+    if not payment_terms.objects.filter(Terms='NET 30').exists():
+        payment_terms(Terms='NET 30').save()
     
 
 
@@ -2661,8 +2663,8 @@ def add_expense(request):
         notes = request.POST['notes']
         customer_id = request.POST['customername']
         customer_obj = get_object_or_404(customer, pk=customer_id)
-       
-        custemail=request.POST['mail']
+        
+        custemail=request.POST.get('mail')
 
         # Handle the ends_on field
         ends_on = request.POST.get('ends_on')
@@ -2690,7 +2692,7 @@ def add_expense(request):
             destination=destination,
             tax=tax,
             notes=notes,
-            customername= customer_obj.customerName,
+            customer= customer_obj,
             customeremail=custemail,
             vendormail= vmail,
             activation_tag="active" # Set the activation_tag to "active"
@@ -2832,6 +2834,7 @@ def edit_expense(request, expense_id):
     print(customers)
     print("Expense GST:", expense.gst)
     print('expense.customer_id',expense.customer_id)
+    print('expense.customer',expense.customer)
 
     if request.method == 'POST':
         expense.profile_name = request.POST.get('profile_name')
@@ -2859,7 +2862,7 @@ def edit_expense(request, expense_id):
         expense.notes = request.POST.get('notes')
         customer_id= request.POST.get('customername')  # Get the customer ID from POST data
         customer_obj = get_object_or_404(customer, pk=customer_id)  # Fetch the customer object
-        expense.customername     = customer_obj.customerName 
+        expense.customer = customer_obj
         expense.customeremail=request.POST.get('mail')
         
         
@@ -2878,7 +2881,7 @@ def edit_expense(request, expense_id):
 def newexp(request):
     return render(request,'create_expense.html')
 @login_required(login_url='login')
-def save_data(request):
+def save_recurring_data(request):
     if request.method == 'POST':
         account_type = request.POST.get('accountType')
         account_name = request.POST.get('accountName')
@@ -2912,92 +2915,79 @@ def profileshow(request,expense_id):
     expense = get_object_or_404(Expense, id=expense_id)
 
     return render(request, 'show_recurring.html', {'expenses': expenses,'expense':expense})    
-@login_required(login_url='login')   
+@login_required(login_url='login')
 def entr_recurring_custmr(request):
-  if request.user.is_authenticated:
-        if request.method=='POST':
-            print('customer is entered')
-           
-            type=request.POST.get('radioCust')
-            # Name=request.POST.get('ctitle')
-            # print(Name)
-            # fname=request.POST.get('cfirstname')
-            # print(fname)
-            # lname=request.POST.get('clastname')
-            fullname=request.POST.get('cdisplayname')
-            print(fullname)
-            company=request.POST.get('ccompany_name')
-            email=request.POST.get('cemail')
-            wphone=request.POST.get('cw_mobile')
-            mobile=request.POST.get('cp_mobile')
-            facebook=request.POST.get('facebook')
-            twitter=request.POST.get('twitter')
-            wbsite=request.POST.get('website')
-            skname=request.POST.get('cskype')
-            desg=request.POST.get('c_desg')      
-            dept=request.POST.get('c_dpt')
-            print(dept)
+    if request.method == 'POST':
+        print('customer is entered')
 
-            gstt=request.POST.get('c_gsttype')
-            gstin=request.POST.get('v_gstin')
-            posply=request.POST.get('placesupply')
-            tax1=request.POST.get('radioCust1')
-            crncy=request.POST.get('c_curn')
-            obal=request.POST.get('c_open')
+        type = request.POST.get('radioCust')
+        print("type",type)
 
-            select=request.POST.get('c_terms')
-            pterms=payment_terms.objects.get(id=select)
-            
-            print(pterms)
+        fullname = request.POST.get('cdisplayname')
+        company = request.POST.get('ccompany_name')
+        email = request.POST.get('cemail')
+        wphone = request.POST.get('cw_mobile')
+        mobile = request.POST.get('cp_mobile')
+        facebook = request.POST.get('facebook')
+        twitter = request.POST.get('twitter')
+        wbsite = request.POST.get('website')
+        skname = request.POST.get('cskype')
+        desg = request.POST.get('c_desg')
+        dept = request.POST.get('c_dpt')
+        gstt = request.POST.get('c_gsttype')
+        gstin = request.POST.get('v_gstin')
+        posply = request.POST.get('placesupply')
+        tax1 = request.POST.get('radioCust1')
+        crncy = request.POST.get('c_curn')
+        obal = request.POST.get('c_open')
+        
+        selected_payment_label = request.POST.get('c_terms')
+        pterms = payment_terms.objects.get(Terms=selected_payment_label)
+        print(pterms)
+        
+        baddrs1 = request.POST.get('cstreet1')
+        baddrs2 = request.POST.get('cstreet2')
+        bcity = request.POST.get('ccity')
+        bstate = request.POST.get('cstate')
+        bcountry = request.POST.get('ccountry')
+        bpincode = request.POST.get('cpincode')
+        bphone = request.POST.get('cphone')
+        bfax = request.POST.get('cfax')
+        saddrs1 = request.POST.get('csstreet1')
+        saddrs2 = request.POST.get('csstreet2')
+        scity = request.POST.get('cscity')
+        sstate = request.POST.get('csstate')
+        scountry = request.POST.get('cscountry')
+        spincode = request.POST.get('cspincode')
+        sphone = request.POST.get('csphone')
+        sfax = request.POST.get('csfax')
 
-           
-            baddrs1=request.POST.get('cstreet1')
-            baddrs2=request.POST.get('cstreet2')
-            bcity=request.POST.get('ccity')
-            bstate=request.POST.get('cstate')
-            bcountry=request.POST.get('ccountry')
-            bpincode=request.POST.get('cpincode')
-            bphone=request.POST.get('cphone')
-            bfax=request.POST.get('cfax')
-            saddrs1=request.POST.get('csstreet1')
-            saddrs2=request.POST.get('csstreet2')
-            scity=request.POST.get('cscity')
-            sstate=request.POST.get('csstate')
-            scountry=request.POST.get('cscountry')
-            spincode=request.POST.get('cspincode')
-            sphone=request.POST.get('csphone')
-            sfax=request.POST.get('csfax')
-            print(sfax)
+        u = User.objects.get(id=request.user.id)
 
-            u = User.objects.get(id = request.user.id)
-          
+        ctmr = customer(customerType=type, customerName=fullname,
+                        companyName=company, customerEmail=email, customerWorkPhone=wphone,
+                        customerMobile=mobile, skype=skname, designation=desg, department=dept,
+                        website=wbsite, GSTTreatment=gstt, placeofsupply=posply, Taxpreference=tax1,
+                        currency=crncy, OpeningBalance=obal,PaymentTerms=pterms,    
+                        Facebook=facebook, Twitter=twitter, GSTIN=gstin,
+                        country=bcountry, bAddress1=baddrs1, bAddress2=baddrs2,
+                        bcity=bcity, bstate=bstate, bzipcode=bpincode, bphone1=bphone,
+                        bfax=bfax, sAddress1=saddrs1, sAddress2=saddrs2, scity=scity, sstate=sstate,
+                        scountry=scountry, szipcode=spincode, sphone1=sphone, sfax=sfax, user=u)
 
-          
-            ctmr=customer(customerType=type,customerName=fullname,
-                        companyName=company,customerEmail=email,customerWorkPhone=wphone,
-                         customerMobile=mobile,skype=skname,designation=desg,department=dept,
-                           website=wbsite,GSTTreatment=gstt,placeofsupply=posply, Taxpreference=tax1,
-                             currency=crncy,OpeningBalance=obal,PaymentTerms=pterms,
-                                Facebook=facebook,Twitter=twitter,GSTIN= gstin,
-                                 country=bcountry,bAddress1=baddrs1,bAddress2=baddrs2,
-                                  bcity=bcity,state=bstate,zipcode= bpincode,phone1=bphone,
-                                   fax=bfax,sAddress1=saddrs1,sAddress2=saddrs2,scity= scity,sstate=sstate,
-                                     scountry= scountry, szipcode=spincode,sphone1=sphone,sfax=sfax,user=u )
-           
-            ctmr.save()  
-            print(ctmr)
-            
-            new_customer_data = {
+        ctmr.save()
+        print(ctmr)
+
+        new_customer_data = {
             'id': ctmr.id,
             'name': ctmr.customerName,
-            'email':ctmr.customerEmail,
-            
-
+            'email': ctmr.customerEmail,
             # Add other fields as needed
         }
-            return JsonResponse(new_customer_data)
-        payments=payment_terms.objects.all()
-        return render(request,'recurring_home.html',{'payments':payments})  
+        return JsonResponse(new_customer_data)
+
+    payments = payment_terms.objects.all()
+    return render(request, 'recurring_home.html', {'payments': payments})
 
         
 
@@ -3009,14 +2999,15 @@ def get_customer_email(request):
         try:
             custmer = customer.objects.get(id=customer_id)
             email = custmer.customerEmail
-            print('email',email)
+            print('email', email)
             return JsonResponse({'email': email})
-        except custmer.DoesNotExist:
+        except customer.DoesNotExist:  # Corrected exception name
             # Handle the case where the customer does not exist
             return JsonResponse({'error': 'Customer not found'}, status=404)
     else:
         # Handle other HTTP methods if necessary
         return JsonResponse({'error': 'Invalid request method'}, status=400)
+
         
 
 @login_required(login_url='login')
@@ -3055,20 +3046,31 @@ def get_profile_details(request, profile_id):
     
 
 
-
 @login_required(login_url='login')
 def custmr_payment(request):
+
     if request.method == 'POST':
+        print('enter payment terms')
         user = request.user
         name = request.POST.get('term_name')
         days = request.POST.get('term_days')
+        
+        
         payment = payment_terms(Terms=name, Days=days, user=user)
         payment.save()
+        
         return JsonResponse({'success': True, 'term_name': name, 'term_id': payment.id})
     else:
         return JsonResponse({'success': False})
+@login_required(login_url='login')
+def payment_view(request):
+    user = request.user
 
-    
+    payment_terms_queryset = payment_terms.objects.filter(user=user)
+    options = [{'id': term.id, 'Terms': term.Terms, 'Days': term.Days} for term in payment_terms_queryset]
+
+    return JsonResponse(options, safe=False)
+    return JsonResponse(options, safe=False)
 @login_required(login_url='login')
 def view_sales_order(request):
     sales=SalesOrder.objects.all()
