@@ -100,9 +100,9 @@
               <label>Ends On</label>
           </div>
           <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="date" id="ends_on" name="ends_on"  value="{{ expense.ends_on|date:'Y-m-d' }}" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;" {% if never_expire %}disabled{% endif %}>
+              <input type="date" id="ends_on" name="ends_on"  value="{{ expense.ends_on|date:'Y-m-d' }}" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;"  {% if never_expire %}disabled{% endif %}>
           </div>
-          <div style="margin-left:318px;">
+          <div style="margin-left:280px;">
             <div class="form-check">
               <input type="checkbox" id="never-expire-checkbox" onchange="toggleDateInput()" />
               <label for="never-expire-checkbox" style="color: #909091;" name="neverExp">Never Expires</label>
@@ -344,18 +344,25 @@
               <div class="col-sm-12 col-md-6 col-lg-6">
               <div class="input-group" style="width:100%;">
                 <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="margin-left:15px;color:black;">
-                  {% for cust in customers %}
-                      <option value="{{ cust.id }}" {% if expense.customername == cust.customerName %}selected{% endif %}>{{ cust.Firstname }}{{ cust.Lastname }}</option>
-                  {% endfor %}
-                </select>
+                  {% for c in customers %}    
+                  {% if c.id == expense.customer.id %}
+                  <option value="{{c.id}} " selected >{{expense.customer_obj.customerName}}</option>
+                  {% else %}
+                  <option value="{{c.id}} "  >{{c.customerName}}</option>
+                  {% endif %}
+              {% endfor %}
+              </select>
+              
+              
+              
                 <div class="input-group-append">
                   <button class="btn btn-primary" type="button"    data-toggle="modal" data-target="#newcustomer" style="height:38px;">Add new customer</button>
                 </div>
             </div>
             <div class="form-group row mt-4" id="emailField" >
-              <label for="email" class="col-sm-12 col-md-12 col-lg-3 col-form-label">Customer EmailId</label>
+              <div class="col-sm-12 col-md-12 col-lg-12" style="margin-left:-17rem;margin-top:2rem;"><label for="email" class="col-form-label">Customer EmailId</label></div>
               <div class="col-sm-12 col-md-12 col-lg-12">
-                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value=" {{expense.customeremail}}" style="width: 100%; color: black;margin-left:15px">
+                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value=" {{expense.customeremail}}" style="width: 100%; color: black;margin-left:15px;margin-top:-2rem;">
               </div>
           </div>
           
@@ -366,12 +373,12 @@
         </div>
         <br><br>
         <div class="form-group" >
-            <button type="submit" class="btn btn-primary" style="margin-left:300px;width:">Save</button>&nbsp;&nbsp;
-            
+            <button type="submit" class="btn btn-primary" style="margin-left:100px;width:100px;">Save</button>&nbsp;&nbsp;
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'show_recurring' expense.id  %}'" style="color:orangered;width:100px;height:35px;">Cancel</button>
         </div>
     </form>
     </div>
-
+    
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script>
@@ -431,37 +438,47 @@
     </script>
 
     <script>
-      // Function to check the checkbox based on a condition
-      function checkCheckboxCondition() {
-          // Replace this condition with your actual condition
-          const shouldBeChecked = true; // Example condition, change this as needed
-
-          // Get a reference to the checkbox element
-          const checkbox = document.getElementById("never-expire-checkbox");
-
-          // Check the checkbox if the condition is met
-          if (shouldBeChecked) {
-              checkbox.checked = true;
-              toggleDateInput(); // Call the toggleDateInput function to ensure proper initialization
-          }
-      }
-
-      // Call the function to check the checkbox condition when the page loads
-      window.onload = checkCheckboxCondition;
-
-      // Function to handle the checkbox change event
       function toggleDateInput() {
-          var checkbox = document.getElementById("never-expire-checkbox");
-          var dateInput = document.getElementById("ends_on");
-          
-          if (checkbox.checked) {
-              dateInput.disabled = true;
-          } 
-          else {
-              dateInput.disabled = false;
-          }
-      }
+        var checkbox = document.getElementById("never-expire-checkbox");
+        var dateInput = document.getElementById("ends_on");
+        
+        if (checkbox.checked) {
+            dateInput.disabled = true;
+        } 
+        else {
+            dateInput.disabled = false;
+        }
+    }
   </script>
+  <script>
+    function toggleDate() {
+        var endsOnInput = document.getElementById("ends_on");
+        var neverExpireCheckbox = document.getElementById("never-expire-checkbox");
+        var startDateInput = document.getElementById("start_date");
+
+        if (neverExpireCheckbox.checked) {
+            endsOnInput.disabled = true;
+            endsOnInput.value = ""; // Clear the "Ends On" date
+        } else {
+            endsOnInput.disabled = false;
+        }
+    }
+
+    // Add an event listener to the "Start Date" input to prevent selecting the same date in "Ends On"
+    var startInput = document.getElementById("start_date");
+    var endsOnInput = document.getElementById("ends_on");
+
+    startInput.addEventListener("change", function () {
+        // Disable the "Ends On" date input if it matches the "Start Date"
+        if (startInput.value === endsOnInput.value) {
+            endsOnInput.value = ""; // Clear the "Ends On" date
+        }
+    });
+</script>
+    
+
+
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script>
       $(document).ready(function() {
@@ -613,7 +630,7 @@
         var formData = new FormData($(this)[0]);
 
         $.ajax({
-            url: "{% url 'save_data' %}",  // Replace with your Django URL
+            url: "{% url 'save_recurring_data' %}",  // Replace with your Django URL
             type: "POST",
             data: formData,
             processData: false,
@@ -2064,7 +2081,7 @@ $(document).ready(function() {
         var formData = $("#customerForm").serialize(); // Replace "customerForm" with the actual form ID
 
         $.ajax({
-            url: "{% url 'entr_custmr' %}", // Change to the actual URL
+            url: "{% url 'entr_recurring_custmr' %}", // Change to the actual URL
             type: "POST",
             data: formData,
             success: function(data) {
@@ -2306,7 +2323,7 @@ $(document).ready(function() {
                 var formData = $("#vendorForm").serialize();
     
                 $.ajax({
-                    url: "{% url 'add_vendor' %}",
+                    url: "{% url 'add_recurring_vendor' %}",
                     type: "POST",
                     data: formData,
                     headers: { "X-CSRFToken": "{{ csrf_token }}" },
