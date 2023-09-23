@@ -367,7 +367,7 @@
                                 <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal"
                                     data-target="#files"><i class="fa fa-paperclip"></i> Attach File</a>
                                 {% if expense.document != "" %}
-                                <a class="dropdown-item" download href="{{expense.document.url }}"><i
+                                <a class="dropdown-item" download href=""><i
                                         class="fa fa-download"></i> Download File</a>
                                 {% endif %}
                             </div>
@@ -422,7 +422,7 @@
                                 </div>
                                 <div class="position-relative">
                                     <p>Bill Date : &nbsp <span style="color: black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                                    <p>Due Date : &nbsp <span style="color: black;">{{expense.ends_on|date:'d-m-Y'}}</span></p>
+                                    <p>Due Date : &nbsp <span style="color: black;">{{expense.ends_on|date:'d-m-Y'|default:"Never expire"}}</span></p>
                                     {% comment %} <p>Term : &nbsp <span style="color: black;">NET {{expense.payment_terms}}</span></p>  {% endcomment %}
                                 </div>
                             </div>

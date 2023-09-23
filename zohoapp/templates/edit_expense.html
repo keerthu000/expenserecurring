@@ -169,13 +169,13 @@
               </label>
             </div>
             <div class="form-group" id="goods-bottom" style="display:none">
-              <label for="goods-label" style="margin-top:54px;margin-left:-187px;">HSN</label>
-              <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label" value="{{expense.hsn}}" oninput="validateHSN(this)" style="width:200px;">
+              <div style="margin-left:-300px;"><label for="goods-label" style="margin-top:74px;margin-left:-187px;">HSN</label></div>
+              <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label" value="{{expense.hsn}}" oninput="validateHSN(this)" style="margin-left:-13.5rem;width:551px;">
               <small id="hsn-error" class="text-danger"></small>
             </div>
             <div class="form-group" id="services-bottom" style="display:none;">
-              <label for="services-label" style="margin-top:54px;margin-left:-187px;">SAC</label>
-              <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label" value="{{expense.sac}}" oninput="validateSAC(this)">
+              <div style="margin-left:-300px;"><label for="services-label" style="margin-top:74px;margin-left:-187px;">SAC</label></div>
+              <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label" value="{{expense.sac}}" oninput="validateSAC(this)" style="margin-left:-13.5rem;width:551px;">
               <small id="sac-error" class="text-danger"></small>
             </div>
           </div>
@@ -186,7 +186,7 @@
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Amount</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
             <div class="input-group-prepend" style="margin-left:-151px;">
-              <select class="form-control bg-white text-dark" id="currency" name="currency"   style="width:50px; margin-left:151px;color:white;">
+              <select class="form-control bg-white text-dark" id="currency" name="currency"   style="width:50px; margin-left:151px;color:white;margin-top:10px;">
                 <option value="INR" >INR</option>
               </select>
             </div>
@@ -345,8 +345,9 @@
               <div class="input-group" style="width:100%;">
                 <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="margin-left:15px;color:black;">
                   {% for c in customers %}    
+
                   {% if c.id == expense.customer.id %}
-                  <option value="{{c.id}} " selected >{{expense.customer_obj.customerName}}</option>
+                  <option value="{{c.id}} " selected >{{expense.customer.customerName}}</option>
                   {% else %}
                   <option value="{{c.id}} "  >{{c.customerName}}</option>
                   {% endif %}

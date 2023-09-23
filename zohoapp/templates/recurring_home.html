@@ -150,13 +150,13 @@
               </label>
             </div>
             <div class="form-group" id="goods-bottom" style="display:none" >
-              <label for="goods-label" style="margin-top:54px;margin-left:-187px;">HSN</label>
-              <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label" oninput="validateHSN(this)"  >
+              <div style="margin-left:-300px;"><label for="goods-label" style="margin-top:74px;margin-left:-187px;">HSN</label></div>
+              <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label" oninput="validateHSN(this)" style="margin-left:-11.5rem;width:595px;" >
               <small id="hsn-error" class="text-danger"></small>
             </div>
             <div class="form-group" id="services-bottom" style="display:none;">
-              <label for="services-label" style="margin-top:54px;margin-left:-187px;">SAC</label>
-              <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label" oninput="validateSAC(this)"  >
+              <div style="margin-left:-300px;"><label for="services-label" style="margin-top:74px;margin-left:-187px;">SAC</label></div>
+              <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label" oninput="validateSAC(this)" style="margin-left:-11.5rem;width:595px;" >
               <small id="sac-error" class="text-danger"></small>
             </div>
           </div>
@@ -219,17 +219,17 @@
               <div class="col-sm-12 col-md-6 col-lg-6">
                 <input type="text" name="gst_trt_inp" id="gst_trt_inp" class="form-control  bg-white text-dark" style="margin-left: 6px; width: 602px;color:black;">
                   
-            <div class="form-group row mt-4" id="textboxContainer" style="display: none;">
+            <div class="form-group row mt-4" id="textboxContainer" style="display: none;margin-left:5px;">
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vendor GSTIN</label></div>
               
 
-                <input type="text" id="gst_num_inp" class="form-control"  name="gstin_inp" placeholder="Enter additional information" value="" style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
+                <input type="text" id="gst_num_inp" class="form-control"  name="gstin_inp" placeholder="Enter additional information" value="" style="background-color:#2c2e33;margin-left:5.5px; width: 602px;color:black;">
               </div>
             </div>
             <div class="form-group row mt-4" id="emailid" style="display: none;">
               <label for="email" class="col-sm-12 col-md-6 col-lg-3 col-form-label">Vendor EmailId</label>
               <div class="col-sm-12 col-md-12 col-lg-6">
-                  <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" style="width: 100%; color: black;">
+                  <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" style="width: 602px; color: black;margin-left:5.9px;">
               </div>
           </div>
           </div>
@@ -899,7 +899,7 @@ $(document).ready(function() {
               </div>       
             </div>
 
-            <!-- <div class="row gstrow d-none">
+             <div class="row gstrow d-none">
               <div class="col-md-3 mt-2">
                 <label id="glbl" style="color:rgb(190, 88, 88);">GSTIN/UIN *</label>
               </div>
@@ -917,7 +917,7 @@ $(document).ready(function() {
                 <input type="text" class="form-control" id="v_pan" name="v_pan" placeholder="APPCK7465F">
                 <label id="pan_label"></label>
               </div>       
-            </div> -->
+            </div> 
 
             <div class="row mt-2">
               <div class="col-md-3 mt-2">
@@ -1016,7 +1016,7 @@ $(document).ready(function() {
                   <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
                     
                     {% for p in payments %}
-                    <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
+                    <option value="{{p.id}}">{{p.Terms}}</option>
                     {% endfor %}
                   </select>                
                   <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   
@@ -1405,7 +1405,7 @@ $(document).ready(function() {
                   <select name="title" id="title" class="form-control text-dark bg-light">
                     <option value="Mr.">Mr.</option>
                     <option value="Mrs.">Mrs.</option>
-                    <option value="Miss">Miss</option>
+                    <option value="Miss">Miss.</option>
                     <option value="Ms.">Ms.</option>
                   </select>
                 </div>
@@ -1620,7 +1620,7 @@ $(document).ready(function() {
                     <select class="form-control text-dark bg-light" id="paymentTermsDropdown" name="v_terms" required>
                      
                       {% for p in payments %}
-                      <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
+                      <option value="{{p.id}}">{{p.Terms}}</option>
                       {% endfor %}
                     </select>                
                     <a href="#" class="btn btn-outline-secondary py-2 my-1" id="openPaymentModalBtn" data-target="#newpayment" data-toggle="modal">+</a>   
@@ -1944,7 +1944,7 @@ $(document).ready(function() {
               <div class="col-md-4">
                 <div class="d-flex">
                   <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                  type="submit"  id="paySave">Save
+                  type="submit"   id="paySave">Save
                   </button> 
                   
 
@@ -1962,55 +1962,58 @@ $(document).ready(function() {
     </div>
   </div>  
 </div>  
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        // AJAX for adding payment term
-        $("#paymentTermForm").submit(function(event) {
-            event.preventDefault();
-            var formData = $(this).serialize();
-            $.ajax({
-                url: "{% url 'custmr_payment' %}",
-                type: "POST",
-                data: formData,
-                success: function(data) {
-                    if (data.success) {
-                        // Clear the form and reload the dropdown on success
-                        $("#paymentTermForm")[0].reset();
-                        loadPaymentTerms();
-                    } else {
-                        // Handle form validation errors
-                        console.log(data.errors);
-                    }
-                },
-                error: function(error) {
-                    console.log("Error:", error);
+  $(document).ready(function() {
+    // AJAX for adding payment term
+    $("#paymentTermsForm").submit(function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: "{% url 'custmr_payment' %}",
+            type: "POST",
+            data: formData,
+            success: function(data) {
+                if (data.success) {
+                    console.log('Payment term added successfully:', data);
+                    // Clear the form and reload the dropdown on success
+                    $("#paymentTermsForm")[0].reset();
+                    loadPaymentTerms();
+                } else {
+                    // Handle form validation errors
+                    console.log('Error adding payment term:', data.errors);
                 }
-            });
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
         });
-
-        // Function to load payment terms into the dropdown
-        function loadPaymentTerms() {
-            $.ajax({
-                url: "{% url 'payment_view' %}",
-                type: "GET",
-                success: function(data) {
-                    $("#paymentTermsDropdown").empty();
-                    $.each(data, function(index, payment_term) {
-                        $("#paymentTermsDropdown").append('<option value="' + payment_term.id + '">' + payment_term.Terms + '</option>');
-                    });
-                },
-                error: function(error) {
-                    console.log("Error:", error);
-                }
-            });
-        }
-
-        // Initial load of payment terms
-        loadPaymentTerms();
-
-       
     });
+
+    // Function to load payment terms into the dropdown
+    function loadPaymentTerms() {
+        $.ajax({
+            url: "{% url 'payment_view' %}",
+            type: "GET",
+            success: function(data) {
+                console.log('Received payment terms data:', data);
+                var dropdown = $("#paymentTermsDropdown");
+                dropdown.empty();
+                $.each(data, function(key, value) {
+                    var optionText = value[1];
+                    var optionValue = key;
+                    dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
+                    console.log('Added option:', optionValue, optionText);
+                });
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    }
+
+    // Initial load of payment terms
+    loadPaymentTerms();
+});
 </script>
 
 
