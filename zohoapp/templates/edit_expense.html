@@ -100,11 +100,13 @@
               <label>Ends On</label>
           </div>
           <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="date" id="ends_on" name="ends_on"  value="{{ expense.ends_on|date:'Y-m-d' }}" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;"  {% if never_expire %}disabled{% endif %}>
+              <input type="date" id="ends_on" name="ends_on"  value="{{ expense.ends_on|date:'Y-m-d' }}" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;" {% if expense.ends_on == None %}disabled{% endif %}>
           </div>
           <div style="margin-left:280px;">
             <div class="form-check">
-              <input type="checkbox" id="never-expire-checkbox" onchange="toggleDateInput()" />
+              
+              <input type="checkbox"  id="never-expire-checkbox" onchange="toggleDateInput()" {% if expense.ends_on == None %}checked{% endif %} />
+              {% comment %} <input type="checkbox" id="never-expire-checkbox" onchange="toggleDateInput()" name="neverExp" {% if  expense.ends_on == 'None' %}checked{% endif %} /> {% endcomment %}
               <label for="never-expire-checkbox" style="color: #909091;" name="neverExp">Never Expires</label>
               </div>
         </div>
@@ -343,16 +345,17 @@
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
               <div class="col-sm-12 col-md-6 col-lg-6">
               <div class="input-group" style="width:100%;">
-                <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="margin-left:15px;color:black;">
-                  {% for c in customers %}    
-
-                  {% if c.id == expense.customer.id %}
-                  <option value="{{c.id}} " selected >{{expense.customer.customerName}}</option>
-                  {% else %}
-                  <option value="{{c.id}} "  >{{c.customerName}}</option>
-                  {% endif %}
-              {% endfor %}
-              </select>
+                
+                {% comment %} <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="margin-left:15px;color:black;"> {% endcomment %}
+                 
+                  <select name="customername"  id="customer-list" class="form-control bg-white text-dark" style="margin-left:15px;color:black;">
+                    
+                    {% for c in customers %}
+                      <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
+                    {% endfor %}
+                </select>
+              
+             
               
               
               
@@ -966,29 +969,22 @@
               </div>       
             </div>
 
-            <div class="row mt-2">
+            <div class="row">
               <div class="col-md-3 mt-2">
-                <label for="c_terms">Payment Terms</label>
+                <label for="v_terms">Payment Terms</label>
               </div>
               <div class="col-md-6 mt-2">
                 <div class="d-flex">
-                  <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
-                    <option selected value="15">NET 15</option>
-                    <option value="30">NET 30</option>
-                    <option value="45">NET 45</option>
-                    <option value="60">NET 60</option>
-                    <option value="90">NET 90</option>
-                    <option value="">Due end of the month</option>
-                    <option value="recpt">Due on receipt</option>
+                  <select class="form-control text-dark bg-light" id="paymentTermsDropdown" name="v_terms" required>
+                   
                     {% for p in payments %}
-                    <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
+                    <option value="{{p.id}}">{{p.Terms}}</option>
                     {% endfor %}
                   </select>                
-                  <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   
+                  <a href="#" class="btn btn-outline-secondary py-2 my-1" id="openPaymentModalBtn" data-target="#newpayment" data-toggle="modal">+</a>   
                 </div>
               </div>       
             </div>
-            
 
             <hr>
 
@@ -1338,62 +1334,67 @@
     </div>
   </div>  
 </div>  
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
-  $(document).ready(function () {
-      $("#paymentTermsForm").on("submit", function (event) {
-          event.preventDefault();
-          var termName = $("#term_name").val();
-          var termDays = $("#term_days").val();
+  $(document).ready(function() {
+    // AJAX for adding payment term
+    $("#paymentTermsForm").submit(function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: "{% url 'custmr_payment' %}",
+            type: "POST",
+            data: formData,
+            success: function(data) {
+                if (data.success) {
+                    console.log('Payment term added successfully:', data);
+                    // Clear the form and reload the dropdown on success
+                    $("#paymentTermsForm")[0].reset();
+                    loadPaymentTerms();
+                    closeForm()
+                } else {
+                    // Handle form validation errors
+                    console.log('Error adding payment term:', data.errors);
+                }
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    });
 
-          if (!termName || !termDays) {
-              alert("Please fill in all required fields.");
-              return;
-          }
+    // Function to load payment terms into the dropdown
+    function loadPaymentTerms() {
+        $.ajax({
+            url: "{% url 'payment_view' %}",
+            type: "GET",
+            success: function(data) {
+                console.log('Received payment terms data:', data);
+                var dropdown = $("#c_terms");
+                var dropdown1 = $("#paymentTermsDropdown"); 
+                dropdown.empty();
+                dropdown1.empty();
+                $.each(data, function(key, value) {
+                    var optionText = value[1];
+                    var optionValue = key;
+                    dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
+                    dropdown1.append($('<option></option>').attr('value', optionValue).text(optionText));
+                    console.log('Added option:', optionValue, optionText);
+                });
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    }
 
-          var formData = $(this).serialize();
-
-          $.ajax({
-              url: "{% url 'custmr_payment' %}",
-              type: "POST",
-              data: formData,
-              headers: { "X-CSRFToken": "{{ csrf_token }}" },
-              success: function (data) {
-                  console.log("AJAX Success:", data);
-
-                  if (data.success) {
-                      alert("Payment term added successfully!");
-                      $("#term_name").val('');
-                      $("#term_days").val(''); // Clear both input fields
-                      updatePaymentTermsDropdown(data.term_name, data.term_id);
-                  } else {
-                      alert("Payment term addition failed!");
-                  }
-              },
-              error: function (error) {
-                  console.log("AJAX Error:", error);
-              }
-          });
-      });
-
-      function updatePaymentTermsDropdown(termName, termId) {
-        console.log('updatePaymentTermsDropdown called');
-        console.log('termName:', termName);
-        console.log('termId:', termId);
-        // Append the new payment term to the select dropdown
-        var dropdown = $("#paymentTermsDropdown");
-        var option = new Option(termName, termId); // Set termId as the value
-        dropdown.append(option);
-    
-        // Optionally, you can select the newly added option
-        dropdown.val(termId);
-      }
-  });
+    // Initial load of payment terms
+    loadPaymentTerms();
+});
+function closeForm() {
+  let formContainer = document.getElementById("newpayment");
+  formContainer.style.display = "none";
+}
 </script>
-
-
-
 
 
 
@@ -1454,7 +1455,7 @@
                 <select name="title" id="title" class="form-control text-dark bg-light">
                   <option value="Mr.">Mr.</option>
                   <option value="Mrs.">Mrs.</option>
-                  <option value="Miss">Miss</option>
+                  <option value="Miss">Miss.</option>
                   <option value="Ms.">Ms.</option>
                 </select>
               </div>
@@ -1474,6 +1475,7 @@
               </div>
               <div class="col-md-6 mt-2">
                 <input type="text" class="form-control text-dark bg-light" id="lname" name="lastname">
+                
               </div>
             </div>
 
@@ -1562,7 +1564,7 @@
                   <option value="Demed Exports">Demed Exports (Supply of woods to an exports oriented unit or againsed advanced authorization or export promotion capital woods)</option>
                   <option value="Tax Deductor">Tax Deductor (State of central gov,government agencies or local authority)</option>
                   <option value="SEZ Developer">SEZ Developer (A person or organization who owns atleast 26% eqaulity in creating business units in special economic zone)</option>
-                </select> <div class="row" id="gstinRow">
+                </select> 
                 
 
               </div> 
@@ -1577,6 +1579,7 @@
                 <label id="gst_label"></label>
               </div>       
             </div>
+
            
             <div class="row">
               <div class="col-md-3 mt-2">
@@ -1664,19 +1667,13 @@
               </div>
               <div class="col-md-6 mt-2">
                 <div class="d-flex">
-                  <select class="form-control text-dark bg-light" id="v_terms" name="v_terms" required>
-                    <option selected value="15">NET 15</option>
-                    <option value="30">NET 30</option>
-                    <option value="45">NET 45</option>
-                    <option value="60">NET 60</option>
-                    <option value="90">NET 90</option>
-                    <option value="">Due end of the month</option>
-                    <option value="recpt">Due on receipt</option>
+                  <select class="form-control text-dark bg-light" id="paymentTermsDropdown" name="v_terms" required>
+                   
                     {% for p in payments %}
-                    <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
+                    <option value="{{p.id}}">{{p.Terms}}</option>
                     {% endfor %}
                   </select>                
-                  <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   
+                  <a href="#" class="btn btn-outline-secondary py-2 my-1"  data-target="#newpayment" data-toggle="modal">+</a>   
                 </div>
               </div>       
             </div>
@@ -2075,56 +2072,55 @@ function addressSame() {
 
 <!-- Include jQuery library -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    // Handle clicking the "Add Customer" button in the modal
-    $("#addCustomerButton").on("click", function() {
-        var formData = $("#customerForm").serialize(); // Replace "customerForm" with the actual form ID
+  <script>
+  $(document).ready(function() {
+      // Handle clicking the "Add Customer" button in the modal
+      $("#addCustomerButton").on("click", function() {
+          var formData = $("#customerForm").serialize(); // Replace "customerForm" with the actual form ID
 
-        $.ajax({
-            url: "{% url 'entr_recurring_custmr' %}", // Change to the actual URL
-            type: "POST",
-            data: formData,
-            success: function(data) {
-                // Clear the form fields
-                $("#customerForm")[0].reset();
+          $.ajax({
+              url: "{% url 'entr_recurring_custmr' %}", // Change to the actual URL
+              type: "POST",
+              data: formData,
+              success: function(data) {
+                  // Clear the form fields
+                  $("#customerForm")[0].reset();
 
-                // Close the modal
-                $("#newcustomer").modal("hide");
+                  // Close the modal
+                  $("#newcustomer").modal("hide");
 
-                // Update the customer dropdown list
-                updateCustomerDropdown();
-            },
-            error: function(error) {
-                console.log("Error:", error);
-            }
-        });
-    });
+                  // Update the customer dropdown list
+                  updateCustomerDropdown();
+              },
+              error: function(error) {
+                  console.log("Error:", error);
+              }
+          });
+      });
 
-    // Function to update the customer dropdown list
-    function updateCustomerDropdown() {
-        var customerListSelect = $("#customer-list");
+      // Function to update the customer dropdown list
+      function updateCustomerDropdown() {
+          var customerListSelect = $("#customer-list");
 
-        $.ajax({
-            url: "{% url 'get_customer_names' %}", // Change to the actual URL
-            type: "GET",
-            success: function(data) {
-                customerListSelect.empty();
-                data.forEach(function(customer) {
-                    customerListSelect.append("<option value='" + customer.id + "'>" + customer.name + "</option>");
-                });
-            },
-            error: function(error) {
-                console.log("Error:", error);
-            }
-        });
-    }
+          $.ajax({
+              url: "{% url 'get_customer_namess' %}", // Change to the actual URL
+              type: "GET",
+              success: function(data) {
+                  customerListSelect.empty();
+                  data.forEach(function(customer) {
+                      customerListSelect.append("<option value='" + customer.id + "'>" + customer.name + "</option>");
+                  });
+              },
+              error: function(error) {
+                  console.log("Error:", error);
+              }
+          });
+      }
 
-    // Initial update of the customer dropdown list
-    updateCustomerDropdown();
-});
-</script>
- 
+      // Initial update of the customer dropdown list
+    
+  });
+  </script>
 
 
 

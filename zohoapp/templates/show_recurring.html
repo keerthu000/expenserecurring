@@ -495,7 +495,7 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{expense.profile_name}}</td>
                                 <td>{{expense.start_date}} </td>
-                                <td>{{expense.ends_on}}</td>
+                                <td>{{expense.ends_on | default:"Never expire"}}</td>
                                 <td>{{expense.vendor.first_name}}{{expense.vendor.last_name}}</td>
                                 <td>{{expense.gst}}</td>
                                 <td>{{expense.tax}}</td>
@@ -614,11 +614,9 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <p class="mb-0" style="font-size: 18px; color: #434141;">
-                                        {% if expense.ends_on|lower == 'none' %}
-                                            Never Expires
-                                        {% else %}
-                                            {{ expense.ends_on | date:'d-m-Y' }}
-                                        {% endif %}
+                                        
+                                    {{ expense.ends_on | date:'d-m-Y' | default:"Never Expire"}}
+                                       
                                     </p>
                                 </div>
                             </div>
@@ -680,7 +678,7 @@
                                     <h5 style="color: #ccc;">Customer :</h5>
                                 </div><br>
                                 <div class="col-md-12 my-0 mx-5">
-                                    <h6 class="text-capitalize " style="color: azure;">{{ customer.Firstname }}{{customer.Lastname}}
+                                    <h6 class="text-capitalize " style="color: azure;">{{ customer.customerName}}
                                     </h6>
                                 </div>
                             </div>
