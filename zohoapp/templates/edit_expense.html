@@ -345,6 +345,7 @@
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
               <div class="col-sm-12 col-md-6 col-lg-6">
               <div class="input-group" style="width:100%;">
+                <input type="hidden" value={{expense.customer.id }} id="hid">
                 
                 {% comment %} <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="margin-left:15px;color:black;"> {% endcomment %}
                  
@@ -750,10 +751,11 @@
             <div class="row mt-2">
               <div class="col-md-3 mt-2">
                 <label for="clname">Last name</label>
-                <label id="cdisplayname" name = "cdisplayname" hidden></label>
+                <label for="cdisplayname" name = "cdisplayname" hidden></label>
               </div>
               <div class="col-md-6 mt-2">
                 <input type="text" class="form-control text-dark bg-light" id="clname" name="clastname">
+                <input type="hidden" class="form-control text-dark bg-light" name = "cdisplayname" id="cdisplayname">
               </div>
             </div>
 
@@ -975,7 +977,7 @@
               </div>
               <div class="col-md-6 mt-2">
                 <div class="d-flex">
-                  <select class="form-control text-dark bg-light" id="paymentTermsDropdown" name="v_terms" required>
+                  <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
                    
                     {% for p in payments %}
                     <option value="{{p.id}}">{{p.Terms}}</option>
@@ -2106,11 +2108,19 @@ function addressSame() {
               url: "{% url 'get_customer_namess' %}", // Change to the actual URL
               type: "GET",
               success: function(data) {
-                  customerListSelect.empty();
-                  data.forEach(function(customer) {
-                      customerListSelect.append("<option value='" + customer.id + "'>" + customer.name + "</option>");
-                  });
-              },
+               
+                var expense=$("#hid").val()
+                console.log(expense )
+                customerListSelect.empty();
+                data.forEach(function(customer) {
+                    
+
+                    var selected = customer.id == expense ? 'selected' : '';
+                    console.log(selected,customer.id)
+                    
+                    customerListSelect.append("<option value='" + customer.id + "' " + selected + ">" + customer.name + "</option>");
+                });
+            },
               error: function(error) {
                   console.log("Error:", error);
               }
@@ -2118,7 +2128,7 @@ function addressSame() {
       }
 
       // Initial update of the customer dropdown list
-    
+  
   });
   </script>
 
@@ -2629,15 +2639,9 @@ function addressSame() {
                   <div class="col-md-6 mt-2">
                     <div class="d-flex">
                       <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
-                        <option selected value="15">NET 15</option>
-                        <option value="30">NET 30</option>
-                        <option value="45">NET 45</option>
-                        <option value="60">NET 60</option>
-                        <option value="90">NET 90</option>
-                        <option value="">Due end of the month</option>
-                        <option value="recpt">Due on receipt</option>
+                    
                         {% for p in payments %}
-                        <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
+                        <option value="{{p.id}}">{{p.Terms}}</option>
                         {% endfor %}
                       </select>                
                       <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   

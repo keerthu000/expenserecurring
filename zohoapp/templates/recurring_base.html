@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+{% comment %} <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> {% endcomment %}
 
 <style>
     .button-container {
@@ -32,14 +32,14 @@
     @media only screen and (min-width: 768px) {
         /* Tablets and desktop screens */
         .button-container {
-            margin-left: auto;
-            margin-right: auto;
+            margin-left: 200px;
+            margin-right: 100px;
             text-align: center;
             margin-top:-20px;
         }
         
         .table-container {
-            margin-top: 60px;
+            margin-top: 70px;
             width: 70%;
             margin-left: 120px;
             margin-right: auto;
@@ -51,20 +51,17 @@
         }
     }
 </style>
-<div class="fixed-top" style="top: 9rem; margin-left: 8rem; margin-top:20px;">
-    <div style="height: 600px; overflow-y: scroll; margin-left: 90px;"> <!-- Added margin-left here -->
-        <div><h1 class="text-light">All Expenses</h1></div>
-        
-        
-          
-    
+<div class="fixed-top" style="top: 9rem; margin-left: 9rem; margin-top: 20px;">
+    <div style="height: 600px; overflow-y: scroll; margin-left: 120px;">
+        <div style="margin-left:30px;"><h1 class="text-light">All Expenses</h1></div>
 
         <div class="button-container">
-            <input type="text" id="searchInput" class="form-control bg-dark" placeholder="Search Items..."  style="width: 25%; margin-top: 25px;" />
-            <button type="button" class="btn btn-success" style="width: 100px; margin-left: 950px; margin-top: -25px;" onclick="window.location.href='{% url 'recurringhome' %}'">+New</button>
+            <input type="text" id="searchInput" class="form-control bg-dark" placeholder="Search Items..." style="width: 25%; margin-top: 40px; margin-left: -150px;" />
+            <button type="button" class="btn btn-success" style="width: 100px; margin-left: 950px; margin-top: -45px;" onclick="window.location.href='{% url 'recurringhome' %}'">+New</button>
         </div><br><br>
+
         <div class="container">
-            <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; margin-left: 930px; margin-top: -130px;">
+            <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; margin-left: 1010px; margin-top: -148px;">
                 Filter
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
@@ -74,7 +71,8 @@
                 <a class="dropdown-item" href="#" data-sort="All">All</a>
             </div>
         </div>
-        <div class="table-responsive">
+
+        <div class="table-responsive" style="margin-left: 20px; margin-right: 20px;">
             <table class="table table-bordered" id="dataTable">
                 <thead class="thead-dark">
                     <tr>
@@ -102,7 +100,7 @@
                         <td>{{ e.start_date }}</td>
                         <td>{{ e.ends_on }}</td>
                         <td>{{ e.notes }}</td>
-                        <td>{{ e.customer.Firstname }} {{ e.customer.Lastname }}</td>
+                        <td>{{ e.customer.customerName }}</td>
                         <td>{{ e.customeremail }}</td>
                     </tr>
                     {% endfor %}
@@ -113,7 +111,6 @@
         <img src="{% static 'images/flowchart.png' %}" alt="Flowchart Image">
     </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

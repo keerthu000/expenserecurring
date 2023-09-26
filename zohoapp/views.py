@@ -339,6 +339,12 @@ def base(request):
         Account(accountType='Expenses',accountName='Automobile Expense',description='Automobile Expense').save()
     if not payment_terms.objects.filter(Terms='NET 30').exists():
         payment_terms(Terms='NET 30').save()
+    if not payment_terms.objects.filter(Terms='NET 60').exists():
+        payment_terms(Terms='NET 60').save()
+    if not payment_terms.objects.filter(Terms='NET 45').exists():
+        payment_terms(Terms='NET 45').save()
+    if not payment_terms.objects.filter(Terms='Due on Receipt').exists():
+        payment_terms(Terms='Due on Receipt').save()
     
 
 
@@ -2621,7 +2627,7 @@ def recurringhome(request):
     gst_treatment = selected_vendor.gst_treatment if selected_vendor else ''
     customers=customer.objects.all()
     payments=payment_terms.objects.all()
-   
+    company = company_details.objects.get(user = request.user)
     print('vendor',vendors)
     return render(request, 'recurring_home.html', {
         'vendors': vendors,
@@ -2632,6 +2638,7 @@ def recurringhome(request):
         'gst_treatment':gst_treatment,
         'customers':customers,
         'payments':payments,
+        'company':company,
     })
 
 @login_required(login_url='login')
@@ -2667,18 +2674,22 @@ def add_expense(request):
         custemail=request.POST.get('mail')
 
         # Handle the ends_on field
-        ends_on = request.POST.get('ends_on')
-        never_expire = request.POST.get('never_expire') == 'on'
-
-        if never_expire:
-            ends_on = "Never expire"
-
+        
+        never_expire = request.POST.get('neverExp')
+        
+        if never_expire == '1':
+           
+            endson = None            
+        else  :
+           endson = request.POST.get('ends_on')
+        
+        
         # Create and save the Expense instance
         expense = Expense(
             profile_name=profile_name,
             repeat_every=repeat_every,
             start_date=start_date,
-            ends_on=ends_on,
+            ends_on=endson,
             expense_account=expense_account,
             expense_type=expense_type,
             hsn=hsn,
@@ -2716,8 +2727,9 @@ def toggle_expense_status(request, expense_id):
 @login_required(login_url='login')
 def recurringbase(request):
     expenses = Expense.objects.all()
+    company = company_details.objects.get(user = request.user)
     
-    return render(request, 'recurring_base.html',{'expenses': expenses})
+    return render(request, 'recurring_base.html',{'expenses': expenses,'company':company})
 
 
 @login_required(login_url='login')
@@ -2822,20 +2834,16 @@ def expense_details(request):
     return render(request, 'recurring_base.html',{'expenses': expenses})
     
 def edit_expense(request, expense_id):
-    expense = get_object_or_404(Expense, id=expense_id)
+    expense = Expense.objects.get(id=expense_id)
+    print('expense.customer.id',expense.customer.id)
     vendors = vendor_table.objects.all()
     customers = customer.objects.all()
     accounts = Account.objects.all()
     account_types = Account.objects.values_list('accountType', flat=True)
     selected_account = expense.expense_account
     payments=payment_terms.objects.all()
-    print('account_types',account_types)
-    print(payments)
-    print(customers)
-    print("Expense GST:", expense.gst)
-    print('expense.customer_id',expense.customer_id)
-    print('expense.customer',expense.customer)
-
+    company = company_details.objects.get(user = request.user)
+    
     if request.method == 'POST':
         expense.profile_name = request.POST.get('profile_name')
         expense.repeat_every = request.POST.get('repeat_every')
@@ -2873,8 +2881,8 @@ def edit_expense(request, expense_id):
         return redirect('recurringbase')
     
     else:
-      
-        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments})
+        
+        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments,'company':company})
 
         
 @login_required(login_url='login')
@@ -2921,9 +2929,12 @@ def entr_recurring_custmr(request):
         print('customer is entered')
 
         type = request.POST.get('radioCust')
-        print("type",type)
-
-        fullname = request.POST.get('cdisplayname')
+        sal=request.POST.get('ctitle')
+        fname= request.POST.get('cfirstname')
+        lname=request.POST.get('clastname')
+        # fullname=request.POST.get('cdisplayname')
+        fullname = sal + ' ' + fname + ' ' + lname if fname and lname else (fname or lname)
+        print(fullname)
         company = request.POST.get('ccompany_name')
         email = request.POST.get('cemail')
         wphone = request.POST.get('cw_mobile')
@@ -2941,9 +2952,10 @@ def entr_recurring_custmr(request):
         crncy = request.POST.get('c_curn')
         obal = request.POST.get('c_open')
         
-        selected_payment_label = request.POST.get('c_terms')
-        pterms = payment_terms.objects.get(Terms=selected_payment_label)
-        print(pterms)
+        selected_payment_label =int(request.POST.get('c_terms'))
+       
+        pterms = payment_terms.objects.get(id=selected_payment_label)
+        
         
         baddrs1 = request.POST.get('cstreet1')
         baddrs2 = request.POST.get('cstreet2')
@@ -2969,10 +2981,10 @@ def entr_recurring_custmr(request):
                         customerMobile=mobile, skype=skname, designation=desg, department=dept,
                         website=wbsite, GSTTreatment=gstt, placeofsupply=posply, Taxpreference=tax1,
                         currency=crncy, OpeningBalance=obal,PaymentTerms=pterms,    
-                        Facebook=facebook, Twitter=twitter, GSTIN=gstin,
-                        country=bcountry, bAddress1=baddrs1, bAddress2=baddrs2,
-                        bcity=bcity, bstate=bstate, bzipcode=bpincode, bphone1=bphone,
-                        bfax=bfax, sAddress1=saddrs1, sAddress2=saddrs2, scity=scity, sstate=sstate,
+                        Facebook=facebook, Twitter=twitter, GSTIN=gstin,Fname=fname,Lname=lname,
+                        country=bcountry, Address1=baddrs1, Address2=baddrs2,
+                        city=bcity, state=bstate, zipcode=bpincode, phone1=bphone,
+                        fax=bfax, sAddress1=saddrs1, sAddress2=saddrs2, scity=scity, sstate=sstate,
                         scountry=scountry, szipcode=spincode, sphone1=sphone, sfax=sfax, user=u)
 
         ctmr.save()
@@ -2989,7 +3001,21 @@ def entr_recurring_custmr(request):
     payments = payment_terms.objects.all()
     return render(request, 'recurring_home.html', {'payments': payments})
 
-        
+def get_repeat_every(request):
+    if request.method == 'POST':
+        every = request.POST.get('repeatname')
+        day = request.POST.get('every')
+        everyrept = repeat_every(Terms=every, num=day)
+        everyrept.save()
+        data = {
+            'success': True,
+            'id': everyrept.id,  # Replace with the actual ID of the new item
+            'text': f'{everyrept.Terms} - {everyrept.num}'  # Replace with the actual text of the new item
+        }
+        return JsonResponse(data)
+
+    repeat_list = repeat_every.objects.all()
+    return render(request, 'recurring_home.html', {'repeat_list': repeat_list})
 
 @login_required(login_url='login')
 def get_customer_email(request):
@@ -3011,7 +3037,7 @@ def get_customer_email(request):
         
 
 @login_required(login_url='login')
-def get_customer_names(request):
+def get_customer_namess(request):
     customers = customer.objects.all()
     customer_names = [{'id': c.id, 'name':c.customerName} for c in customers]
     return JsonResponse(customer_names, safe=False)    
@@ -3067,10 +3093,11 @@ def payment_view(request):
     user = request.user
 
     payment_terms_queryset = payment_terms.objects.filter(user=user)
-    options = [{'id': term.id, 'Terms': term.Terms, 'Days': term.Days} for term in payment_terms_queryset]
+  
+    options = {option.id: [option.id, option.Terms] for option in payment_terms_queryset}
 
     return JsonResponse(options, safe=False)
-    return JsonResponse(options, safe=False)
+    
 @login_required(login_url='login')
 def view_sales_order(request):
     sales=SalesOrder.objects.all()
