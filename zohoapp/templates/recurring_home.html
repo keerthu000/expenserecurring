@@ -72,15 +72,24 @@
 
             </div>
           </div> 
+          
           <div class="form-group row mt-4">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Repeat Every</label></div>
               <div class="col-sm-12 col-md-6 col-lg-6">
-                <select class="form-control bg-white text-dark" id="repeat_select" name="repeat_every" style="width:530px;">
-                  <option value="" disabled selected>Select an option</option>
-                    {% for repeat in repeat_list %}
-                        <option value="{{ repeat.id }}">  {{ repeat.Terms }} {{ repeat.num }}</option>
-                    {% endfor %}
-                </select>      
+               
+                <select class="form-control text-dark" id="repeat_select" name="repeat_every">
+                  {% for term in repeat %}
+                    <optgroup label="{{ term }}">
+                      {% for repeat_item in repeat_list %}
+                        {% if repeat_item.Terms == term %}
+                          <option class="text-dark" value="{{ repeat_item.id }}">{{ repeat_item.num }} {{ repeat_item.Terms }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </optgroup>
+                  {% endfor %}
+                </select>
+              
+                  
               </div>
               <div class="input-group-append">
                 <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#repeatevery"  class="text-capitalize"  style="width:100px;height:38px;margin-left:-123px;">Add</button>
@@ -2033,45 +2042,61 @@ $(document).ready(function() {
 
 
 <!-- Include jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
-    $(document).ready(function () {
-        $("#repeatSave").on("click", function (event) {
-            event.preventDefault();
-            var formData = $("#repeatForm").serialize();
+  $(document).ready(function () {
+    $("#repeatSave").on("click", function (event) {
+      event.preventDefault();
+      var formData = $("#repeatForm").serialize();
 
-            $.ajax({
-                url: "{% url 'get_repeat_every' %}", // Replace with your actual URL
-                type: "POST",
-                data: formData,
-                headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                success: function (data) {
-                    console.log("AJAX Success:", data);
+      $.ajax({
+        url: "{% url 'get_repeat_every' %}",
+        type: "POST",
+        data: formData,
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+        success: function (data) {
+          console.log("AJAX Success:", data);
 
-                    if (data.success) {
-                        alert("Data saved successfully!");
-                        $("#repeatForm")[0].reset();
-                        
-                        // Add the new option to the dropdown immediately
-                        var newOption = $('<option>', {
-                            value: data.id, // Assuming the server sends back the new item's ID
-                            text: data.text // Assuming the server sends back the new item's text
-                        });
-                        $("#repeat_select").append(newOption);
-                    } else {
-                        alert("Data save failed!");
-                    }
-                },
-                error: function (error) {
-                    console.log("AJAX Error:", error);
-                }
+          if (data.success) {
+            alert("Data saved successfully!");
+
+            // Get the existing terms in the dropdown
+            var existingTerms = $("#repeat_select").find("optgroup").map(function() {
+              return $(this).attr("label");
+            }).get();
+
+            // Rebuild the dropdown based on the data returned
+            var repeatSelect = $("#repeat_select");
+
+            // Iterate through unique terms
+            $.each(data.terms, function (index, term) {
+              if (existingTerms.indexOf(term) === -1) {
+                // Create an optgroup for the term if it's not already in the dropdown
+                var optgroup = $("<optgroup>").attr("label", term);
+                repeatSelect.append(optgroup);
+
+                // Iterate through unique numbers for this term to create options
+                $.each(data.num, function (index, num) {
+                  if (num.Terms === term) {
+                    var optionText = num.num + " " + term;
+                    var newOption = $("<option>")
+                      .val(num.id)
+                      .text(optionText);
+                    optgroup.append(newOption);
+                  }
+                });
+              }
             });
-        });
+          } else {
+            alert("Data save failed!");
+          }
+        },
+        error: function (error) {
+          console.log("AJAX Error:", error);
+        }
+      });
     });
+  });
 </script>
-
-
 
 
 
