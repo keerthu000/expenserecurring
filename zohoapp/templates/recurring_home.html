@@ -56,128 +56,117 @@
   }
   
     </style>
-     <div  style="margin-top:2rem;   margin-left: 8rem;" > 
+    <div style="margin-top: 2rem; margin-left: 8rem;">
       <h2>New Recurring Expenses</h2>
-      <div style="height: 600px; overflow-y: scroll;overflow-x: clip;"> 
-      
+      <div style="height: 600px; overflow-y: scroll; overflow-x: clip;">
         <form action="{% url 'add_expense' %}" method="post" id="expenseForm">
           {% csrf_token %}
-          
-
+    
+          <!-- Profile Name -->
           <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Profile Name</label></div>
-            <div class="col-sm-12 col-md-6 col-lg-6">
-                <input  type="text" class="form-control bg-white text-dark"  name="profile_name" required style="width:100%">     
-                <div class="invalid-feedback">Please fill out this field.</div>   
-
+            <label class="col-sm-3 col-form-label">Profile Name</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control bg-white text-dark" name="profile_name" required style="width: 100%;">
+              <div class="invalid-feedback">Please fill out this field.</div>
             </div>
-          </div> 
-          
+          </div>
+    
+          <!-- Repeat Every -->
           <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Repeat Every</label></div>
-              <div class="col-sm-12 col-md-6 col-lg-6">
-               
-                <select class="form-control text-dark" id="repeat_select" name="repeat_every">
-                  {% for term in repeat %}
-                    <optgroup label="{{ term }}">
-                      {% for repeat_item in repeat_list %}
-                        {% if repeat_item.Terms == term %}
-                          <option class="text-dark" value="{{ repeat_item.id }}">{{ repeat_item.num }} {{ repeat_item.Terms }}</option>
-                        {% endif %}
-                      {% endfor %}
-                    </optgroup>
+            <label class="col-sm-3 col-form-label">Repeat Every</label>
+            <div class="col-sm-6">
+              <select class="form-control text-dark" id="repeat_select" name="repeat_every">
+                
+                  {% for repeat_item in repeat_list %}
+                 
+                  <option value="{{ repeat_item.id }}"> {{ repeat_item.Terms }}</option>
+                 
                   {% endfor %}
-                </select>
               
-                  
-              </div>
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#repeatevery"  class="text-capitalize"  style="width:100px;height:38px;margin-left:-123px;">Add</button>
-              </div>
-          </div>
-          <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Start Date</label></div>
-            <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="date"  id="start_date" name="start_date" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;width:100%">
+              </select>
+            </div>
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button" data-toggle="modal" id="openModal" data-target="#repeatevery" class="text-capitalize" style="width:100px;height:38px;margin-left:-123px;">Add</button>
             </div>
           </div>
+             <!-- Start Date -->
+      <div class="form-group row mt-4">
+        <label class="col-sm-3 col-form-label">Start Date</label>
+        <div class="col-sm-6">
+          <input type="date" id="start_date" name="start_date" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;width:100%">
+        </div>
+      </div>
 
-          <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
-                <label>Ends On</label>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-6">
-                <input type="date" id="ends_on" name="ends_on" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;width:100%" {% if never_expire %}disabled{% endif %}>
-            </div>
-            <div style="margin-left:280px;">
-              <div class="form-check">
-                <input type="checkbox" id="never-expire-checkbox" onchange="toggleDateInput()" name="neverExp" value='1'/>
-                <label for="never-expire-checkbox" style="color: #909091;width:100%" >Never Expires</label>
-                </div>
+      <!-- Ends On -->
+      <div class="form-group row mt-4">
+        <label class="col-sm-3 col-form-label">Ends On</label>
+        <div class="col-sm-6">
+          <input type="date" id="ends_on" name="ends_on" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;width:100%" {% if never_expire %}disabled{% endif %}>
+        </div>
+        <div style="margin-left:280px;">
+          <div class="form-check">
+            <input type="checkbox" id="never-expire-checkbox" onchange="toggleDateInput()" name="neverExp" value='1' />
+            <label for="never-expire-checkbox" style="color: #909091;width:100%">Never Expires</label>
           </div>
         </div>
-        <div class="form-group row mt-4">
-          <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Expence Account</label></div>
-          <div class="col-sm-12 col-md-6 col-lg-6">
-            <div class="input-group">
-              <select class="form-control bg-white text-dark" id="expense_account" name="expense_account" >
-                <!-- Existing options and comment tags -->
-                {% for account_type in account_types %}
-                <optgroup label="{{ account_type }}">
+      </div>
+
+      <!-- Expense Account -->
+      <div class="form-group row mt-4">
+        <label class="col-sm-3 col-form-label">Expense Account</label>
+        <div class="col-sm-6">
+          <div class="input-group">
+                <select class="form-control bg-white text-dark" id="expense_account" name="expense_account">
+                  <!-- Existing options and comment tags -->
+                  {% for account_type in account_types %}
+                  <optgroup label="{{ account_type }}">
                     {% for account in accounts %}
                     {% if account.accountType == account_type %}
-                    <option value="{{ account.id }}"> {{ account.accountName }}</option>
+                    <option value="{{ account.id }}">{{ account.accountName }}</option>
                     {% endif %}
                     {% endfor %}
-                </optgroup>
-                {% endfor %}
-            </select>
-          
-          
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newAccountModal" id="openModalBtn" class="text-capitalize"  style="height:38px;">New Account</button>
+                  </optgroup>
+                  {% endfor %}
+                </select>
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newAccountModal" id="openModalBtn" class="text-capitalize" style="height:38px;">New Account</button>
+                </div>
               </div>
             </div>
           </div>
-          </div>  
-
           <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label" style="margin-top:8px;"><label>Expence Type</label></div>
-            <div class="col-sm-12 col-md-6 col-lg-6" style="display:flex;">
-            <div class="form-check" >
-              <input class="form-check-input" type="radio" name="expense_type" id="expense_type1" value="goods"  >
-              <label class="form-check-label" for="expense_type1">
-                Goods
-              </label>
-            </div>
-            <div class="form-check" style="margin-left:30px;">
-              <input class="form-check-input" type="radio" name="expense_type" id="expense_type2" value="services" >
-              <label class="form-check-label" for="expense_type2">
-                Services
-              </label>
-            </div>
-            <div class="form-group" id="goods-bottom" style="display:none" >
-              <div style="margin-left:-300px;"><label for="goods-label" style="margin-top:84px;margin-left:-170px;">HSN</label></div>
-              <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label" oninput="validateHSN(this)" style="margin-left:-11.5rem;width:550px;" >
-              <small id="hsn-error" class="text-danger"></small>
-            </div>
-            <div class="form-group" id="services-bottom" style="display:none;">
-              <div style="margin-left:-300px;"><label for="services-label" style="margin-top:84px;margin-left:-170px;">SAC</label></div>
-              <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label" oninput="validateSAC(this)" style="margin-left:-11.5rem;width:550px;" >
-              <small id="sac-error" class="text-danger"></small>
+            <label class="col-sm-3 col-form-label" style="margin-top:8px;">Expense Type</label>
+            <div class="col-sm-6" style="display:flex;">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="expense_type" id="expense_type1" value="goods">
+                <label class="form-check-label" for="expense_type1">Goods</label>
+              </div>
+              <div class="form-check" style="margin-left:30px;">
+                <input class="form-check-input" type="radio" name="expense_type" id="expense_type2" value="services">
+                <label class="form-check-label" for="expense_type2">Services</label>
+              </div>
+              <div class="form-group" id="goods-bottom" style="display:none">
+                <div style="margin-left:-300px;"><label for="goods-label" style="margin-top:84px;margin-left:-170px;">HSN</label></div>
+                <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label" oninput="validateHSN(this)" style="margin-left:-11.5rem;width:550px;">
+                <small id="hsn-error" class="text-danger"></small>
+              </div>
+              <div class="form-group" id="services-bottom" style="display:none;">
+                <div style="margin-left:-300px;"><label for="services-label" style="margin-top:84px;margin-left:-170px;">SAC</label></div>
+                <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label" oninput="validateSAC(this)" style="margin-left:-11.5rem;width:550px;">
+                <small id="sac-error" class="text-danger"></small>
+              </div>
             </div>
           </div>
-          </div>
-
+          
           <div class="form-group row mt-4">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Amount</label></div>
             <div class="col-sm-12 col-md-6 col-lg-6">
               <div class="input-group-prepend" style="margin-left:-151px;">
-                <select class="form-control bg-white text-dark" id="currency" name="currency" style="width:50px; margin-left:151px;color:white;">
-                  <option value="INR" >INR</option>
+                <select class="form-control bg-white text-dark" id="currency" name="currency" style="width:50px; margin-left:151px;color:white;margin-top:-8px;">
+                  <option value="INR">INR</option>
                 </select>
               </div>
-              <option value="INR" ></option><input type="text"  id="amount" name="amount" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;margin-top:-57px;width: 500px;margin-left: 48px;">
+              <input type="text" id="amount" name="amount" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;margin-top:-38px;width: 500px;margin-left: 48px;">
             </div>
           </div>
           <div class="form-group row mt-4">
@@ -201,48 +190,47 @@
     
 
           <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vendor</label></div>
-            <div class="col-sm-12 col-md-6 col-lg-6">
-            <div class="input-group" style="width: 550px;">
-              <select name="vendor" id="vendorSelect" class="form-control text-dark bg-light" >
-                <option  id="placeholderOption"  value="" class="text-dark bg-light">Select a Vendor</option>
+            <label class="col-sm-3 col-form-label">Vendor</label>
+            <div class="col-sm-6">
+              <div class="input-group" style="width: 550px;">
+                <select name="vendor" id="vendorSelect" class="form-control text-dark bg-light" >
+                  <option id="placeholderOption" value="" class="text-dark bg-light">Select a Vendor</option>
                 {% for v in vendors %}
                   
                   <option value="{{ v.id }}"  data-gst="{{ v.gst_treatment }}">{{ v.first_name }} {{ v.last_name }}</option>
                 {% endfor %}
               </select>
-            
-              
-                  <div class="input-group-append">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newvendor" id="addVendorButton" style="height:38px;">Add new vendor</button>
-                  </div>
+              <div class="input-group-append">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newvendor" id="addVendorButton" style="height:38px;">Add new vendor</button>
               </div>
             </div>
-            
-      
-          
-            <div class="form-group row mt-4">
-              <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>GST Treatment</label></div>
-              <div class="col-sm-12 col-md-6 col-lg-6">
-                <input type="text" name="gst_trt_inp" id="gst_trt_inp" class="form-control  bg-white text-dark" style="margin-left: 5px; width: 550px;color:black;">
-                  
-            <div class="form-group row mt-4" id="textboxContainer" style="display: none;margin-left:-5px;">
-              <div class="col-sm-12 col-md-3 col-lg-3 col-form-label" style="margin-left:-280px;margin-top:3rem"><label>Vendor GSTIN</label></div>
-              
-
-                <input type="text" id="gst_num_inp" class="form-control bg-white text-dark"  name="gstin_inp" placeholder="Enter additional information" value="" style=" width: 600px;margin-top:-2.5rem;margin-left:12px;color:black;">
-              </div>
-            </div>
-            <div class="form-group row mt-4" id="emailid" style="display: none;">
-              <label for="email" class="col-sm-12 col-md-6 col-lg-3 col-form-label">Vendor EmailId</label>
-              <div class="col-sm-12 col-md-12 col-lg-6">
-                  <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" style="width: 570px; color: black;margin-left:5.9px;">
-              </div>
-          </div>
           </div>
         </div>
+           <!-- GST Treatment -->
+      <div class="form-group row mt-4">
+        <label class="col-sm-3 col-form-label">GST Treatment</label>
+        <div class="col-sm-6">
+          <input type="text" name="gst_trt_inp" id="gst_trt_inp" class="form-control  bg-white text-dark" style=" width: 550px;color:black;">
+        </div>
+      </div>
 
-      
+      <!-- Vendor GSTIN -->
+      <div class="form-group row mt-4" id="textboxContainer" style="display: none;">
+        <label class="col-sm-3 col-form-label" style="margin-top:1rem">Vendor GSTIN</label>
+        <div class="col-sm-6">
+          <input type="text" id="gst_num_inp" class="form-control bg-white text-dark"  name="gstin_inp" placeholder="Enter additional information" value="" style="width:550px;color:black;margin-left:280px;margin-top:-2rem;">
+        </div>
+      </div>
+
+
+      <!-- Vendor EmailId -->
+      <div class="form-group row mt-4" id="emailid" style="display: none;">
+        <label for="email" class="col-sm-12 col-md-6 col-lg-3 col-form-label">Vendor EmailId</label>
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" style="width: 550px; color: black;">
+        </div>
+      </div>
+
         <div class="form-group row mt-4">
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Destination of supply</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
@@ -273,7 +261,7 @@
               <div class="col-md-3 col-form-label"><label>Tax</label></div>
               <div class="col-md-3">
                 <select name='tax[]' id='tax1'
-                class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleTaxInput()" style="margin-left: 4px; width: 557px; color: black;">
+                class='form-control bg-light text-dark   border-0 tax' onclick="toggleTaxInput()" style="margin-left: 4px; width: 557px; color: black;">
                 <optgroup class="text-left" label="GST">
                   <option value="0" selected></option>
                   <option value="GST0">0% GST(0%)</option>
@@ -283,7 +271,7 @@
                   <option value="GST18">18.0% GST(18%)</option>
                   <option value="GST28">28.0% GST(28%)</option>
                 </optgroup>
-                <optgroup  class="text-center" label="IGST">
+                <optgroup  class="text-left" label="IGST">
                   <option value="0">0% IGST(0%)</option>
                   <option value="IGST3">3.0% IGST(3%)</option>
                   <option value="IGST5">5.0% IGST(5%)</option>
@@ -564,86 +552,7 @@ $(document).ready(function() {
       });
   </script>
       
-    <div class="modal fade" id="newAccountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
-      <!-- Modal content here -->
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content" style="background: rgb(32, 35, 37); border-radius: 20px;">
-          <div class="modal-header" style="background: rgb(32, 35, 37);">
-            <h3 class="m-3 text-uppercase">New Account</h3>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body" style="background: rgb(32, 35, 37);">
-            <div class="card p-3 m-3">
-              <form action=" " method="post" class="needs-validation" novalidate autocomplete="off" id="accountForm">
-                {% csrf_token  %}
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="accountType">Account Type:</label>
-                    <select class="form-control bg-white text-dark" id="accountType" name="accountType" required>
-                      <option value=""  class="btn btn text-dark   highlight-account-type">Select an Account</option>
-                      <option value=""  ><b>Assets</b></option>
-                      <option value="Other Current Asset">Other Current Asset</option>
-                      <option value="Cash">Cash </option>
-                      <option value="Bank">Bank </option>
-                      <option value="Stock">Stock </option>
-                      <option value="Payment Clearing">Payment Clearing </option>
-                      <option value="Fixed Asset">Fixed Asset</option>
-                      
-                      <option value=""  disabled class="btn btn text-dark   highlight-account-type"><b>Liability</b></option>
-                      <option value="Other Liability">Other Liability</option>
-                      <option value="Other Current Liability">Other Current Liability</option>
-                      <option value="Credit Card">Credit Card</option>
-                      <option value="Long Term Liability">Long Term Liability</option>
-                      <option value="Overseas Tax Pyable">Overseas Tax Pyable</option>
-                      
-                      <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Expense</b></option>
-                      <option value="Expenses">Expenses</option>
-                      <option value="Cost Of Goods Sold">Cost Of Goods Sold</option>
-                      <option value="Other Expense">Other Expense</option>
-                      <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Equatity</b></option>
-                      <option value="Equality">Equatity</option>
-                      <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Income</b></option>
-                      <option value="Income">Income</option>
-                      <option value="other Income">Other Income</option>
-                    
-                    
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="accountName">Account Name:</label>
-                    <input type="text" class="form-control bg-white text-dark" id="accountName" name="accountName" required>
-                  </div>
-                </div>
-                
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="accountCode">Account Code:</label>
-                    <input type="text" class="form-control  bg-white text-dark" id="accountCode" name="accountCode" required>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="description">Description:</label>
-                    <textarea class="form-control bg-white text-dark" id="description" name="description" rows="3" required></textarea>
-                  </div>
-                </div>
-                
-                
-                <div class="form-row mt-3">
-                  <div class="col-md-6">
-                    <button type="submit" class="btn btn-primary" style="margin-left:430px;width:150px;"  id="accountSave">Save and Select</button>
-                  </div>
-                  <div class="col-md-6">
-                    <!-- No need for the close button here -->
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-     
+ 
       
       
       
@@ -735,6 +644,89 @@ $(document).ready(function() {
       formContainer.style.display = "none";
   }
 </script>
+
+<div class="modal fade" id="newAccountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
+  <!-- Modal content here -->
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content" style="background: rgb(32, 35, 37); border-radius: 20px;">
+      <div class="modal-header" style="background: rgb(32, 35, 37);">
+        <h3 class="m-3 text-uppercase">New Account</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="background: rgb(32, 35, 37);">
+        <div class="card p-3 m-3">
+          <form action=" " method="post" class="needs-validation" novalidate autocomplete="off" id="accountForm">
+            {% csrf_token  %}
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="accountType">Account Type:</label>
+                <select class="form-control bg-white text-dark" id="accountType" name="accountType">
+                  <option value=""  disabled class="btn btn text-dark   highlight-account-type"><b>Assets</b></option>
+                 
+                  <option value="Other Current Asset">Other Current Asset</option>
+                  <option value="Cash">Cash </option>
+                  <option value="Bank">Bank </option>
+                  <option value="Stock">Stock </option>
+                  <option value="Payment Clearing">Payment Clearing </option>
+                  <option value="Fixed Asset">Fixed Asset</option>
+                  
+                  <option value=""  disabled class="btn btn text-dark   highlight-account-type"><b>Liability</b></option>
+                  <option value="Other Liability">Other Liability</option>
+                  <option value="Other Current Liability">Other Current Liability</option>
+                  <option value="Credit Card">Credit Card</option>
+                  <option value="Long Term Liability">Long Term Liability</option>
+                  <option value="Overseas Tax Pyable">Overseas Tax Pyable</option>
+                  
+                  <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Expense</b></option>
+                  <option value="Expenses">Expenses</option>
+                  <option value="Cost Of Goods Sold">Cost Of Goods Sold</option>
+                  <option value="Other Expense">Other Expense</option>
+                  <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Equatity</b></option>
+                  <option value="Equality">Equatity</option>
+                  <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Income</b></option>
+                  <option value="Income">Income</option>
+                  <option value="other Income">Other Income</option>
+                
+                
+                 
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="accountName">Account Name:</label>
+                <input type="text" class="form-control bg-white text-dark" id="accountName" name="accountName" required>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="accountCode">Account Code:</label>
+                <input type="text" class="form-control  bg-white text-dark" id="accountCode" name="accountCode" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="description">Description:</label>
+                <textarea class="form-control bg-white text-dark" id="description" name="description" rows="3" required></textarea>
+              </div>
+            </div>
+            
+            <div class="form-row mt-3">
+              <div class="col-md-6" >
+                <button type="submit" class="btn btn-primary" style="margin-left:356px;"  id="accountSave">Save and Select</button>
+              </div>
+              
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 
 
 <!--Add Newcustomer -->
@@ -1975,44 +1967,33 @@ $(document).ready(function() {
   <div class="modal-dialog modal-xl">
     <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
       <div class="modal-header " style="background: rgb(32, 35, 37);">
-          <h3 class="m-3 text-uppercase">Repeat Every</h3>
+          <h3 class="m-3 text-uppercase">Add Repeat</h3>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
           </button>
       </div>
       <div class="modal-body" style="background: rgb(32, 35, 37);">
         <div class="card p-3 m-3">
-          <form action="" method="post" class="needs-validation"  id="repeatForm">
-            {% csrf_token %}
+          <form action="" method="post" class="needs-validation" novalidate autocomplete="off" id="repeatForm">
             <div class="row mt-2">
               <div class="col-md-2 mt-2"></div>
               <div class="col-md-4 mt-2">
-                <center><label  style="color: rgb(190, 88, 88);"> Select any*</label></center>
+                
               </div>
 
-              <div class="col-md-4 mt-2">
-                <center><label  style="color: rgb(190, 88, 88);"> Add</label></center>
-              </div>
-              <div class="col-md-2 mt-2"></div>
             </div>
 
 
             <div class="row mt-2">
-              <div class="col-md-2 mt-2"></div>
-
-              <div class="col-md-4 mt-2">
-                <select type="text" class="form-control text-light bg-dark" id="repeat" name="repeatname" required> 
-                  <option > Days</option>
-                  <option > Week</option>
-                  <option>Month</option>
-                  <option>Year</option> 
-                </select>    
+              <div class="col-md-2 mt-2">
+                <center><label for="termname" style="color: rgb(190, 88, 88);">Add Repeat*</label></center>
               </div>
 
               <div class="col-md-4 mt-2">
-                <input type="text" class="form-control text-light bg-dark" id="every" name="every" required>
+                <input type="text" class="form-control text-dark bg-light" id="repeats_input" name="repeatname" required>      
               </div>
-              <div class="col-md-2 mt-2"></div>
+
+             
 
             </div>
             
@@ -2021,7 +2002,7 @@ $(document).ready(function() {
               <div class="col-md-4">
                 <div class="d-flex">
                   <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                  type="submit"   id="repeatSave">Save
+                  type="submit"  id="repeatSave">Save
                   </button> 
                   
 
@@ -2040,63 +2021,50 @@ $(document).ready(function() {
   </div>  
 </div>  
 
-
-<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function () {
-    $("#repeatSave").on("click", function (event) {
-      event.preventDefault();
-      var formData = $("#repeatForm").serialize();
+    $("#repeatForm").submit(function (e) {
+      e.preventDefault(); // Prevent the form from submitting traditionally
 
+      // Serialize the form data
+      var formData = $(this).serialize();
+
+      // Send an AJAX POST request to the server to save the data
       $.ajax({
-        url: "{% url 'get_repeat_every' %}",
         type: "POST",
+        url: "{% url 'get_repeat_every' %}", // Replace with the correct URL for your view that saves the item
         data: formData,
         headers: { "X-CSRFToken": "{{ csrf_token }}" },
         success: function (data) {
-          console.log("AJAX Success:", data);
-
           if (data.success) {
-            alert("Data saved successfully!");
+            // Clear the existing dropdown options
+            $("#repeat_select").empty();
 
-            // Get the existing terms in the dropdown
-            var existingTerms = $("#repeat_select").find("optgroup").map(function() {
-              return $(this).attr("label");
-            }).get();
-
-            // Rebuild the dropdown based on the data returned
-            var repeatSelect = $("#repeat_select");
-
-            // Iterate through unique terms
-            $.each(data.terms, function (index, term) {
-              if (existingTerms.indexOf(term) === -1) {
-                // Create an optgroup for the term if it's not already in the dropdown
-                var optgroup = $("<optgroup>").attr("label", term);
-                repeatSelect.append(optgroup);
-
-                // Iterate through unique numbers for this term to create options
-                $.each(data.num, function (index, num) {
-                  if (num.Terms === term) {
-                    var optionText = num.num + " " + term;
-                    var newOption = $("<option>")
-                      .val(num.id)
-                      .text(optionText);
-                    optgroup.append(newOption);
-                  }
-                });
-              }
+            // Iterate through the received data and add options to the dropdown
+            $.each(data.repeat_list, function (index, item) {
+              $("#repeat_select").append(
+                $("<option>", {
+                  value: item.id,
+                  text: item.name, // Assuming the item name is the 'name' field in your model
+                })
+              );
             });
-          } else {
-            alert("Data save failed!");
           }
         },
         error: function (error) {
           console.log("AJAX Error:", error);
-        }
+        },
       });
+
+      // Clear the input field
+      $("#repeats_input").val("");
     });
   });
 </script>
+
+  
+
 
 
 
