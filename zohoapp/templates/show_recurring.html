@@ -374,7 +374,7 @@
                         </div>
                         <div class="m-0">
                             <div class="dropdown m-0 p-0">
-                                <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;margin-top:-3.8rem;margin-left:50px;" class="expense-toggle-button btn btn-warning px-2 py-2" href="#" data-expense-id="{{ expense.id }}">{{ expense.active|yesno:"Active,Inactive" }}</a>
+                                <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;margin-top:-3.8rem;margin-left:50px;" class="expense-toggle-button btn btn-warning px-2 py-2" href="#" data-expense-id="{{ expense.id }}">{{ expense.active|yesno:"Inactive,Active" }}</a>
                             </div>
                         </div>
                         
@@ -594,7 +594,9 @@
                                     <h6 class="mb-0 text-grey " >Repeat Every :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{ expense.repeat_every }}</p>
+                                   
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{repeat.Terms }}</p>
+                                   
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
