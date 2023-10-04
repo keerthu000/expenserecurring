@@ -265,9 +265,10 @@
               <div class="col-md-3 col-form-label"><label>Tax</label></div>
               <div class="col-md-3">
                 <select name='tax[]' id='tax1'
-                class='form-control bg-light text-dark   border-0 tax' onclick="toggleTaxInput()" style="margin-left: 4px; width: 557px; color: black;">
+                class='form-control bg-light text-dark   border-1 tax' onclick="toggleTaxInput()"    style="margin-left: 4px; width: 557px; color: black;">
+                <option value=""   disabled selected>Select a Tax</option>
                 <optgroup class="text-left" label="GST">
-                  <option value="0" selected></option>
+                 
                   <option value="GST0">0% GST(0%)</option>
                   <option value="GST3">3.0% GST(3%)</option>
                   <option value="GST5">5.0% GST(5%)</option>
@@ -276,14 +277,16 @@
                   <option value="GST28">28.0% GST(28%)</option>
                 </optgroup>
                 <optgroup  class="text-left" label="IGST">
-                  <option value="0">0% IGST(0%)</option>
+                  <option value="IGST0">0% IGST(0%)</option>
                   <option value="IGST3">3.0% IGST(3%)</option>
                   <option value="IGST5">5.0% IGST(5%)</option>
                   <option value="IGST12">12.0% IGST(12%)</option>
                   <option value="IGST18">18.0% IGST(18%)</option>
                   <option value="IGST28">28.0% IGST(28%)</option>             
-                  </optgroup>
-            </select>
+                  </optgroup> 
+            </select> 
+            
+           
               </div>
           </div>
           
@@ -405,15 +408,19 @@
           // Rest of your JavaScript code...
       });
       </script>
-      
-
+     
       <script>
+        $(document).ready(function(){
+          toggleTaxInput()
+        })
         function toggleTaxInput() {
           var destinationSelect = document.getElementById("destination");
           var selectedOption = destinationSelect.options[destinationSelect.selectedIndex].value;
           
           var taxSelect = document.getElementById("tax1"); // Assuming you want to change the first tax dropdown
-      
+          
+          // Hide all options first
+         
           if (selectedOption === "[KL]-Kerala") {
             // Show GST options and hide IGST options
             var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
@@ -429,6 +436,7 @@
           }
         }
       </script>
+     
 
 
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
