@@ -350,7 +350,7 @@
                    
                         <a href=" " class="fa fa-file-pdf btns btn_print px-2 py-2" id="toPDF"
                         data-toggle="tooltip" title="PDF" ></a>
-                        <iframe id="pdfFrame" style="display: none;"></iframe>
+                        
 
                         
 
@@ -445,7 +445,12 @@
                             <div class="col-5">
                                 <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>
                                 <h6  class="mx-3 text-capitalize" style="color: black; ">{{ vendor.salutation}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
-                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{vendor.bstreet}}<br>
+                                
+                                <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-style:Arial">
+                                    {{vendor.gst_number}}</p>
+                                <p  style="margin-left: 15px;margin-top:-1.6rem;">
+                                    {{vendor.vendor_email}}<br>
+                                    {{vendor.bstreet}}<br>
                                     {{vendor.bcity}}<br>
                                     {{vendor.bstate}}<br> 
                                     {{vendor.bpin}}<br> 
@@ -463,7 +468,10 @@
                                 <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p>
                                 
                                 <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.customerName}}</h6>
-                                <p class="address col-6 mx-3 p-2" style="margin-left: -14px;">{{customer.Address1}} <br>
+                                <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-style:Arial">
+                                    {{vendor.gst_number}}</p>
+                                <p class="address col-6 mx-3 p-2" style="margin-left: -14px;">{{customer.customerEmail}}
+                                    {{customer.Address1}} <br>
                                     
                                     {{customer.city}}<br>
                                     {{customer.state}}<br>
@@ -775,31 +783,58 @@
     
 
   
-        <script>
-            // Function to open tabs
-            function openTab(event, tabName) {
-                // Your tab switching logic here
-            }
-    
-            // Function to generate PDF
-            document.querySelector('.btn_print').addEventListener('click', function () {
-                const element = document.getElementById('Template'); // Get the content of the Template tab
-    
-                const opt = {
-                    margin: 0,
-                    filename: 'recurring_expense.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-                };
-    
-                html2pdf()
-                    .set(opt)
-                    .from(element)
-                    .save();
+    >
+        <script type="text/javascript">
+            $(document).ready(function ($) {
+                console.log('print');
+          
+                $(document).on('click', '.btn_print', function (event) {
+                    console.log('print1');
+                    event.preventDefault();
+          
+                    //credit : https://ekoopmans.github.io/html2pdf.js
+          
+                    var element = document.getElementById('Template');
+          
+                   
+                    var opt =
+                    {
+                        margin: 1,
+                        filename: 'recurring expense_' + '.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
+          
+                    // New Promise-based usage:
+                    html2pdf().set(opt).from(element).save();
+          
+          
+                });
+          
+          
+          
             });
-        </script>
+          </script>
    
+
+    {% comment %} <script>
+        function printToPDF(Template) {
+            console.log('Print PDF');
+            
+            var element = document.getElementById('Template');
+          
+            var opt = {
+                margin: 0,
+                filename: 'recurring_expense_' + $("#pid").text() + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+    
+            html2pdf().set(opt).from(element).save();
+        }
+    </script> {% endcomment %}
     
 
     
@@ -1006,16 +1041,7 @@
 
 
 
-<script>
-    const printbtn=document.getElementById('printbtn')
-    printbtn.addEventListener("click",() => {
-        printbtn.disabled=true;
-        window.print();
-        setTimeout(()  =>{
-            printbtn.disabled=false;
-        },1000);
-    });
-</script>
+
 
 <script>
 $(document).ready(function() {
@@ -1143,208 +1169,14 @@ $(document).ready(function() {
   });
 });
 
-{% comment %} $(document).ready(function () {
-        console.log('print');
-
-        $(document).on('click', '.toPDF', function (event) {
-            console.log('print1');
-            event.preventDefault();
-            var element = document.getElementById('Template');
-            
-            var opt =
-            {
-                margin: 0,
-                filename: 'recurring expense_'+$("#pid").text() + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-
-        });
-
- }); {% endcomment %}
 
 </script>
 
 
 
 
-{% comment %} <section>
-  <div class="row fixed-top" style="top: 7rem; margin-left: 18rem;">
-    <div class="col-md-12" style="right: 0;">
-      <div class="row">
-        <div class="col-md-3" style="border-right: 1px solid white;height: 100vh;margin-left:;position: fixed;">
-          <div class="row">
-            <div class="col-md-4"><a class="text-white" style="font-size: 1.5rem;">All Expense</a></div>
-            <div class="col-md-4" style="margin-top: -3rem;">
-              <a style="color: white;width: 4rem;height: 2rem;margin-top: 3rem;" class="btn btn-success" href="{% url 'recurringhome' %}">
-                <i class="fa-solid fa-plus"></i>New
-              </a>
-            </div>
-            <div class="col-md-4" style="width:100%;">
-              <form action="" method="GET">
-                <div class="input-group">
-                  <input type="text" name="search_query" class="form-control" placeholder="Search Name...">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-success" style="height:38px; width:70px;">
-                      Search
-                    </button>
-                  </div>
-                </div>
-                <input type="date" name="search_date" class="form-control" style="display:none;">
-              </form>
-            </div>
-            
-            
-          </div>
-          
-          <table class="table text-white">
-            <thead>
-              <tr>
-                <th>Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for e in expenses %}
-              <tr>
-                <td>
-                  <a class="text-white profile-link" data-profile-id="{{ e.id }}" href="#" onclick="changeProfileName('{{ e.profile_name }}')">{{ e.profile_name }}</a>
-                </td>
-              </tr>
-              {% endfor %}
-              <tr>
-                <td><hr></td>
-              </tr>
-            </tbody>
-            </table><br><br>
-            </div>
-            
-            <div class="col-md-9" style="margin-left: 25rem;">
-              <div class="row" style="position: fixed;">
-                <div class="col-md-4" style="position: fixed;">
-                  <a class="text-white" style="font-size: 1.5rem;">
-                    <h2 id="profile-name">{{ expense.profile_name }}</h2>
-                  </a>
-                </div>
-            
-                <div class="col-md-4" style="margin-top: -3rem;margin-left: 17rem;position: fixed;">
-                  <a style="color: #ccc; width: 4rem;height: 2rem;margin-top: 3rem;" class="btn btn-light text-dark" onclick="location.href='{% url 'edit_expense' expense.id %}'">
-                    Edit
-                  </a>
-                  <a style="color: #ccc;" href="#">
-                    <form action="#" method="post">
-                      {% csrf_token %}
-                    </form>
-                  </a>
-                  <a href="{% url 'delete_expense' expense.id %}" style="color: #ccc;height: 2rem;margin-top: -3.7rem;margin-left: 5rem;" class="btn btn-danger text-white">
-                    Delete
-                  </a>
-                  {% comment %} <div style="margin-top: -3.5rem;margin-left: 200px;">
-                    <form method="POST" action="#">
-                      {% csrf_token %}
-                      <input type="text" id="profile-name-input" name="enter_comment_here" placeholder="Enter comment here"  style="width: 200px; height: 2rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; margin-right: 1rem;">
-                      <button type="submit" class="btn btn-success" style="height:38px; width:70px;">
-                        Save
-                      </button>
-                    </form>
-                  </div>
-                  
-                  <!-- Display comments -->
-                  <div>
-                    <h3>Comments:</h3>
-                    <ul id="comments-list">
-                      {% for comment in comments %}
-                      <li>{{ comment.comment }}</li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                </div> {% endcomment %}
-              {% comment %} </div>
-            </div>
-            
-            </div>
-          </div>
-        
-         <!-- ============================ tab view (detail page )==================================== -->
     
-    
-    
-         
-    
-        <div style="height: 600px; overflow-y: scroll;width:820px; margin-left:400px;">
-        <div class="tabs"><br><br>
-        <div class="tab-header"><br><br>
-    
-         <div class="active" style="color:#6e6eb7a3;font-size:35px;font-weight:500;">
-           <i class="fa fa code"></i>OverView
-         </div><br><br>
-    
-        </div>
-    
-        <div class="tab-indicator"></div>
-    
-    
-        <div class="tab-body">
-         <div class="activ ">
-          <h6 class="mr-5">Repeat Every:</h6>
-          <h6 style="margin-top: -1.8rem; margin-left: 13rem;font-size:20px;" id="repeat-every">{{ expense.repeat_every }}</h6><br>
-    
-           <h6 class="mr-5">Start Date:</h6>
-           <h6 style="margin-top: -1.7rem; margin-left: 13rem;font-size:20px;" id="start-date" >{{expense.start_date}}</h6> 
-    
-           <h6 class="mr-4 ">Ends On:</h6>
-           <h6 style="margin-top: -1.9rem; margin-left: 13rem; margin-bottom: 2rem;font-size:20px;" id="ends-on">{{expense.ends_on}}</h6> 
-          <h6 class="mr-5">Expense Account:</h6> <br>
-          <h6 style="margin-top: -3.2rem; margin-left: 13rem;font-size:20px;" id="expense-account">{{expense.expense_account}}</h6> <br>
-          <h6 class="mr-5">Expense Type:</h6>
-          <h6 style="margin-top: -1.8rem; margin-left: 13rem;font-size:20px;" id="expense-type">{{ expense.expense_type }} {{expense.goods_label}}</h6> <br>
-          <h6 class="mr-5">Amount:</h6>
-          <h6 style="margin-top: -1.8rem; margin-left: 13rem;font-size:20px;" id="amount">{{expense.amount}}</h6> <br>
-          <h6 class="mr-5">Paid Through:</h6> <br>
-          <h6 style="margin-top: -3.2rem; margin-left: 13rem;font-size:20px;" id="paidthrough">{{expense.paidthrough}}</h6> <br>
-          <h6 class="mr-5">Vendor:</h6>
-          <h6 style="margin-top: -1.8rem; margin-left: 13rem;font-size:20px;" id="vendor">{{expense.vendor.vendor_display_name}}</h6> <br>
-          <h6 class="mr-5">GST Treatment:</h6>
-          <h6 style="margin-top: -2rem; margin-left: 13rem;font-size:20px;" id="gst">{{expense.gst}}</h6><br>
-          <h6 class="mr-5">Destination Of Supply:</h6>
-          <h6 style="margin-top: -1.7rem; margin-left: 13rem;font-size:20px;" id="destination">{{expense.destination}}</h6> <br>
-          <h6 class="mr-5">Tax:</h6>
-          <h6 style="margin-top: -2rem; margin-left: 13rem;font-size:20px;" id="tax">{{expense.tax}}</h6> <br>
-          <h6 class="mr-5">Notes:</h6>
-          <h6 style="margin-top: -2rem; margin-left: 13rem;font-size:20px;" id="notes">{{expense.notes}}</h6> <br>
-          <h6 class="mr-5">Customer Name:</h6>
-          <h6 style="margin-top: -2rem; margin-left: 13rem;font-size:20px;" id="customername">{{expense.customername}}</h6> <br>
-           
-         </div>
-    
-         <div >
-           <h2>There is no transaction yet</h2>
-           <p>do something</p>
-         </div>
-    
-       
-        <table class="table text-white">
-          <thead>
-            {% for i in history %}
-            <tr>
-              <th>{{i.date}}</th>
-              <th>{{i.message}}</th>
-    
-            </tr>
-            {% endfor %}
-          </thead>
-        </table>
-          
-        
-          
-          
-         </div>
-    
-    
-        </div>
-    
-    <script>
+    {% comment %} <script>
     
     let tabHeader = document.getElementsByClassName("tab-header")[0];
     let tabIndicator = document.getElementsByClassName("tab-indicator")[0];
@@ -1365,22 +1197,9 @@ $(document).ready(function() {
     }
     
     
-    </script>
+    </script> {% endcomment %}
     
     
-       </div>
-    
-       </div>
-    
-      </div>
- 
-   </div>
-  
-  </div>
-
-</section> {% endcomment %}
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {

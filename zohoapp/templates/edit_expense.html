@@ -58,7 +58,7 @@
   </style>
   <div style="margin-top: 6rem; margin-left: 8rem;">
     <h2>Edit Expense</h2>
-    <div style="height: 600px; overflow-y: scroll; overflow-x: clip;">
+    <div style="height: 1300px; ">
 
         <form action="{% if expense %}{% url 'edit_expense' expense.id %}{% else %}{% url 'add_expense' %}{% endif %}" method="post" id="expenseForm">
             {% csrf_token %}
@@ -410,7 +410,7 @@
                 <div class="col-md-4">
                   <div class="d-flex">
                     <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                    type="submit"  id="repeatSave">Save
+                    type="button"   data-dismiss="modal"  id="repeatSave">Save
                     </button> 
                     
   
@@ -429,15 +429,14 @@
     </div>  
   </div>  
   
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
-      $("#repeatForm").submit(function (e) {
+      $("#repeatSave").click(function (e) {
         e.preventDefault(); // Prevent the form from submitting traditionally
-  
+    
         // Serialize the form data
-        var formData = $(this).serialize();
-  
+        var formData = $('#repeatForm').serialize();
+    
         // Send an AJAX POST request to the server to save the data
         $.ajax({
           type: "POST",
@@ -445,33 +444,29 @@
           data: formData,
           headers: { "X-CSRFToken": "{{ csrf_token }}" },
           success: function (data) {
+            // Clear the input field
+            $("#repeats_input").val("");
             
-              // Clear the input field
-              $("#repeats_input").val("");
-              var dropdown = $("#repeat_select");
-              // Only clear and update the dropdown if data.repeat_list exists
-             
-              dropdown.empty();
+            var dropdown = $("#repeat_select");
+            // Only clear and update the dropdown if data.repeat_list exists
+            dropdown.empty();
           
-                // Iterate through the received data and add options to the dropdown
-                $.each(data, function(key, value) {
-                  var optionText = value[1];
-                  var optionValue = key;
-                  dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
-                  
-                
-                  
-                });
-              
+            // Iterate through the received data and add options to the dropdown
+            $.each(data, function(key, value) {
+              var optionText = value[1];
+              var optionValue = key;
+              dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
+            });
+    
             
           },
-          
           error: function (error) {
             console.log("AJAX Error:", error);
           },
         });
       });
     });
+    
   </script>
   
     
@@ -511,55 +506,33 @@
           });
       </script>
       
-    <script>
-      function toggleTaxInput() {
-        var destinationSelect = document.getElementById("destination");
-        var selectedOption = destinationSelect.options[destinationSelect.selectedIndex].value;
-      
-        var taxSelect = document.getElementById("tax1");
-      
-        // Remove all existing options
-        taxSelect.innerHTML = '';
-      
-        if (selectedOption === "[KL]-Kerala") {
-          // Add GST options
-          var gstOptions = [
-            { value: "GST0", text: "0% GST(0%)" },
-            { value: "GST3", text: "3.0% GST(3%)" },
-            { value: "GST5", text: "5.0% GST(5%)" },
-            { value: "GST12", text: "12.0% GST(12%)" },
-            { value: "GST18", text: "18.0% GST(18%)" },
-            { value: "GST28", text: "28.0% GST(28%)" }
-          ];
-      
-          for (var i = 0; i < gstOptions.length; i++) {
-            var option = document.createElement('option');
-            option.value = gstOptions[i].value;
-            option.text = gstOptions[i].text;
-            taxSelect.appendChild(option);
-          }
-        } else {
-          // Add IGST options
-          var igstOptions = [
-            { value: "IGST0", text: "0% IGST(0%)" },
-            { value: "IGST3", text: "3.0% IGST(3%)" },
-            { value: "IGST5", text: "5.0% IGST(5%)" },
-            { value: "IGST12", text: "12.0% IGST(12%)" },
-            { value: "IGST18", text: "18.0% IGST(18%)" },
-            { value: "IGST28", text: "28.0% IGST(28%)" }
-          ];
-      
-          for (var j = 0; j < igstOptions.length; j++) {
-            var option = document.createElement('option');
-            option.value = igstOptions[j].value;
-            option.text = igstOptions[j].text;
-            taxSelect.appendChild(option);
+      <script>
+        $(document).ready(function(){
+          toggleTaxInput()
+        })
+        function toggleTaxInput() {
+          var destinationSelect = document.getElementById("destination");
+          var selectedOption = destinationSelect.options[destinationSelect.selectedIndex].value;
+          
+          var taxSelect = document.getElementById("tax1"); // Assuming you want to change the first tax dropdown
+          
+          // Hide all options first
+         
+          if (selectedOption === "[KL]-Kerala") {
+            // Show GST options and hide IGST options
+            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            gstOptgroup.style.display = "block";
+            igstOptgroup.style.display = "none";
+          } else {
+            // Show IGST options and hide GST options
+            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            gstOptgroup.style.display = "none";
+            igstOptgroup.style.display = "block";
           }
         }
-      }
-      
-      
-    </script>
+      </script>
 
     <script>
       function toggleDateInput() {
@@ -574,7 +547,7 @@
         }
     }
   </script>
-  <script>
+  {% comment %} <script>
     function toggleDate() {
         var endsOnInput = document.getElementById("ends_on");
         var neverExpireCheckbox = document.getElementById("never-expire-checkbox");
@@ -599,11 +572,11 @@
         }
     });
 </script>
-    
+     {% endcomment %}
 
 
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
       <script>
       $(document).ready(function() {
           // Event listener for the vendor dropdown
@@ -743,7 +716,7 @@
 </div>
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
   $(document).ready(function() {
     // Function to open the modal
@@ -1534,7 +1507,7 @@ function addressSame() {
     }
 }
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
  
     <script>
         $(document).ready(function() {
@@ -1583,7 +1556,7 @@ function addressSame() {
 <!--End Cutomer-->
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
   $(document).ready(function() {
     // Event listener for the vendor dropdown
@@ -1625,8 +1598,7 @@ function addressSame() {
 
 
 
-<!-- Include jQuery library -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <script>
   $(document).ready(function() {
       // Handle clicking the "Add Customer" button in the modal
@@ -1756,6 +1728,32 @@ function addressSame() {
     return true;
   }
 </script> 
+<script>
+  function toggleTextBox() {
+    var gstTreatment = document.getElementById("gst_trt_inp").value;
+    var textboxContainer = document.getElementById("textboxContainer");
+    var textbox = document.getElementById("gstin_inp");
+
+    if (gstTreatment !== "unregistered Business") {
+      textboxContainer.style.display = "block";
+      textbox.value = getGstNumber();
+    } else {
+      textboxContainer.style.display = "none";
+      textbox.value = "";
+    }
+  }
+
+  function getGstNumber() {
+    var vendorSelect = document.getElementById("vendorSelect");
+    var selectedVendorId = vendorSelect.value;
+    var selectedVendorOption = vendorSelect.options[vendorSelect.selectedIndex];
+    var gstNumber = selectedVendorOption.getAttribute("data-gst-number");
+    return gstNumber || ""; // Return an empty string if GST number is undefined
+  }
+
+  // Call toggleTextBox initially to set the initial state of the textbox
+  toggleTextBox();
+</script>
 <script>
   $(document).ready(function() {
     $("#v_gsttype").change(function() {

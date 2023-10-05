@@ -14,7 +14,7 @@ from django.views import View
 from .forms import EmailForm
 from django.http import JsonResponse
 from datetime import datetime,date, timedelta
-# from xhtml2pdf import pisa
+from xhtml2pdf import pisa
 from django.template.loader import get_template
 # from bs4 import BeautifulSoup
 from django.core import serializers
@@ -772,13 +772,13 @@ def add_vendor(request):
 
 @login_required(login_url='login')
 def add_recurring_vendor(request):
-    print("Entering the add_vendor view")
+    
     if request.method=="POST":
-        print('r')
+       
         salutation=request.POST['title']
-        print(salutation)
+        
         first_name=request.POST['firstname']
-        print(first_name)
+        
         last_name=request.POST['lastname']
         company_name=request.POST['vcompany_name']
         vendor_email=request.POST['vemail']
@@ -850,9 +850,11 @@ def add_recurring_vendor(request):
         
         vendor_data.save()
         user_id=request.user.id
+
         udata=User.objects.get(id=user_id)
         vendor_data.user=udata
-        vendors = vendor_table.objects.all()
+        vendor_data.save()
+       
         vendorname=f"{vendor_data.first_name} {vendor_data.last_name}"
        
         
@@ -2626,13 +2628,15 @@ def banking_delete(request,id):
     
 @login_required(login_url='login')
 def recurringhome(request):
+    user_id=request.user.id 
+       
     selected_vendor_id = request.GET.get('vendor')
-    vendors = vendor_table.objects.all()
+    vendors = vendor_table.objects.filter(user=user_id)
     accounts = Account.objects.all()
     account_types = set(Account.objects.values_list('accountType', flat=True))
     repeat_list = repeat_every.objects.all()
-    
-    repeat=repeat_every.objects.values_list('Terms', flat=True).distinct()
+   
+    # repeat=repeat_every.objects.values_list('Terms', flat=True).distinct()
    
     selected_vendor = vendor_table.objects.filter(id=selected_vendor_id).first()
     gst_treatment = selected_vendor.gst_treatment if selected_vendor else ''
@@ -2651,13 +2655,14 @@ def recurringhome(request):
         'payments':payments,
         'company':company,
         'repeat_list':repeat_list,
-        'repeat':repeat,
+        
     })
 
 @login_required(login_url='login')
 def add_expense(request):
     if request.method == 'POST':
         # Retrieve form data
+        
         profile_name = request.POST['profile_name']
         repeatevery = request.POST['repeat_every']
         repeat=repeat_every.objects.filter(id=repeatevery).first()
@@ -2701,7 +2706,7 @@ def add_expense(request):
         # Create and save the Expense instance
         expense = Expense(
             profile_name=profile_name,
-            repeat_every=repeat,
+            repeatevery=repeat,
             start_date=start_date,
             ends_on=endson,
             expense_account=expense_account,
@@ -2775,8 +2780,13 @@ def show_recurring(request, expense_id):
     vendor = vendor_table.objects.get(id=expense.vendor_id)
     customers = customer.objects.get(id=expense.customer_id)
     vendors = vendor_table.objects.all()
+    try:
+        everyrepeat=repeat_every.objects.get(id=expense.repeatevery.id)
+    except:
+         everyrepeat=None
+        
 
-    return render(request, 'show_recurring.html', {'expense': expense,'expense.id':expense_id, 'expenses': expenses, 'comments': comments, 'company': company, 'vendor': vendor, 'customer': customers,'account':accounts,'account_types':account_types,'vendors':vendors})
+    return render(request, 'show_recurring.html', {'expense': expense,'expense.id':expense_id, 'expenses': expenses, 'comments': comments, 'company': company, 'vendor': vendor, 'customer': customers,'account':accounts,'account_types':account_types,'vendors':vendors,'repeat':everyrepeat})
 
 
 def samplee(request):
@@ -2852,10 +2862,12 @@ def expense_details(request):
     return render(request, 'recurring_base.html',{'expenses': expenses})
     
 def edit_expense(request, expense_id):
-    print('enter edit')
+    
+    user_id=request.user.id 
+
     expense = Expense.objects.get(id=expense_id)
     print('expense.customer.id',expense.customer.id)
-    vendors = vendor_table.objects.all()
+    vendors = vendor_table.objects.filter(user=user_id)
     customers = customer.objects.all()
     accounts = Account.objects.all()
     account_types = Account.objects.values_list('accountType', flat=True).distinct()
@@ -2864,15 +2876,14 @@ def edit_expense(request, expense_id):
     company = company_details.objects.get(user = request.user)
     repeat_list = repeat_every.objects.all()
     
-    repeat=repeat_every.objects.values_list('Terms', flat=True).distinct()
-   
+    
     
     if request.method == 'POST':
         print('enter edit')
         expense.profile_name = request.POST.get('profile_name')
         repeatevery_id= request.POST.get('repeat_every')
         repeat_id=repeat_every.objects.get(id=repeatevery_id)
-        print('repeat_id',repeat_id)
+        expense.repeatevery=repeat_id
         expense.start_date = request.POST.get('start_date')
         expense.ends_on = request.POST.get('ends_on')
         account_id = request.POST.get('expense_account')
@@ -2908,7 +2919,7 @@ def edit_expense(request, expense_id):
     
     else:
         
-        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments,'company':company,'repeat_list':repeat_list,'repeat':repeat})
+        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments,'company':company,'repeat_list':repeat_list})
 
         
 @login_required(login_url='login')
@@ -2972,14 +2983,12 @@ def get_repeat_every(request):
         repeat_item.save()
 
         # Get all items from the database
-        repeat_list = repeat_every.objects.all().values('id', 'Terms')
+        repeat_list = repeat_every.objects.all()
+        
+        options = {option.id: [option.id, option.Terms] for option in repeat_list}
+        
 
-        data = {
-            'success': True,
-            'repeat_list': list(repeat_list),
-        }
-        return JsonResponse(data)
-    return render(request, 'recurring_home.html') 
+    return JsonResponse(options, safe=False)
 
 
 def get_account_names(request):
@@ -3015,7 +3024,8 @@ def entr_recurring_custmr(request):
         desg = request.POST.get('c_desg')
         dept = request.POST.get('c_dpt')
         gstt = request.POST.get('c_gsttype')
-        gstin = request.POST.get('v_gstin')
+        gstin = request.POST.get('c_gstin')
+        pan=request.POST.get('c_pan')
         posply = request.POST.get('placesupply')
         tax1 = request.POST.get('radioCust1')
         crncy = request.POST.get('c_curn')
@@ -3051,7 +3061,7 @@ def entr_recurring_custmr(request):
                         website=wbsite, GSTTreatment=gstt, placeofsupply=posply, Taxpreference=tax1,
                         currency=crncy, OpeningBalance=obal,PaymentTerms=pterms,    
                         Facebook=facebook, Twitter=twitter, GSTIN=gstin,Fname=fname,Lname=lname,
-                        country=bcountry, Address1=baddrs1, Address2=baddrs2,
+                        country=bcountry, Address1=baddrs1, Address2=baddrs2,pan_no=pan,
                         city=bcity, state=bstate, zipcode=bpincode, phone1=bphone,
                         fax=bfax, sAddress1=saddrs1, sAddress2=saddrs2, scity=scity, sstate=sstate,
                         scountry=scountry, szipcode=spincode, sphone1=sphone, sfax=sfax, user=u)
