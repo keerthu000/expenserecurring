@@ -337,14 +337,15 @@ def base(request):
         Account(accountType='Expenses',accountName='Advertising & Marketing',description='Advertising & Marketing').save()
     if not Account.objects.filter(accountName='Automobile Expense').exists():
         Account(accountType='Expenses',accountName='Automobile Expense',description='Automobile Expense').save()
-    if not payment_terms.objects.filter(Terms='NET 30').exists():
-        payment_terms(Terms='NET 30').save()
-    if not payment_terms.objects.filter(Terms='NET 60').exists():
-        payment_terms(Terms='NET 60').save()
-    if not payment_terms.objects.filter(Terms='NET 45').exists():
-        payment_terms(Terms='NET 45').save()
-    if not payment_terms.objects.filter(Terms='Due on Receipt').exists():
-        payment_terms(Terms='Due on Receipt').save()
+    userId=User.objects.get(id=request.user.id)
+    if not payment_terms.objects.filter(Terms='NET 30',user=userId).exists():
+        payment_terms(Terms='NET 30',user=userId).save()
+    if not payment_terms.objects.filter(Terms='NET 60',user=userId).exists():
+        payment_terms(Terms='NET 60',user=userId).save()
+    if not payment_terms.objects.filter(Terms='NET 45',user=userId).exists():
+        payment_terms(Terms='NET 45',user=userId).save()
+    if not payment_terms.objects.filter(Terms='Due on Receipt',user=userId).exists():
+        payment_terms(Terms='Due on Receipt',user=userId).save()
 
     if not repeat_every.objects.filter(Terms='Week').exists():
         repeat_every(Terms='Week').save()
@@ -2640,8 +2641,8 @@ def recurringhome(request):
    
     selected_vendor = vendor_table.objects.filter(id=selected_vendor_id).first()
     gst_treatment = selected_vendor.gst_treatment if selected_vendor else ''
-    customers=customer.objects.all()
-    payments=payment_terms.objects.all()
+    customers=customer.objects.filter(user=user_id)
+    payments=payment_terms.objects.filter(user=user_id)
     company = company_details.objects.get(user = request.user)
     
     return render(request, 'recurring_home.html', {
@@ -2731,11 +2732,8 @@ def add_expense(request):
 
         return redirect('recurringbase')
     else:
-        vendors = vendor_table.objects.all()
-        accounts = Account.objects.all()  
-        repeat_list = repeat_every.objects.all()
-        print('repeat_list',repeat_list)
-        return render(request, 'recurring_home.html', {'vendors': vendors,'accounts':accounts,'repeat_list':repeat_list})
+       
+        return render(request, 'recurring_home.html')
 
 def toggle_expense_status(request, expense_id):
     expense = get_object_or_404(Expense, id=expense_id)
@@ -2760,9 +2758,7 @@ def show_recurring(request, expense_id):
     company = company_details.objects.get(user=request.user)
     accounts = Account.objects.all()
     account_types = set(Account.objects.values_list('accountType', flat=True))
-    print('expense',expense_id)
-    print('account_types',account_types)
-
+   
     search_query = request.GET.get('search_query')
     search_date = request.GET.get('search_date')
 
@@ -2797,12 +2793,12 @@ def samplee(request):
 
 @login_required(login_url='login')
 def expense_comment(request,expense_id):
-    print('form is submitted')
+   
     expense = get_object_or_404(Expense, id=expense_id) 
     
 
     if request.method == 'POST':
-        print('form is submitted')
+      
         comment_text = request.POST['comment']
 
         comment = Comment()
@@ -2866,9 +2862,9 @@ def edit_expense(request, expense_id):
     user_id=request.user.id 
 
     expense = Expense.objects.get(id=expense_id)
-    print('expense.customer.id',expense.customer.id)
+    
     vendors = vendor_table.objects.filter(user=user_id)
-    customers = customer.objects.all()
+    customers = customer.objects.filter(user=user_id)
     accounts = Account.objects.all()
     account_types = Account.objects.values_list('accountType', flat=True).distinct()
     selected_account = expense.expense_account
@@ -2879,7 +2875,7 @@ def edit_expense(request, expense_id):
     
     
     if request.method == 'POST':
-        print('enter edit')
+       
         expense.profile_name = request.POST.get('profile_name')
         repeatevery_id= request.POST.get('repeat_every')
         repeat_id=repeat_every.objects.get(id=repeatevery_id)
@@ -3004,7 +3000,7 @@ def profileshow(request,expense_id):
 @login_required(login_url='login')
 def entr_recurring_custmr(request):
     if request.method == 'POST':
-        print('customer is entered')
+       
 
         type = request.POST.get('radioCust')
         sal=request.POST.get('ctitle')
@@ -3012,7 +3008,7 @@ def entr_recurring_custmr(request):
         lname=request.POST.get('clastname')
         # fullname=request.POST.get('cdisplayname')
         fullname = sal + ' ' + fname + ' ' + lname if fname and lname else (fname or lname)
-        print(fullname)
+        
         company = request.POST.get('ccompany_name')
         email = request.POST.get('cemail')
         wphone = request.POST.get('cw_mobile')
@@ -3083,13 +3079,13 @@ def entr_recurring_custmr(request):
 
 @login_required(login_url='login')
 def get_customer_email(request):
-    print('customer')
+   
     if request.method == 'GET':
         customer_id = request.GET.get('customername')
         try:
             custmer = customer.objects.get(id=customer_id)
             email = custmer.customerEmail
-            print('email', email)
+           
             return JsonResponse({'email': email})
         except customer.DoesNotExist:  # Corrected exception name
             # Handle the case where the customer does not exist
@@ -3102,7 +3098,8 @@ def get_customer_email(request):
 
 @login_required(login_url='login')
 def get_customer_namess(request):
-    customers = customer.objects.all()
+    user_id=request.user.id
+    customers = customer.objects.filter(user=user_id)
     customer_names = [{'id': c.id, 'name':c.customerName} for c in customers]
     return JsonResponse(customer_names, safe=False)    
 

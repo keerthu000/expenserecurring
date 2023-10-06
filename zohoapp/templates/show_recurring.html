@@ -421,7 +421,7 @@
                         <section class="d-flex justify-content-between">
                             <div class="top-right">
                                 <div class="graphic-path text-center">
-                                    <h5 class="text-capitalize"  >{{expense.profile_name}}</h5>
+                                    {% comment %} <h5 class="text-capitalize"  >{{expense.profile_name}}</h5> {% endcomment %}
                                     <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
 
                                 </div>
@@ -446,9 +446,11 @@
                                 <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>
                                 <h6  class="mx-3 text-capitalize" style="color: black; ">{{ vendor.salutation}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
                                 
-                                <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-style:Arial">
+                                {% if expense.gst_treatment != 'unregistered Business' %}
+                                <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-style:Arial;margin-top:1rem">
                                     {{vendor.gst_number}}</p>
-                                <p  style="margin-left: 15px;margin-top:-1.6rem;">
+                                {% endif %}
+                                <p  style="margin-left: 15px;margin-top:-1rem;">
                                     {{vendor.vendor_email}}<br>
                                     {{vendor.bstreet}}<br>
                                     {{vendor.bcity}}<br>
@@ -468,9 +470,11 @@
                                 <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p>
                                 
                                 <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.customerName}}</h6>
-                                <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-style:Arial">
-                                    {{vendor.gst_number}}</p>
-                                <p class="address col-6 mx-3 p-2" style="margin-left: -14px;">{{customer.customerEmail}}
+                                {% if customer.GSTIN != None %}
+                                <p class=" col-6 mx-1 p-2" style="margin-left: 14px;font-size:12px;font-style:Arial;margin-top:1rem;">
+                                    {{customer.GSTIN}}</p>
+                                    {% endif %}
+                                <p class="address col-6 mx-3 p-2" style="margin-left: -14px;margin-top:-1rem;">{{customer.customerEmail}}
                                     {{customer.Address1}} <br>
                                     
                                     {{customer.city}}<br>
@@ -608,7 +612,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                    
-                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{repeat.Terms }}</p>
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{repeat.Terms}}</p>
                                    
                                 </div>
                             </div>
@@ -715,8 +719,10 @@
                                     <h6 style="color: #ccc;">GST Number :</h5><br>
                                 </div>
                                 <div class="col-md-8 mt-4 mx-3">
+                                  
                                     <input type="text" value="{{ expense.gst }} " class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
+                                        style="font-size: 16px; color: azure;margin-top:-3.6rem" readonly>
+                                   
                                 </div>
                             </div>
                             {% comment %} <div class=" justify-content-between mb-5 d-none" id="cgst">
@@ -743,17 +749,17 @@
                                 </div>
                                 <div class="col-md-4 mt-3 mx-3">
                                     <input type="text" value="{{ expense.paidthrough }} " class="amnt"
-                                        style="font-size: 16px; color: azure;margin-left:-3rem;" readonly>
+                                        style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-between mb-5">
                                 <div class="col-md-6 mt-3">
-                                    <h6 style="color: #ccc;">Expense Type:</h5><br>
+                                    <h6 style="color: #ccc;margin-top:3rem">Expense Type:</h5><br>
                                 </div>
                                 <div class="col-md-6 mt-3 mx-3">
                                     <input type="text" value="{{ expense.expense_type }} "
-                                        class="amnt " style="font-size: 16px; color: azure;" readonly>
+                                        class="amnt " style="font-size: 16px; color: azure;margin-top:2.8rem" readonly>
                                 </div>
                             </div>
 
@@ -784,7 +790,7 @@
 
   
     >
-        <script type="text/javascript">
+        {% comment %} <script type="text/javascript">
             $(document).ready(function ($) {
                 console.log('print');
           
@@ -816,7 +822,7 @@
           
             });
           </script>
-   
+    {% endcomment %}
 
     {% comment %} <script>
         function printToPDF(Template) {
@@ -836,7 +842,31 @@
         }
     </script> {% endcomment %}
     
-
+<script>
+    $(document).ready(function ($) {
+        console.log('print');
+    
+        $(document).on('click', '.btn_print', function (event) {
+            console.log('print1');
+            event.preventDefault();
+    
+            var activeTab = document.querySelector('.tabcontent[style="display: block;"]');
+            var elementToPrint = activeTab && activeTab.id === 'Overview' ? document.getElementById('Template') : activeTab;
+    
+            var opt = {
+                margin: 1,
+                filename: 'recurring_expense.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+    
+            // New Promise-based usage:
+            html2pdf().set(opt).from(elementToPrint).save();
+        });
+    });
+    
+</script>
     
     <!-- comment modal -->
 

@@ -54,13 +54,31 @@
     z-index: 9999;
     overflow: scroll;
   }
+   ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
 
 
   
     </style>
     <div style="margin-top: 2rem; margin-left: 8rem;">
       <h2>New Recurring Expenses</h2>
-      <div style="height: 1300px;">
+      <div style="height: 1400px;">
         <form action="{% url 'add_expense' %}" method="post" id="expenseForm">
           {% csrf_token %}
     
@@ -300,26 +318,26 @@
             <div class="form-group row mt-4">
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
               <div class="col-sm-12 col-md-6 col-lg-6">
-                  <div class="input-group" style="width:557px;">
+                <div class="input-group" style="width:557px;">
                     
-                      <select class="form-control bg-white text-dark" id="customer-list" name="customername" style="color: black; ">
-                        <option value="" selected disabled class="text-dark bg-light">Select a customer</option>
-                        {% for c in customers %}
+                  <select class="form-control bg-white text-dark" id="customer-list" name="customername">
+                    <option disabled class="text-dark " selected>Select a Customer</option>
+                    {% for c in customers %}
                           
-                          <option value="{{ c.id }}"  >{{ c.customerName }}</option>
-                        {% endfor %}
-                      </select>
-                      <div class="input-group-append">
-                          <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newcustomer" style="height: 38px;">Add new customer</button>
-                      </div>
+                    <option value="{{ c.id }}"  >{{ c.customerName }}</option>
+                    {% endfor %}
+                  </select>
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newcustomer" style="height: 38px;">Add new customer</button>
                   </div>
+                </div>
               </div>
           </div>
           
           <div class="form-group row mt-4" id="emailField" style="display: none;">
               <label for="email" class="col-sm-12 col-md-6 col-lg-3 col-form-label">Customer EmailId</label>
               <div class="col-sm-12 col-md-12 col-lg-6">
-                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" style="width: 100%; color: black;">
+                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" style="width: 557px; color: black;">
               </div>
           </div>
           
