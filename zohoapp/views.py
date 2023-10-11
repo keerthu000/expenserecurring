@@ -777,6 +777,7 @@ def add_recurring_vendor(request):
     if request.method=="POST":
        
         salutation=request.POST['title']
+        print(salutation)
         
         first_name=request.POST['firstname']
         
@@ -843,11 +844,11 @@ def add_recurring_vendor(request):
                                  bfax=bfax,
                                  sstreet=sstreet,
                                  scity=scity,
-                                sstate=sstate,
-                                scountry=scountry,
-                                spin=spin,
-                                sphone=sphone,
-                                sfax=sfax)
+                                 sstate=sstate,
+                                 scountry=scountry,
+                                 spin=spin,
+                                 sphone=sphone,
+                                 sfax=sfax)
         
         vendor_data.save()
         user_id=request.user.id
@@ -2703,7 +2704,9 @@ def add_expense(request):
         else  :
            endson = request.POST.get('ends_on')
         
-        
+        userId=request.user.id
+        udata=User.objects.get(id=userId)
+       
         # Create and save the Expense instance
         expense = Expense(
             profile_name=profile_name,
@@ -2726,7 +2729,8 @@ def add_expense(request):
             customer= customer_obj,
             customeremail=custemail,
             vendormail= vmail,
-            activation_tag="active" # Set the activation_tag to "active"
+            activation_tag="active", # Set the activation_tag to "active"
+            user=udata
         )
         expense.save()
 
@@ -2745,7 +2749,8 @@ def toggle_expense_status(request, expense_id):
 
 @login_required(login_url='login')
 def recurringbase(request):
-    expenses = Expense.objects.all()
+    userId=request.user.id
+    expenses = Expense.objects.filter(user=userId)
     company = company_details.objects.get(user = request.user)
     
     return render(request, 'recurring_base.html',{'expenses': expenses,'company':company})
@@ -2753,8 +2758,9 @@ def recurringbase(request):
 
 @login_required(login_url='login')
 def show_recurring(request, expense_id):
+    userid=request.user.id
     expense = get_object_or_404(Expense, id=expense_id)
-    expenses = Expense.objects.all()
+    expenses = Expense.objects.filter(user=userid)
     company = company_details.objects.get(user=request.user)
     accounts = Account.objects.all()
     account_types = set(Account.objects.values_list('accountType', flat=True))
@@ -2776,11 +2782,9 @@ def show_recurring(request, expense_id):
     vendor = vendor_table.objects.get(id=expense.vendor_id)
     customers = customer.objects.get(id=expense.customer_id)
     vendors = vendor_table.objects.all()
-    try:
-        everyrepeat=repeat_every.objects.get(id=expense.repeatevery.id)
-    except:
-         everyrepeat=None
-        
+  
+    everyrepeat=repeat_every.objects.get(id=expense.repeatevery.id)
+   
 
     return render(request, 'show_recurring.html', {'expense': expense,'expense.id':expense_id, 'expenses': expenses, 'comments': comments, 'company': company, 'vendor': vendor, 'customer': customers,'account':accounts,'account_types':account_types,'vendors':vendors,'repeat':everyrepeat})
 
@@ -2911,7 +2915,7 @@ def edit_expense(request, expense_id):
 
         expense.save()
         
-        return redirect('recurringbase')
+        return redirect('show_recurring',expense_id=expense_id)
     
     else:
         

@@ -199,7 +199,8 @@
         width: auto;
         overflow-y: auto;
         border: none;
-        box-shadow: 5px 2px 5px 2px  grey;
+        box-shadow: 5px 2px 5px 2px grey;
+        color: black;
     }
 
     @media print {
@@ -222,25 +223,65 @@
             top: 0;
             right: 0;
             height: auto;
-            margin:0;
-            {% comment %} page-break-before: always; {% endcomment %}
-            {% comment %} page-break-inside: avoid; {% endcomment %}
+            margin: 0;
+            page-break-before: always;
+            page-break-inside: avoid;
+            color: black;
         }
 
         @page {
-            size:100%;
+            size: 100%;
+            margin: 0;
+            height: auto;
+            color: black;
+        }
+    }
+    {% comment %} @media print {
+        .print-only[size="A4"] {
+            width: 21cm;
+            height: 29.7cm;
+            display: none;
+            
+            
+        }
+        
+        body * {
+            visibility: hidden;
+        }
+    
+        header {
+            display: none;
+        }
+    
+        .print-only * {
+            visibility: visible;
+        }
+    
+        .print-only {
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            height: auto;
+            page-break-before: always;
+            page-break-inside: avoid;
+            color: black;
+        }
+        @page {
+            size: 100%;
             margin: 0;
             height: auto;
         }
-    }
-
+        
+    } {% endcomment %}
+    
     .modal{
       z-index: 9999;
       overflow: scroll;
     }
     .print-only p{
         color: black;
-        font-weight:700;
+        font-weight:1000;
         font-family:Georgia, 'Times New Roman', Times, serif
     }
     .print-only h5{
@@ -367,7 +408,7 @@
                         
 
                         <a href="" class=" fa fa-print btns px-2 py-2"   
-                            title="PRINT" id="printbtn" onclick="window.print()"> </a>
+                            title="PRINT"  onclick="printSection('Template')"> </a>
 
                         <a href="" class="fa fa-envelope btns px-2 py-2" 
                             title="MAIL" data-toggle="modal" data-target="#emails" > </a>
@@ -409,7 +450,7 @@
             <hr class="hr">
 
             <div style="position:relative;"> 
-                <div id="Template" class=" print-only page tabcontent p-5 m-3" style="display: block; background-color:azure;visibility:visible;">
+                <div id="Template" class=" print-only page tabcontent p-5 m-3" style="display: block; background-color:azure; visibility:visible;">
                     <div id="pdfContainer" ></div>
                     <div class="row pt-0 m-0 text-center">
                         <div class="col-4 "></div>
@@ -422,7 +463,7 @@
                         <div class="col-1 "></div>
                         <div class="col-5 ">
                             <h3 class="text-uppercase" style="color: black;"><b>{{company.company_name }}</b></h3>
-                            <p class="address mx-2 p-2"> {{company.address}}<br>
+                            <p style="color:black;" class="address text-dark mx-2 p-2"> {{company.address}}<br>
                                 {{company.city}} <br>
                                 {{company.state}}<br>
                                 {{company.pincode}}<br>
@@ -439,8 +480,8 @@
 
                                     </div>
                                     <div class="position-relative">
-                                        <p>Start Date : &nbsp <span style="color: black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                                        <p>Due Date : &nbsp <span style="color: black;">{{expense.ends_on|date:'d-m-Y'|default:"Never expire"}}</span></p>
+                                        <p style="color:black;">Start Date : &nbsp <span style="color: black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
+                                        <p style="color:black;">Due Date : &nbsp <span style="color: black;">{{expense.ends_on|date:'d-m-Y'|default:"Never expire"}}</span></p>
                                         {% comment %} <p>Term : &nbsp <span style="color: black;">NET {{expense.payment_terms}}</span></p>  {% endcomment %}
                                     </div>
                                 </div>
@@ -456,14 +497,14 @@
 
                                 <div class="col-1 "></div>
                                 <div class="col-5">
-                                    <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>
+                                    <p style=" font-size: 18px; font-style: italic; font-weight: 700;color:black;">Bill To,</p>
                                     <h6  class="mx-3 text-capitalize" style="color: black; ">{{ vendor.salutation}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
                                     
                                     {% if expense.gst_treatment != 'unregistered Business' %}
-                                    <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-style:Arial;margin-top:1rem">
+                                    <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-style:Arial;margin-top:1rem;color:black;">
                                         {{vendor.gst_number}}</p>
                                     {% endif %}
-                                    <p  style="margin-left: 15px;margin-top:1.5rem;">
+                                    <p  style="margin-left: 15px;margin-top:1.5rem;color:black;">
                                         {{vendor.vendor_email}}<br>
                                         {{vendor.bstreet}}<br>
                                         {{vendor.bcity}}<br>
@@ -480,14 +521,14 @@
                                 </div> -->
 
                                 <div class="col-5">
-                                    <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p>
+                                    <p style=" font-size: 18px; font-style: italic; font-weight: 700; color:black;">Deliver To,</p>
                                     
                                     <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.customerName}}</h6>
                                     {% if customer.GSTIN != None %}
-                                    <p class=" col-6 mx-1 p-2" style="margin-left: 14px;font-size:12px;font-style:Arial;margin-top:1rem;">
+                                    <p class=" col-6 mx-1 p-2" style="margin-left: 14px;font-size:12px;font-style:Arial;margin-top:1rem;color:black;">
                                         {{customer.GSTIN}}</p>
                                         {% endif %}
-                                    <p class="address col-6 mx-3 p-2" style="margin-left: -14px;margin-top:-1rem;">{{customer.customerEmail}}
+                                    <p class="address col-6 mx-3 p-2" style="margin-left: -14px;margin-top:-1rem;color:black;">{{customer.customerEmail}}
                                         {{customer.Address1}} <br>
                                         
                                         {{customer.city}}<br>
@@ -732,9 +773,10 @@
                                         <h6 style="color: #ccc;">GST Number :</h5><br>
                                     </div>
                                     <div class="col-md-8 mt-4 mx-3">
-                                    
+                                      
                                         <input type="text" value="{{ expense.gst }} " class="amnt"
                                             style="font-size: 16px; color: azure;margin-top:-3.6rem" readonly>
+                                           
                                     
                                     </div>
                                 </div>
@@ -819,27 +861,21 @@
           </script>
     
 
-    {% comment %} <script>
-        function printToPDF(Template) {
-            console.log('Print PDF');
-            
-            var element = document.getElementById('Template');
           
-            var opt = {
-                margin: 0,
-                filename: 'recurring_expense_' + $("#pid").text() + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-    
-            html2pdf().set(opt).from(element).save();
-        }
-    </script> {% endcomment %}
-    <script>
-      
-        
-</script>
+            <script>  function printSection(sectionId) {
+                var printContents = document.getElementById(sectionId).innerHTML;
+                var originalContents = document.body.innerHTML;
+            
+                document.body.innerHTML = printContents;
+            
+                window.print();
+               
+            
+                document.body.innerHTML = originalContents;
+                window.location.reload();
+            }
+         </script>
+     
     
     <!-- comment modal -->
 
