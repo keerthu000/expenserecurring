@@ -31,6 +31,21 @@
         margin: 20px auto;
         opacity: 0.5;
     }
+    ul.image-bullets {
+        list-style-type: none;
+        padding-left: 30px;
+    }
+
+    ul.image-bullets li:before {
+        content: "";
+        background-image: url('static/images/bullet.png');
+        background-size: 15px 15px;
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-right: 5px; 
+        margin-left: 26%;
+    }
     
     @media only screen and (min-width: 768px) {
         /* Tablets and desktop screens */
@@ -104,29 +119,43 @@
 
     
 </style>
-<div class="fixed-top" style="top: 9rem; margin-left: 9rem; margin-top: 20px;">
-    <div style="height: 600px; overflow-y: scroll; margin-left: 120px;">
-        <div style="margin-left:30px;"><h1 class="text-light">All Expenses</h1></div>
+<div class="fixed-top" style="top: 9rem; margin-left: 9rem; margin-top: 10px;overflow-y: scroll;height: 1500px;">
+    <div style="height: 600px; overflow-y: scroll; margin-left: 140px;">
+        <div style="margin-left:30px;"><h1 class="text-light">All Recurring Expenses</h1></div>
 
-        <div class="button-container">
-            <input type="text" id="searchInput" class="form-control bg-dark" placeholder="Search Items..." style="width: 25%; margin-top: 40px; margin-left: -150px;" />
-            <button type="button" class="btn btn-success" style="width: 100px; margin-left: 940px; margin-top: -50px;" onclick="window.location.href='{% url 'recurringhome' %}'">+New</button>
-       
-
-           
-            <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; margin-left: 800px; margin-top:-98px;">
-                Filter
-            </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <a class="dropdown-item" href="#" data-sort="Profile">Profile</a>
-                <a class="dropdown-item" href="#" data-sort="Vendor">Vendor</a>
-                <a class="dropdown-item" href="#" data-sort="Customer">Customer</a>
-                <a class="dropdown-item" href="#" data-sort="All">All</a>
+        <div class="button-container" style="display: flex; justify-content: space-between; align-items: center;margin-top:40px;">
+            <div style="display: flex; align-items:left;">
+                <input type="text" id="searchInput" class="form-control bg-dark " placeholder="Search Items..." style="width:100%;margin-left:-100px;" >
+                <div class="dropdown">
+                    <button type="button" id="btnGroupDrop2" class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown" style="height: 40px; margin-left: 20px;">Sort</button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
+                        <a class="dropdown-item" href="#" data-sort="Profile">All</a>
+                        <a class="dropdown-item" href="#" data-sort="Vendor">Vendor</a>
+                        <a class="dropdown-item" href="#" data-sort="Customer">Expense</a>
+                    </div>
+                </div>
             </div>
-          
-        </div><br><br>
 
-        <div class="table-responsive" style="margin-left: 20px; margin-right: 20px;">
+            <div style="display: flex; align-items: center;">
+                
+                
+                <div class="dropdown">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-solid fa-filter" style="font-size: 17px;"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <a class="dropdown-item" href="#" data-sort="Profile">Profile</a>
+                        <a class="dropdown-item" href="#" data-sort="Vendor">Vendor</a>
+                        <a class a="dropdown-item" href="#" data-sort="Customer">Customer</a>
+                        <a class="dropdown-item" href="#" data-sort="All">All</a>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-warning" style="width: 100px; margin-left: 20px;" onclick="window.location.href='{% url 'recurringhome' %}'">+New</button>
+            </div>
+        </div>
+        <br><br><br>
+
+        <div class="table-responsive" style="margin-left: 20px; margin-right: 40px;">
             <table class="table table-bordered" id="dataTable">
                 <thead class="thead-dark">
                     <tr>
@@ -173,7 +202,7 @@
             </table>
         </div><br><br>
 
-        <div class="card mt-5" style="width:960px; height: 263px;margin-bottom:-100px;margin-left:130px;">
+        <div class="card radius-5 mt-5" style="width:960px; height: 263px;margin-bottom:-100px;margin-left:130px;">
             <div class="card-body">
                 <div class="card-title">
                     <h3 class="mb-0 text-center">Life cycle of a Recurring Expense</h3>
@@ -206,6 +235,23 @@
                 </div>
             </div>
         </div> 
+        <br><br><br>
+        <br><br><br>
+        <div class="card radius-5">
+            <div class="card-body">
+                <div class="card-title recurpoints">
+                    <h3 class="mb-0 text-center">In the Recurring Expenses section, you can:</h3>
+                    <br>
+                    <div >
+                        <ul class='image-bullets' >
+                            <li > Create a recurring profile to routinely auto-generate expenses.</li>
+                            <li>View when each expense was auto-generated</li>
+                            <li>Create individual expenses within the recurring profile.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div
    
     </div>
 </div>
