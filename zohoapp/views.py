@@ -337,6 +337,70 @@ def base(request):
         Account(accountType='Expenses',accountName='Advertising & Marketing',description='Advertising & Marketing').save()
     if not Account.objects.filter(accountName='Automobile Expense').exists():
         Account(accountType='Expenses',accountName='Automobile Expense',description='Automobile Expense').save()
+    if not Account.objects.filter(accountName='Bad Debt').exists():
+        Account(accountType='Expenses',accountName='Bad Debt',description='Bad Debt').save()
+    if not Account.objects.filter(accountName='Bank Fees and Charges').exists():
+        Account(accountType='Expenses',accountName='Bank Fees and Charges',description='Bank Fees and Charges').save()
+    if not Account.objects.filter(accountName='Consultant Expense').exists():
+        Account(accountType='Expenses',accountName='Consultant Expense',description='Consultant Expense').save()
+    if not Account.objects.filter(accountName='Credit Card Charges').exists():
+        Account(accountType='Expenses',accountName='Credit Card Charges',description='Credit Card Charges').save()
+    if not Account.objects.filter(accountName='Depreciation Expense').exists():
+        Account(accountType='Expenses',accountName='Depreciation Expense',description='Depreciation Expense').save()
+    if not Account.objects.filter(accountName='IT and Internet Expenses').exists():
+        Account(accountType='Expenses',accountName='IT and Internet Expenses',description='IT and Internet Expenses').save()
+    if not Account.objects.filter(accountName='Janitorial Expense').exists():
+        Account(accountType='Expenses',accountName='Janitorial Expense',description='Janitorial Expense').save()
+    if not Account.objects.filter(accountName='Lodging').exists():
+        Account(accountType='Expenses',accountName='Lodging',description='Lodging').save()
+    if not Account.objects.filter(accountName='Meals and Entertainment').exists():
+        Account(accountType='Expenses',accountName='Meals and Entertainment',description='Meals and Entertainment').save()
+    if not Account.objects.filter(accountName='Office Supplies').exists():
+        Account(accountType='Expenses',accountName='Office Supplies',description='Office Supplies').save()
+    if not Account.objects.filter(accountName='Other Expenses').exists():
+        Account(accountType='Expenses',accountName='Other Expenses',description='Other Expenses').save()
+    if not Account.objects.filter(accountName='Postage').exists():
+        Account(accountType='Expenses',accountName='Postage',description='Postage').save()
+    if not Account.objects.filter(accountName='Printing and Stationery').exists():
+        Account(accountType='Expenses',accountName='Printing and Stationery',description='Printing and Stationery').save()
+    if not Account.objects.filter(accountName='Rent Expense').exists():
+        Account(accountType='Expenses',accountName='Rent Expense',description='Rent Expense').save()
+    if not Account.objects.filter(accountName='Repairs and Maintenance').exists():
+        Account(accountType='Expenses',accountName='Repairs and Maintenance',description='Repairs and Maintenance').save()
+    if not Account.objects.filter(accountName='Salaries and Employee Wages').exists():
+        Account(accountType='Expenses',accountName='Salaries and Employee Wages',description='Salaries and Employee Wages').save()
+    if not Account.objects.filter(accountName='Telephone Expense').exists():
+        Account(accountType='Expenses',accountName='Telephone Expense',description='Telephone Expense').save()
+    if not Account.objects.filter(accountName='Travel Expense').exists():
+        Account(accountType='Expenses',accountName='Travel Expense',description='Travel Expense').save()
+    
+    if not Account.objects.filter(accountName='Uncategorized').exists():
+        Account(accountType='Expenses',accountName='Uncategorized',description='Uncategorized').save()
+    if not Account.objects.filter(accountName='Contract Assets').exists():
+        Account(accountType='Expenses',accountName='Contract Assets',description='Contract Assets').save()
+    if not Account.objects.filter(accountName='Depreciation And Amortisation').exists():
+        Account(accountType='Expenses',accountName='Depreciation And Amortisation',description='Depreciation And Amortisation').save()
+    if not Account.objects.filter(accountName='Merchandise').exists():
+        Account(accountType='Expenses',accountName='Merchandise',description='Merchandise').save()
+    if not Account.objects.filter(accountName='Raw Materials And Consumables').exists():
+        Account(accountType='Expenses',accountName='Raw Materials And Consumables',description='Raw Materials And Consumables').save()
+    if not Account.objects.filter(accountName='Transportation Expense').exists():
+        Account(accountType='Expenses',accountName='Transportation Expense',description='Transportation Expense').save()
+    if not Account.objects.filter(accountName='Exchange Gain or Loss').exists():
+        Account(accountType='Other Expense',accountName='Exchange Gain or Loss',description='Exchange Gain or Loss').save()
+    
+    
+    
+    
+  
+    
+
+
+
+
+
+
+
     userId=User.objects.get(id=request.user.id)
     if not payment_terms.objects.filter(Terms='NET 30',user=userId).exists():
         payment_terms(Terms='NET 30',user=userId).save()
@@ -2828,11 +2892,9 @@ def expense_comment(request,expense_id):
 
 
 def get_vendor_gst(request, vendor_id):
-    try:
-        vendor = vendor_table.objects.get(pk=vendor_id)
-        return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email})
-    except vendor_table.DoesNotExist:
-        return JsonResponse({'gst_treatment': '','gst_number':'','email':''})
+    
+    vendor = vendor_table.objects.get(pk=vendor_id)
+    return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email,'pos':vendor.source_supply})
 
 
 
@@ -3090,7 +3152,8 @@ def get_customer_email(request):
             custmer = customer.objects.get(id=customer_id)
             email = custmer.customerEmail
            
-            return JsonResponse({'email': email})
+           
+            return JsonResponse({'email': email,})
         except customer.DoesNotExist:  # Corrected exception name
             # Handle the case where the customer does not exist
             return JsonResponse({'error': 'Customer not found'}, status=404)
@@ -3098,6 +3161,17 @@ def get_customer_email(request):
         # Handle other HTTP methods if necessary
         return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+
+@login_required(login_url='login')
+def get_customer_gsttrmnt(request):
+    if request.method == 'GET':
+        customer_id = request.GET.get('customername')
+        custmer = customer.objects.get(id=customer_id)
+        gst_trtmnt=custmer.GSTTreatment
+        pos=custmer.placeofsupply
+        return JsonResponse({'gst_trtmnt': gst_trtmnt,'pos':pos})
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
         
 
 @login_required(login_url='login')
