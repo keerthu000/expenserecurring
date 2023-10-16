@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
  
 
-</body>
+
 
 <style>
    
@@ -124,7 +124,17 @@
         box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
     }
 
-    
+    .form{
+        z-index:999;
+        position:absolute;
+        top:0;
+        left:0; 
+        width:100%;
+        height:100%;
+        padding: 6px 12px;
+        border-top: none;
+         
+    }
 
     td {
         color: rgba(0, 0, 0, 0.5);
@@ -334,7 +344,7 @@
     /* Style for Form 3 */
     #form3 {
         background-color: lightpink;
-        font-family: Times New Roman, serif;
+        font-family: Courier New;
     }
     
   
@@ -474,7 +484,7 @@
             <div style="position:relative;"> 
                
                 <div id="Template" class=" print-only page tabcontent p-5 m-3" style="display: block; background-color:azure; visibility:visible;">
-                    <div id="pdfContainer" ></div>
+                    
                     <div class="row pt-0 m-0 text-center">
                         <div class="col-4 "></div>
                         <div class="col-4 ">
@@ -595,11 +605,12 @@
                             </tbody>
                         </table>
                         
+                       
 
 
                         
 
-                        <div id="form1" style="display: none;">
+                        <div class="form"  id="form1" style="display: none;">
                             <div class="row pt-0 m-0 text-center">
                                 <div class="col-4 "></div>
                                 <div class="col-4 ">
@@ -719,8 +730,9 @@
         
                                     </tbody>
                                 </table>
+                              
                         </div>
-                        <div id="form2" style="display: none;">
+                        <div class="form"  id="form2" style="display: none;">
                             <div class="row pt-0 m-0 text-center">
                                 <div class="col-4 "></div>
                                 <div class="col-4 ">
@@ -840,8 +852,9 @@
         
                                     </tbody>
                                 </table>
+                               
                         </div>
-                        <div id="form3" style="display: none;">
+                        <div class="form" id="form3" style="display: none;">
                             <div class="row pt-0 m-0 text-center">
                                 <div class="col-4 "></div>
                                 <div class="col-4 ">
@@ -961,15 +974,14 @@
         
                                     </tbody>
                                 </table>
-                            
+                                
                         </div>
-                        <button class="btn btn-warning" id="formButton" style="margin-top:50px;margin-left:300px;">Toggle Form</button>
 
                     </section>
 
                     
                 </div>
-
+                <button class="btn btn-warning formbutton" id="formButton" style="margin-top:50px;margin-left:350px;" onclick="toggleForms() ">Toggle Form</button>
 
                 <!-- overview -->
                 <div id="Overview" class="  tabcontent  p-5 m-3"  style="overflow-x: hidden; border-top: #ccc double 2px; background-color: burlywood ;border-radius: 5px;display:block;">
@@ -1171,21 +1183,51 @@
     </div>
 
 
-    <script>
-        var currentForm = 1; // Track the currently displayed form
+    {% comment %} <script>
+        function toggleForms() {
+          var form1 = document.getElementById('form1');
+          var form2 = document.getElementById('form2');
+          var form3 = document.getElementById('form3');
+      
+          if (form1.style.display === 'block') {
+            form1.style.display = 'none';
+            form2.style.display = 'block';
+            form3.style.display = 'none';
+          } else if (form2.style.display === 'block') {
+            form1.style.display = 'none';
+            form2.style.display = 'none';
+            form3.style.display = 'block';
+          } else {
+            form1.style.display = 'block';
+            form2.style.display = 'none';
+            form3.style.display = 'none';
+          }
+        }
+      </script> {% endcomment %}
+      <script>
+        var currentForm = 0;
+        var formIds = ['form1', 'form2', 'form3','form1', 'Template'];
+      
+        function toggleForms() {
+          if (currentForm < formIds.length - 1) {
+            document.getElementById(formIds[currentForm]).style.display = 'none';
+            currentForm++;
+            document.getElementById(formIds[currentForm]).style.display = 'block';
+          } else {
+            // If at the last form, reset back to the Template
+            document.getElementById(formIds[currentForm]).style.display = 'none';
+            currentForm = 0;
+            document.getElementById('Template').style.display = 'block';
+          }
+        }
+      </script>
+      
+      
+      
+      
+      
 
-        document.getElementById("formButton").addEventListener("click", function () {
-            // Hide the current form
-            document.getElementById("form" + currentForm).style.display = "none";
-
-            // Increment the form number (cycling from 1 to 3)
-            currentForm = (currentForm % 3) + 1;
-
-            // Display the new form
-            document.getElementById("form" + currentForm).style.display = "block";
-        });
-
-    </script>
+    
     
          <script type="text/javascript">
             $(document).ready(function ($) {
@@ -1440,33 +1482,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery library -->
 
 
-<script>
-    var currentForm = null; // To keep track of the currently displayed form
-
-    // Function to toggle the forms
-    function toggleForm() {
-        if (currentForm !== null) {
-            // Hide the currently displayed form
-            document.getElementById(currentForm).style.display = 'none';
-        }
-
-        // Toggle to the next form (cycle through form1, form2, and form3)
-        if (currentForm === null || currentForm === 'form3') {
-            currentForm = 'form1';
-        } else if (currentForm === 'form1') {
-            currentForm = 'form2';
-        } else {
-            currentForm = 'form3';
-        }
-
-        // Show the newly selected form
-        document.getElementById(currentForm).style.display = 'block';
-    }
-
-    // Attach the toggleForm function to the button click event
-    document.getElementById('formButton').addEventListener('click', toggleForm);
-</script>
-
 
 <script>
 $(document).ready(function() {
@@ -1495,6 +1510,9 @@ $(document).ready(function() {
 </script>
 
 
+
+
+
 <script>
     function openTab(tabName) {
         var template = document.getElementById('Template');
@@ -1516,7 +1534,9 @@ $(document).ready(function() {
     
         // Add "active" class to the clicked tablink
         document.querySelector('[onclick="openTab(\'' + tabName + '\')"]').classList.add("active");
+        
     }
+
     
     function showTax() {
         if ('{{gst_or_igst}}' == "GST") {

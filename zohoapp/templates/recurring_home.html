@@ -275,7 +275,7 @@
               <option disabled class="text-dark " selected>Select a Customer</option>
               {% for c in customers %}
                     
-              <option value="{{ c.id }}" data-gst="{{ c.GSTTreatment }}" data-pos="{{ c.placeofsupply}}" >{{ c.customerName }}</option>
+              <option value="{{ c.id }}" data-gst="{{ c.GSTTreatment }}"  >{{ c.customerName }}</option>
               {% endfor %}
             </select>
             <div class="input-group">
@@ -301,6 +301,7 @@
           <div class="form-group row mt-4">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer place of supply</label></div>
             <div class="col-sm-12 col-md-6 col-lg-6">
+              <input type="hidden" id="state" value="{{ company.state }}">
                 <select name="c_destination" id="c_destination" class="form-control bg-white text-dark" style="margin-left: -4px; width:555px;color:black;">
                   <option disabled selected>Select a Place</option>
                   {% for c in customers %}
@@ -330,8 +331,9 @@
             <div class="row">
               <div class="col-md-3 col-form-label"><label>Tax</label></div>
               <div class="col-md-3">
+               
                 <select name='tax[]' id='tax1'
-                class='form-control bg-light text-dark   border-1 tax' onclick="toggleTaxInput()"    style="margin-left: 4px; width: 557px; color: black;">
+                class='form-control bg-light text-dark   border-1 tax' onclick="checkTax()"    style="margin-left: 4px; width: 557px; color: black;">
                 <option value=""   disabled selected>Select a Tax</option>
                 <optgroup class="text-left" label="GST">
                  
@@ -355,7 +357,8 @@
            
               </div>
           </div>
-          
+          <div id="taxDisplay"></div>
+                    
                     
               <div class="form-group row mt-4">
                 <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Notes</label></div>
@@ -447,67 +450,84 @@
       
       </script>
 
-
+ 
     
-
-
       
-       <script>
-        $(document).ready(function(){
-          toggleTaxInput()
-        })
-        function toggleTaxInput() {
-          var destinationSelect = document.getElementById("c_destination");
-          var selectedOption = destinationSelect.options[destinationSelect.selectedIndex].value;
-          
-          var taxSelect = document.getElementById("tax1"); // Assuming you want to change the first tax dropdown
-          
-          // Hide all options first
-         
-          if (selectedOption === "[KL]-Kerala") {
-            // Show GST options and hide IGST options
-            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
-            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
-            gstOptgroup.style.display = "block";
-            igstOptgroup.style.display = "none";
-          } else {
-            // Show IGST options and hide GST options
-            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
-            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
-            gstOptgroup.style.display = "none";
-            igstOptgroup.style.display = "block";
-          }
-        }
+        <script type="text/javascript">
+          $(document).ready(function () {
+              $('#customer-list').change(function () {
+                  var customer_id = $(this).val();
+                  if (customer_id) {
+                      // Make an AJAX request to get the customer's email
+                      $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
+                          $('#email').val(data.email);
+                      });
+      
+                      // Make an AJAX request to get the customer's GST treatment
+                      $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
+                          $('#cust_gst_tr').val(data.gst_trtmnt);
+                          $('#c_destination').val(data.pos)
+                      });
+                  }
+              });
+          });
       </script>
       
 
-
-      
-      <script type="text/javascript">
-        $(document).ready(function () {
-            $('#customer-list').change(function () {
-                var customer_id = $(this).val();
-                if (customer_id) {
-                    // Make an AJAX request to get the customer's email
-                    $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
-                        $('#email').val(data.email);
-                    });
-    
-                    // Make an AJAX request to get the customer's GST treatment
-                    $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
-                        $('#cust_gst_tr').val(data.gst_trtmnt);
-                        $('#c_destination').val(data.pos)
-                    });
-                }
-            });
-        });
-    </script>
-    
-
-      
-
-
-
+      <script>
+        function checkTax() {
+          // Get the selected place of supply
+          var placeOfSupply = document.getElementById("c_destination").value;
+          
+        
+          // Get the company's state and convert it to lowercase
+          var companyState = document.getElementById("state").value.toLowerCase();
+          console.log(companyState)
+        
+          // Convert the placeOfSupply to lowercase for consistent comparison
+          placeOfSupply = placeOfSupply.toLowerCase();
+          console.log(placeOfSupply)
+          // Get the tax dropdown element
+          var taxDropdown = document.getElementById("tax1");
+        
+          // Clear all existing options in the tax dropdown
+          taxDropdown.innerHTML = '';
+        
+          // Create a new array of options based on the conditions
+          var options = [];
+        
+          if (placeOfSupply === "[kl]-kerala" && companyState === "kerala") {
+            // If both company state and customer place of supply are Kerala, add GST options
+            options = [
+              { value: "GST0", label: "0% GST(0%)" },
+              { value: "GST3", label: "3.0% GST(3%)" },
+              { value: "GST5", label: "5.0% GST(5%)" },
+              { value: "GST12", label: "12.0% GST(12%)" },
+              { value: "GST18", label: "18.0% GST(18%)" },
+              { value: "GST28", label: "28.0% GST(28%)" }
+            ];
+          } else {
+            // If any other condition, add IGST options
+            options = [
+              { value: "IGST0", label: "0% IGST(0%)" },
+              { value: "IGST3", label: "3.0% IGST(3%)" },
+              { value: "IGST5", label: "5.0% IGST(5%)" },
+              { value: "IGST12", label: "12.0% IGST(12%)" },
+              { value: "IGST18", label: "18.0% IGST(18%)" },
+              { value: "IGST28", label: "28.0% IGST(28%)" }
+            ];
+          }
+        
+          // Populate the tax dropdown with the new options
+          for (var i = 0; i < options.length; i++) {
+            var option = document.createElement("option");
+            option.value = options[i].value;
+            option.text = options[i].label;
+            taxDropdown.appendChild(option);
+          }
+        }
+        </script>
+        
 
     
       
