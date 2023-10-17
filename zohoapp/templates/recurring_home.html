@@ -21,7 +21,7 @@
     
     /* style submit button */
     button[type="submit"] {
-      background-color: #007bff;
+      
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -78,8 +78,8 @@
     </style>
     <div style="margin-top: 2rem; margin-left: 8rem;">
       <h2>New Recurring Expenses</h2>
-      <div style="height: 1400px;">
-        <form action="{% url 'add_expense' %}" method="post" id="expenseForm">
+      <div style="height: 1700px;">
+        <form action="{% url 'add_expense' %}" method="post" id="expenseForm" enctype="multipart/form-data">
           {% csrf_token %}
     
           <!-- Profile Name -->
@@ -183,9 +183,11 @@
             <div class="col-sm-12 col-md-6 col-lg-6">
               <select name="paidthrough" id="paidthrough" class="form-control bg-white text-dark" style="width: 550px;">
                   <option value="Cash">Cash</option>
-                  <option value="Check">Check</option>
+                  <option value="Check">cheque</option>
                   <option value="UPI">UPI</option>
-                  <option value="Bank">Bank</option>
+                  {% for b in bank %}
+                  <option value="b.name">{{b.name}}</option>
+                  {% endfor %}
 
 
               </select>
@@ -272,10 +274,10 @@
           <div class="input-group" style="width:555px;">
               
             <select class="form-control bg-white text-dark" id="customer-list" name="customername">
-              <option disabled class="text-dark " selected>Select a Customer</option>
+              <option disabled="disabled" selected="selected">--Choose option--</option>
               {% for c in customers %}
                     
-              <option value="{{ c.id }}" data-gst="{{ c.GSTTreatment }}"  >{{ c.customerName }}</option>
+              <option value="{{c.customerName}}" data-gst="{{ c.GSTTreatment }}"  >{{ c.customerName }}</option>
               {% endfor %}
             </select>
             <div class="input-group">
@@ -357,7 +359,7 @@
            
               </div>
           </div>
-          <div id="taxDisplay"></div>
+          
                     
                     
               <div class="form-group row mt-4">
@@ -375,13 +377,46 @@
               <!-- Add a hidden input field for the activation tag with value "active" -->
               <input type="hidden" name="activation_tag" value="active">
           </div>
-          <br><br>
-          <div class="form-group" style="margin-left:400px;">
-              <button type="submit" class="btn btn-primary" style="width:100px;">Save</button>&nbsp;&nbsp;
-              <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'recurringbase' %}'" style="color:orangered;width:100px;height:35px;">Cancel</button>
+          <div class="form-group row mt-4">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Attach a File</label></div>
+              <div class="col-md-6 col-lg-6 col-sm-12 py-5 text-center rounded mt-4">
+                  <div style="width: 106%;background-color: rgba(243, 241, 241, 0.904);height:90px;margin-left:px;margin-top:-100px;">
+                    <label class="text-black mt-3 pt-3" for="">Attach File(s) to Recurring Expense</label><br>
+
+                    <label for="file-upload" class="btn text-white border-0" style="background-color: rgb(210, 132, 30);">
+                      <i class="fas fa-upload text-white"></i> Upload File
+                    </label>
+                    <input class="pb-3" id="file-upload" type="file" name="file" style="display:none;">
+                  </div>
+              </div>
+          </div>
+        
+          
+          <div class="form-group" style="margin-left:40px;margin-top:100px;">
+              <button type="submit" class="btn btn-warning" style="width:100px;" onclick="saveDialog()">Save</button>&nbsp;&nbsp;
+              <button type="submit" class="btn btn-warning" style="width:100px;height:35px;" onclick="draftDialog()">Draft</button>&nbsp;&nbsp;
+              <button type="button" class="btn btn-warning" onclick="window.location.href='{% url 'recurringbase' %}'" style="color:orangered;width:100px;height:35px;">Cancel</button>
           </div>
       </form>
       </div>
+      <script>
+        function saveDialog() {
+      
+          var frm = document.getElementById("expenseForm");
+          frm.action = ("{% url 'add_expense' %}")
+        }
+      
+        function draftDialog() {
+      
+          var frm = document.getElementById("expenseForm");
+          frm.action = ("{% url 'draft_expense' %}")
+        }
+        $(document).ready(function () {
+          $('[data-toggle="tooltip"]').tooltip();
+        });
+      
+      </script>
+      
 
       <script>
         // Get references to the input elements
@@ -472,31 +507,28 @@
               });
           });
       </script>
-      
 
       <script>
         function checkTax() {
           // Get the selected place of supply
-          var placeOfSupply = document.getElementById("c_destination").value;
-          
-        
+          var placeOfSupply = $("#c_destination").val().split(" ").slice(1).join(" ").trim();
+      
           // Get the company's state and convert it to lowercase
-          var companyState = document.getElementById("state").value.toLowerCase();
-          console.log(companyState)
-        
+          var companyState = $("#state").val().toLowerCase();
+      
           // Convert the placeOfSupply to lowercase for consistent comparison
           placeOfSupply = placeOfSupply.toLowerCase();
-          console.log(placeOfSupply)
+      
           // Get the tax dropdown element
           var taxDropdown = document.getElementById("tax1");
-        
+      
           // Clear all existing options in the tax dropdown
           taxDropdown.innerHTML = '';
-        
+      
           // Create a new array of options based on the conditions
           var options = [];
-        
-          if (placeOfSupply === "[kl]-kerala" && companyState === "kerala") {
+      
+          if (placeOfSupply === "kerala" && companyState === "kerala") {
             // If both company state and customer place of supply are Kerala, add GST options
             options = [
               { value: "GST0", label: "0% GST(0%)" },
@@ -517,7 +549,7 @@
               { value: "IGST28", label: "28.0% IGST(28%)" }
             ];
           }
-        
+      
           // Populate the tax dropdown with the new options
           for (var i = 0; i < options.length; i++) {
             var option = document.createElement("option");
@@ -525,9 +557,36 @@
             option.text = options[i].label;
             taxDropdown.appendChild(option);
           }
-        }
-        </script>
+        };
+      
+      </script>
+      <script>
+        $(document).ready(function(){
+          toggleTaxInput()
+        })
+        function toggleTaxInput() {
+          var destinationSelect = document.getElementById("c_destination");
+          var selectedOption = destinationSelect.options[destinationSelect.selectedIndex].value;
+          
+          var taxSelect = document.getElementById("tax1"); // Assuming you want to change the first tax dropdown
+          
+          // Hide all options first
         
+          if (selectedOption === "[KL]-Kerala") {
+            // Show GST options and hide IGST options
+            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            gstOptgroup.style.display = "block";
+            igstOptgroup.style.display = "none";
+          } else {
+            // Show IGST options and hide GST options
+            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            gstOptgroup.style.display = "none";
+            igstOptgroup.style.display = "block";
+          }
+        }
+      </script>
 
     
       

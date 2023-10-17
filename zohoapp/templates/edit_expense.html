@@ -71,9 +71,9 @@
                     <div class="invalid-feedback">Please fill out this field.</div>
                 </div>
             </div>
-           
-           
-               
+          
+          
+              
           
             <!-- Repeat Every -->
             <div class="form-group row mt-4">
@@ -87,7 +87,7 @@
                     {% for repeat_item in repeat_list %}
                     
                     <option class="text-dark" value="{{ repeat_item.id }}" {% if repeat_item.id == repeat_id.id %} {% endif %}> {{ repeat_item.Terms }}</option>
-                   
+                  
                     {% endfor %}
                 
                 </select>
@@ -106,22 +106,7 @@
                 </div>
             </div>
 
-            <!-- Ends On -->
-            <div class="form-group row mt-4">
-                <label for="ends_on" class="col-sm-3 col-form-label">Ends On</label>
-                <div class="col-sm-6">
-                    <input type="date" id="ends_on" name="ends_on" value="{{ expense.ends_on|date:'Y-m-d' }}"
-                        class="form-control bg-white text-dark" {% if expense.ends_on == None %}disabled{% endif %}>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-check">
-                        <input type="checkbox" id="never-expire-checkbox" onchange="toggleDateInput()"
-                            {% if expense.ends_on == None %}checked{% endif %}>
-                        <label for="never-expire-checkbox" style="color: #909091;">Never Expires</label>
-                    </div>
-                </div>
-            </div>
-
+            
             <!-- Expense Account -->
             <div class="form-group row mt-4">
                 <label for="expense_account" class="col-sm-3 col-form-label">Expense Account</label>
@@ -178,7 +163,7 @@
                 </div>
             </div>
 
-         <div class="form-group row mt-4">
+        <div class="form-group row mt-4">
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Amount</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
             <div class="input-group-prepend" style="margin-left:-151px;">
@@ -193,17 +178,17 @@
           <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Paid Through</label></div>
           <div class="col-sm-12 col-md-6 col-lg-6">
             <select name="paidthrough" id="paidthrough" class="form-control bg-white text-dark" style="width:550px;">
-                <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Cash</b></option>
-              
-                <option value="Petty Cash" {% if expense.paidthrough == "Petty Cash" %}selected{% endif %}>Petty Cash</option>
-                <option value="Undeposited Funds" {% if expense.paidthrough == "Undeposited Funds" %}selected{% endif %}>Undeposited Funds</option>
-                <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Other Current Asset</b></option>
-                <option value="Advance Tax" {% if expense.paidthrough == "Advance Tax" %}selected{% endif %}>Advance Tax</option>
-                <option value="Employee Advance" {% if expense.paidthrough == "Employee Advance" %}selected{% endif %}>Employee Advance</option>
-                <option value="Prepaid Expenses" {% if expense.paidthrough == "Prepaid Expenses" %}selected{% endif %}>Prepaid Expenses</option>
-                <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Payment Clearing Account</b></option>
-                <option value="Stripe Clearing" {% if expense.paidthrough == "Stripe Clearing" %}selected{% endif %}>Prepaid Expenses</option>
-       
+                
+                <option value="{{expense.paidthrough}}">{{expense.paidthrough}}</option>
+                <option value="Cash" >Cash</option>
+                <option value="Cheque" >Cheque</option>
+               
+                <option value="UPI">UPI</option>
+                {% for b in bank %}
+                <option value="b.name">{{b.name}}</option>
+                  {% endfor %}
+
+               
             </select>
         </div>
         </div> 
@@ -231,7 +216,7 @@
           <div class="col-sm-6">
               <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" value="{{ expense.vendormail }}">
           </div>
-       </div>
+      </div>
 
         <!-- GST Treatment -->
         <div class="form-group row">
@@ -245,59 +230,139 @@
       <div class="form-group row" id="textboxContainer">
           <label for="gst_num_inp" class="col-sm-3 col-form-label">Vendor GSTIN</label>
           <div class="col-sm-6">
-              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="width:546px;color:black;margin-top:-25px;margin-left:280px;">
+              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="width:546px;color:black;margin-top:-10px;margin-left:-2px;">
           </div>
       </div>
 
     
 
       <div class="form-group row">
-        <label for="destination" class="col-sm-3 col-form-label">Destination of Supply</label>
+        <label for="destination" class="col-sm-3 col-form-label">Vendor Destination of Supply</label>
         <div class="col-sm-6">
             <select name="destination" id="destination" class="form-control bg-white text-dark">
             {% comment %} <select name="destination" id="destination" class="form-control bg-white text-dark" style="margin-left: 6px; width: 547px;color:black;"> {% endcomment %}
-             
-              <option value="[AN]-Andaman And Nicobar Islands" {% if expense.destination == "[AN]-Andaman And Nicobar Islands" %}selected{% endif %}>[AN]-Andaman And Nicobar Islands</option>
-              <option value="[AD]-Andhra Pradesh" {% if expense.destination == "[AD]-Andhra Pradesh" %}selected{% endif %}>[AD]-Andhra Pradesh</option>
-              <option value="[AR]-Arunachal Pradesh" {% if expense.destination == "[AR]-Arunachal Pradesh" %}selected{% endif %}>[AR]-Arunachal Pradesh</option>
-              <option value="[AS]-Assam" {% if expense.destination == "[AS]-Assam" %}selected{% endif %}>[AS]-Assam</option>
-              <option value="[BR]-Bihar" {% if expense.destination == "[BR]-Bihar" %}selected{% endif %}>[BR]-Bihar</option>
-              <option value="[CH]-	Chandhigarh" {% if expense.destination == "[CH]-	Chandhigarh" %}selected{% endif %}>[CH]-	Chandhigarh</option>
-              <option value="[CG]-Chattisgarh" {% if expense.destination == "[CG]-Chattisgarh" %}selected{% endif %}>[CG]-Chattisgarh</option>
-              <option value="[DD]-Daman Diu" {% if expense.destination == "[DD]-Daman Diu" %}selected{% endif %}>[DD]-Daman Diu</option>
-              <option value="[DL]-	Delhi" {% if expense.destination == "[DL]-	Delhi" %}selected{% endif %}>[DL]-	Delhi</option>
-              <option value="[GA]-Goa" {% if expense.destination == "[GA]-Goa" %}selected{% endif %}>[GA]-Goa</option>
-              <option value="[GJ]-Gujarat" {% if expense.destination == "[GJ]-Gujarat" %}selected{% endif %}>[GJ]-Gujarat</option>
-              <option value="[HR]-Haryana" {% if expense.destination == "[HR]-Haryana" %}selected{% endif %}>[HR]-Haryana</option>
-              <option value="[HP]-Himachal Pradesh" {% if expense.destination == "[HP]-Himachal Pradesh" %}selected{% endif %}>[HP]-Himachal Pradesh</option>
-              <option value="[JK]-Jammu And Kashmir" {% if expense.destination == "[JK]-Jammu And Kashmir" %}selected{% endif %}>[JK]-Jammu And Kashmir</option>
-              <option value="[JH]-Jharkand" {% if expense.destination == "[JH]-Jharkand" %}selected{% endif %}>[JH]-Jharkand</option>
-              <option value="[KA]-Karnataka" {% if expense.destination == "[KA]-Karnataka" %}selected{% endif %}>[KA]-Karnataka</option>
-              <option value="[KL]-Kerala" {% if expense.destination == "[KL]-Kerala" %}selected{% endif %}>[KL]-Kerala</option>
-              <option value="[LA]-Ladakh" {% if expense.destination == "[LA]-Ladakh" %}selected{% endif %}>[LA]-Ladakh</option>
-              <option value="[LD]-Lakshadweep" {% if expense.destination == "[LD]-Lakshadweep" %}selected{% endif %}>[LD]-Lakshadweep</option>
-              <option value="[MP]-Madhyapradesh" {% if expense.destination == "[MP]-Madhyapradesh" %}selected{% endif %}>[MP]-Madhyapradesh</option>
-              <option value="[MH]-Maharashtra" {% if expense.destination == "[MH]-Maharashtra" %}selected{% endif %}>[MH]-Maharashtra</option>
-              <option value="[MN]-Manipur" {% if expense.destination == "[MN]-Manipur" %}selected{% endif %}>[MN]-Manipur</option>
-              <option value="[ML]-Meghalaya" {% if expense.destination == "[ML]-Meghalaya" %}selected{% endif %}>[ML]-Meghalaya</option>
-              <option value="[MZ]-Mizoram" {% if expense.destination == "[MZ]-Mizoram" %}selected{% endif %}>[MZ]-Mizoram</option>
-              <option value="[NL]-Nagaland" {% if expense.destination == "[NL]-Nagaland" %}selected{% endif %}>[NL]-Nagaland</option>
-              <option value="[OD]-Odisha" {% if expense.destination == "[OD]-Odisha" %}selected{% endif %}>[OD]-Odisha</option>
-              <option value="[PY]-Puducherry" {% if expense.destination == "[PY]-Puducherry" %}selected{% endif %}>[PY]-Puducherry</option>
-              <option value="[PB]-Punjab" {% if expense.destination == "[PB]-Punjab" %}selected{% endif %}>[PB]-Punjab</option>
-              <option value="[RL]-Rajasthan" {% if expense.destination == "[RL]-Rajasthan" %}selected{% endif %}>[RL]-Rajasthan</option>
-              <option value="[SK]-Sikkim" {% if expense.destination == "[SK]-Sikkim" %}selected{% endif %}>[SK]-Sikkim</option>
-              <option value="[TN]-Tamilnadu" {% if expense.destination == "[TN]-Tamilnadu" %}selected{% endif %}>[TN]-Tamilnadu</option>
-              <option value="[TS]-Telenghana" {% if expense.destination == "[TS]-Telenghana" %}selected{% endif %}>[TS]-Telenghana</option>
-              <option value="[TR]-Tripura" {% if expense.destination == "[TR]-Tripura" %}selected{% endif %}>[TR]-Tripura</option>
-              <option value="[UP]-Uttar Pradesh" {% if expense.destination == "[UP]-Uttar Pradesh" %}selected{% endif %}>[UP]-Uttar Pradesh</option>
-              <option value="[UK]-Utharakhand" {% if expense.destination == "[UK]-Utharakhand" %}selected{% endif %}>[UK]-Utharakhand</option>
-              <option value="[WB]-West Bengal" {% if expense.destination == "[WB]-West Bengal" %}selected{% endif %}>[WB]-West Bengal</option>
-              <option value="[OT]-Other Territory" {% if expense.destination == "[OT]-Other Territory" %}selected{% endif %}>[OT]-Other Territory</option>
+              <option value="{{expense.vendor_destination}}">{{expense.vendor_destination}}</option>
+              <option value="[AN]-Andaman And Nicobar Islands" {% if expense.vendor_destination == "[AN]-Andaman And Nicobar Islands" %}selected{% endif %}>[AN]-Andaman And Nicobar Islands</option>
+              <option value="[AD]-Andhra Pradesh" {% if expense.vendor_destination == "[AD]-Andhra Pradesh" %}selected{% endif %}>[AD]-Andhra Pradesh</option>
+              <option value="[AR]-Arunachal Pradesh" {% if expense.vendor_destination == "[AR]-Arunachal Pradesh" %}selected{% endif %}>[AR]-Arunachal Pradesh</option>
+              <option value="[AS]-Assam" {% if expense.vendor_destination == "[AS]-Assam" %}selected{% endif %}>[AS]-Assam</option>
+              <option value="[BR]-Bihar" {% if expense.vendor_destination == "[BR]-Bihar" %}selected{% endif %}>[BR]-Bihar</option>
+              <option value="[CH]-	Chandhigarh" {% if expense.vendor_destination == "[CH]-	Chandhigarh" %}selected{% endif %}>[CH]-	Chandhigarh</option>
+              <option value="[CG]-Chattisgarh" {% if expense.vendor_destination == "[CG]-Chattisgarh" %}selected{% endif %}>[CG]-Chattisgarh</option>
+              <option value="[DD]-Daman Diu" {% if expense.vendor_destination == "[DD]-Daman Diu" %}selected{% endif %}>[DD]-Daman Diu</option>
+              <option value="[DL]-	Delhi" {% if expense.vendor_destination == "[DL]-	Delhi" %}selected{% endif %}>[DL]-	Delhi</option>
+              <option value="[GA]-Goa" {% if expense.vendor_destination == "[GA]-Goa" %}selected{% endif %}>[GA]-Goa</option>
+              <option value="[GJ]-Gujarat" {% if expense.vendor_destination == "[GJ]-Gujarat" %}selected{% endif %}>[GJ]-Gujarat</option>
+              <option value="[HR]-Haryana" {% if expense.vendor_destination == "[HR]-Haryana" %}selected{% endif %}>[HR]-Haryana</option>
+              <option value="[HP]-Himachal Pradesh" {% if expense.vendor_destination == "[HP]-Himachal Pradesh" %}selected{% endif %}>[HP]-Himachal Pradesh</option>
+              <option value="[JK]-Jammu And Kashmir" {% if expense.vendor_destination == "[JK]-Jammu And Kashmir" %}selected{% endif %}>[JK]-Jammu And Kashmir</option>
+              <option value="[JH]-Jharkand" {% if expense.vendor_destination == "[JH]-Jharkand" %}selected{% endif %}>[JH]-Jharkand</option>
+              <option value="[KA]-Karnataka" {% if expense.vendor_destination == "[KA]-Karnataka" %}selected{% endif %}>[KA]-Karnataka</option>
+              <option value="[KL]-Kerala" {% if expense.vendor_destination == "[KL]-Kerala" %}selected{% endif %}>[KL]-Kerala</option>
+              <option value="[LA]-Ladakh" {% if expense.vendor_destination == "[LA]-Ladakh" %}selected{% endif %}>[LA]-Ladakh</option>
+              <option value="[LD]-Lakshadweep" {% if expense.vendor_destination == "[LD]-Lakshadweep" %}selected{% endif %}>[LD]-Lakshadweep</option>
+              <option value="[MP]-Madhyapradesh" {% if expense.vendor_destination == "[MP]-Madhyapradesh" %}selected{% endif %}>[MP]-Madhyapradesh</option>
+              <option value="[MH]-Maharashtra" {% if expense.vendor_destination == "[MH]-Maharashtra" %}selected{% endif %}>[MH]-Maharashtra</option>
+              <option value="[MN]-Manipur" {% if expense.vendor_destination == "[MN]-Manipur" %}selected{% endif %}>[MN]-Manipur</option>
+              <option value="[ML]-Meghalaya" {% if expense.vendor_destination == "[ML]-Meghalaya" %}selected{% endif %}>[ML]-Meghalaya</option>
+              <option value="[MZ]-Mizoram" {% if expense.vendor_destination == "[MZ]-Mizoram" %}selected{% endif %}>[MZ]-Mizoram</option>
+              <option value="[NL]-Nagaland" {% if expense.vendor_destination == "[NL]-Nagaland" %}selected{% endif %}>[NL]-Nagaland</option>
+              <option value="[OD]-Odisha" {% if expense.vendor_destination == "[OD]-Odisha" %}selected{% endif %}>[OD]-Odisha</option>
+              <option value="[PY]-Puducherry" {% if expense.vendor_destination == "[PY]-Puducherry" %}selected{% endif %}>[PY]-Puducherry</option>
+              <option value="[PB]-Punjab" {% if expense.vendor_destination == "[PB]-Punjab" %}selected{% endif %}>[PB]-Punjab</option>
+              <option value="[RL]-Rajasthan" {% if expense.vendor_destination == "[RL]-Rajasthan" %}selected{% endif %}>[RL]-Rajasthan</option>
+              <option value="[SK]-Sikkim" {% if expense.vendor_destination == "[SK]-Sikkim" %}selected{% endif %}>[SK]-Sikkim</option>
+              <option value="[TN]-Tamilnadu" {% if expense.vendor_destination == "[TN]-Tamilnadu" %}selected{% endif %}>[TN]-Tamilnadu</option>
+              <option value="[TS]-Telenghana" {% if expense.vendor_destination == "[TS]-Telenghana" %}selected{% endif %}>[TS]-Telenghana</option>
+              <option value="[TR]-Tripura" {% if expense.vendor_destination == "[TR]-Tripura" %}selected{% endif %}>[TR]-Tripura</option>
+              <option value="[UP]-Uttar Pradesh" {% if expense.vendor_destination == "[UP]-Uttar Pradesh" %}selected{% endif %}>[UP]-Uttar Pradesh</option>
+              <option value="[UK]-Utharakhand" {% if expense.vendor_destination == "[UK]-Utharakhand" %}selected{% endif %}>[UK]-Utharakhand</option>
+              <option value="[WB]-West Bengal" {% if expense.vendor_destination == "[WB]-West Bengal" %}selected{% endif %}>[WB]-West Bengal</option>
+              <option value="[OT]-Other Territory" {% if expense.vendor_destination == "[OT]-Other Territory" %}selected{% endif %}>[OT]-Other Territory</option>
           </select>
             </select>
       </div>
     </div>
+                <!-- Customer Name -->
+                <div class="form-group row">
+                  <label for="customer-list" class="col-sm-3 col-form-label">Customer Name</label>
+                  <div class="col-sm-6">
+                      <div class="input-group">
+                          <input type="hidden" value="{{ expense.customer.id }}" id="hid">
+                          <select name="customername" id="customer-list" class="form-control bg-white text-dark">
+                              {% for c in customers %}
+                                  <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
+                              {% endfor %}
+                          </select>
+                          <div class="input-group-append">
+                              <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newcustomer" style="height:38px;">Add new customer</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+      
+              <!-- Customer EmailId -->
+              <div class="form-group row">
+                  <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
+                  <div class="col-sm-6">
+                      <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}">
+                  </div>
+              </div>
+              <div class="form-group row mt-4"  style="display:block;">
+                <label class="col-sm-3 col-form-label">Customer GST Treatment</label>
+                <div class="col-sm-6">
+                  <input type="text" name="cu_gst_trt" id="cust_gst_tr" class="form-control  bg-white text-dark" style=" width: 555px;color:black;margin-left:278px;margin-top:-25px;" value="{{ expense.cust_gsttreatment }}">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="destination" class="col-sm-3 col-form-label">Vendor Destination of Supply</label>
+                <div class="col-sm-6">
+                    <select name="c_destination" id="c_destination" class="form-control bg-white text-dark">
+                    {% comment %} <select name="destination" id="destination" class="form-control bg-white text-dark" style="margin-left: 6px; width: 547px;color:black;"> {% endcomment %}
+                      <option value="{{expense.cust_placeofsupply}}">{{expense.cust_placeofsupply}}</option>
+                      <option value="[AN]-Andaman And Nicobar Islands" {% if expense.cust_placeofsupply == "[AN]-Andaman And Nicobar Islands" %}selected{% endif %}>[AN]-Andaman And Nicobar Islands</option>
+                      <option value="[AD]-Andhra Pradesh" {% if expense.cust_placeofsupply == "[AD]-Andhra Pradesh" %}selected{% endif %}>[AD]-Andhra Pradesh</option>
+                      <option value="[AR]-Arunachal Pradesh" {% if expense.cust_placeofsupply == "[AR]-Arunachal Pradesh" %}selected{% endif %}>[AR]-Arunachal Pradesh</option>
+                      <option value="[AS]-Assam" {% if expense.cust_placeofsupply == "[AS]-Assam" %}selected{% endif %}>[AS]-Assam</option>
+                      <option value="[BR]-Bihar" {% if expense.cust_placeofsupply == "[BR]-Bihar" %}selected{% endif %}>[BR]-Bihar</option>
+                      <option value="[CH]-	Chandhigarh" {% if expense.cust_placeofsupply == "[CH]-	Chandhigarh" %}selected{% endif %}>[CH]-	Chandhigarh</option>
+                      <option value="[CG]-Chattisgarh" {% if expense.cust_placeofsupply == "[CG]-Chattisgarh" %}selected{% endif %}>[CG]-Chattisgarh</option>
+                      <option value="[DD]-Daman Diu" {% if expense.cust_placeofsupply == "[DD]-Daman Diu" %}selected{% endif %}>[DD]-Daman Diu</option>
+                      <option value="[DL]-	Delhi" {% if expense.cust_placeofsupply == "[DL]-	Delhi" %}selected{% endif %}>[DL]-	Delhi</option>
+                      <option value="[GA]-Goa" {% if expense.cust_placeofsupply == "[GA]-Goa" %}selected{% endif %}>[GA]-Goa</option>
+                      <option value="[GJ]-Gujarat" {% if expense.cust_placeofsupply == "[GJ]-Gujarat" %}selected{% endif %}>[GJ]-Gujarat</option>
+                      <option value="[HR]-Haryana" {% if expense.cust_placeofsupply == "[HR]-Haryana" %}selected{% endif %}>[HR]-Haryana</option>
+                      <option value="[HP]-Himachal Pradesh" {% if expense.cust_placeofsupply == "[HP]-Himachal Pradesh" %}selected{% endif %}>[HP]-Himachal Pradesh</option>
+                      <option value="[JK]-Jammu And Kashmir" {% if expense.cust_placeofsupply == "[JK]-Jammu And Kashmir" %}selected{% endif %}>[JK]-Jammu And Kashmir</option>
+                      <option value="[JH]-Jharkand" {% if expense.cust_placeofsupply == "[JH]-Jharkand" %}selected{% endif %}>[JH]-Jharkand</option>
+                      <option value="[KA]-Karnataka" {% if expense.cust_placeofsupply == "[KA]-Karnataka" %}selected{% endif %}>[KA]-Karnataka</option>
+                      <option value="[KL]-Kerala" {% if expense.cust_placeofsupply == "[KL]-Kerala" %}selected{% endif %}>[KL]-Kerala</option>
+                      <option value="[LA]-Ladakh" {% if expense.cust_placeofsupply == "[LA]-Ladakh" %}selected{% endif %}>[LA]-Ladakh</option>
+                      <option value="[LD]-Lakshadweep" {% if expense.cust_placeofsupply == "[LD]-Lakshadweep" %}selected{% endif %}>[LD]-Lakshadweep</option>
+                      <option value="[MP]-Madhyapradesh" {% if expense.cust_placeofsupply == "[MP]-Madhyapradesh" %}selected{% endif %}>[MP]-Madhyapradesh</option>
+                      <option value="[MH]-Maharashtra" {% if expense.cust_placeofsupply == "[MH]-Maharashtra" %}selected{% endif %}>[MH]-Maharashtra</option>
+                      <option value="[MN]-Manipur" {% if expense.cust_placeofsupply == "[MN]-Manipur" %}selected{% endif %}>[MN]-Manipur</option>
+                      <option value="[ML]-Meghalaya" {% if expense.cust_placeofsupply == "[ML]-Meghalaya" %}selected{% endif %}>[ML]-Meghalaya</option>
+                      <option value="[MZ]-Mizoram" {% if expense.cust_placeofsupply == "[MZ]-Mizoram" %}selected{% endif %}>[MZ]-Mizoram</option>
+                      <option value="[NL]-Nagaland" {% if expense.cust_placeofsupply == "[NL]-Nagaland" %}selected{% endif %}>[NL]-Nagaland</option>
+                      <option value="[OD]-Odisha" {% if expense.cust_placeofsupply == "[OD]-Odisha" %}selected{% endif %}>[OD]-Odisha</option>
+                      <option value="[PY]-Puducherry" {% if expense.cust_placeofsupply == "[PY]-Puducherry" %}selected{% endif %}>[PY]-Puducherry</option>
+                      <option value="[PB]-Punjab" {% if expense.cust_placeofsupply == "[PB]-Punjab" %}selected{% endif %}>[PB]-Punjab</option>
+                      <option value="[RL]-Rajasthan" {% if expense.cust_placeofsupply == "[RL]-Rajasthan" %}selected{% endif %}>[RL]-Rajasthan</option>
+                      <option value="[SK]-Sikkim" {% if expense.cust_placeofsupply == "[SK]-Sikkim" %}selected{% endif %}>[SK]-Sikkim</option>
+                      <option value="[TN]-Tamilnadu" {% if expense.cust_placeofsupply == "[TN]-Tamilnadu" %}selected{% endif %}>[TN]-Tamilnadu</option>
+                      <option value="[TS]-Telenghana" {% if expense.cust_placeofsupply == "[TS]-Telenghana" %}selected{% endif %}>[TS]-Telenghana</option>
+                      <option value="[TR]-Tripura" {% if expense.cust_placeofsupply == "[TR]-Tripura" %}selected{% endif %}>[TR]-Tripura</option>
+                      <option value="[UP]-Uttar Pradesh" {% if expense.cust_placeofsupply == "[UP]-Uttar Pradesh" %}selected{% endif %}>[UP]-Uttar Pradesh</option>
+                      <option value="[UK]-Utharakhand" {% if expense.cust_placeofsupply == "[UK]-Utharakhand" %}selected{% endif %}>[UK]-Utharakhand</option>
+                      <option value="[WB]-West Bengal" {% if expense.cust_placeofsupply == "[WB]-West Bengal" %}selected{% endif %}>[WB]-West Bengal</option>
+                      <option value="[OT]-Other Territory" {% if expense.cust_placeofsupply == "[OT]-Other Territory" %}selected{% endif %}>[OT]-Other Territory</option>
+                  </select>
+                    </select>
+              </div>
+            </div>
+
+      
     <div class="form-group row">
       <label for="tax1" class="col-sm-3 col-form-label">Tax</label>
       <div class="col-sm-6">
@@ -330,34 +395,24 @@
               </div>
           </div><br>
   
-          <!-- Customer Name -->
-          <div class="form-group row">
-              <label for="customer-list" class="col-sm-3 col-form-label">Customer Name</label>
-              <div class="col-sm-6">
-                  <div class="input-group">
-                      <input type="hidden" value="{{ expense.customer.id }}" id="hid">
-                      <select name="customername" id="customer-list" class="form-control bg-white text-dark">
-                          {% for c in customers %}
-                              <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
-                          {% endfor %}
-                      </select>
-                      <div class="input-group-append">
-                          <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newcustomer" style="height:38px;">Add new customer</button>
-                      </div>
+
+          <!-- Add a hidden input field for the activation tag with value "active" -->
+          <input type="hidden" name="activation_tag" value="active">
+
+
+          <div class="form-group row mt-4">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Attach a File</label></div>
+              <div class="col-md-6 col-lg-6 col-sm-12 py-5 text-center rounded mt-4">
+                  <div style="width: 100%;background-color: rgba(243, 241, 241, 0.904);height:90px;margin-left:2px;margin-top:-100px;">
+                    <label class="text-black mt-3 pt-3" for="">Attach File(s) to Recurring Expense</label><br>
+
+                    <label for="file-upload" class="btn text-white border-0" style="background-color: rgb(210, 132, 30);">
+                      <i class="fas fa-upload text-white"></i> Upload File
+                    </label>
+                    <input class="pb-3" id="file-upload" type="file" name="file" style="display:none;">
                   </div>
               </div>
           </div>
-  
-          <!-- Customer EmailId -->
-          <div class="form-group row">
-              <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
-              <div class="col-sm-6">
-                  <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}">
-              </div>
-          </div>
-  
-          <!-- Add a hidden input field for the activation tag with value "active" -->
-          <input type="hidden" name="activation_tag" value="active">
   
           <!-- Submit Buttons -->
           <div class="form-group row">
@@ -401,7 +456,7 @@
                   <input type="text" class="form-control text-dark bg-light" id="repeats_input" name="repeatname" required>      
                 </div>
   
-               
+              
   
               </div>
               
@@ -428,6 +483,31 @@
       </div>
     </div>  
   </div>  
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+        $('#customer-list').change(function () {
+            var customer_id = $(this).val();
+            if (customer_id) {
+                // Make an AJAX request to get the customer's email
+                $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
+                    $('#email').val(data.email);
+                });
+
+                // Make an AJAX request to get the customer's GST treatment
+                $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
+                    $('#cust_gst_tr').val(data.gst_trtmnt);
+                    $('#c_destination').val(data.pos)
+                });
+            }
+        });
+    });
+</script>
+
+
   
   <script>
     $(document).ready(function () {
@@ -517,7 +597,7 @@
           var taxSelect = document.getElementById("tax1"); // Assuming you want to change the first tax dropdown
           
           // Hide all options first
-         
+        
           if (selectedOption === "[KL]-Kerala") {
             // Show GST options and hide IGST options
             var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
@@ -572,7 +652,7 @@
         }
     });
 </script>
-     {% endcomment %}
+    {% endcomment %}
 
 
 
@@ -625,7 +705,7 @@
           // Rest of your JavaScript code...
       });
       </script>
-       
+      
       
       
       
@@ -635,8 +715,8 @@
 
 
     
-   
-   
+  
+  
 <div class="modal fade" id="newAccountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="true">
   <!-- Modal content here -->
   <div class="modal-dialog modal-xl">
@@ -682,7 +762,7 @@
                   <option value="other Income">Other Income</option>
                 
                 
-                 
+                
                 </select>
               </div>
               <div class="form-group col-md-6">
@@ -1108,7 +1188,7 @@ function closeForm() {
               </div>       
             </div>
 
-           
+          
             <div class="row">
               <div class="col-md-3 mt-2">
                 <label for="v_pan">PAN Number</label>
@@ -1196,7 +1276,7 @@ function closeForm() {
               <div class="col-md-6 mt-2">
                 <div class="d-flex">
                   <select class="form-control text-dark bg-light" id="paymentTermsDropdown" name="v_terms" required>
-                   
+                  
                     {% for p in payments %}
                     <option value="{{p.id}}">{{p.Terms}}</option>
                     {% endfor %}
@@ -1508,7 +1588,7 @@ function addressSame() {
 }
 </script>
 
- 
+
     <script>
         $(document).ready(function() {
             $("#vendorSave").on("click", function(event) {
@@ -1633,7 +1713,7 @@ function addressSame() {
               url: "{% url 'get_customer_namess' %}", // Change to the actual URL
               type: "GET",
               success: function(data) {
-               
+              
                 var expense=$("#hid").val()
                 console.log(expense )
                 customerListSelect.empty();
@@ -1703,7 +1783,7 @@ function addressSame() {
 
 
 
- <script>
+<script>
   function validateGSTNumber(gstNumber) {
     // Regular expression to validate GST number
     var gstRegex = /^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$/;
@@ -1872,7 +1952,7 @@ function addressSame() {
 
 
 
- <script>
+<script>
   function validateHSN(input) {
     const hsnValue = input.value.trim();
     const hsnError = document.getElementById('hsn-error');
@@ -1895,10 +1975,10 @@ function addressSame() {
 }
 
   </script>
- 
+
 
   
- <script>
+<script>
   function addressSame() {
       const billingStreet = document.getElementById("vstreet").value;
       const billingCity = document.getElementById("vcity").value;
@@ -1930,7 +2010,7 @@ function addressSame() {
   </script>
   
   
-     <script>
+    <script>
         $(document).ready(function() {
             $("#vendorSave").on("click", function(event) {
                 event.preventDefault();
@@ -1982,7 +2062,7 @@ function addressSame() {
             <div class="card p-3 m-3">
               <form action=" " method="post" class="needs-validation" novalidate autocomplete="off" id="customerForm">
                 {% csrf_token %}
-     
+    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="">Customer Type</label><br>
@@ -2062,7 +2142,7 @@ function addressSame() {
                   </div>          
                 </div>
     
-           
+          
                 <hr>
                 <center><h4 class="text-uppercase mb-3"><b>Other Details</b></h4></center>
                 <div class="row mt-5">
@@ -2147,7 +2227,7 @@ function addressSame() {
                 </div>
                 
     
-                 
+                
     
     
                 <div class="row">
@@ -2552,17 +2632,17 @@ function addressSame() {
     </div> 
     
 
-   
   
   
   
-
   
 
+  
 
-   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
 
   
 {% endblock %}
