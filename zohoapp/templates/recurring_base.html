@@ -4,6 +4,8 @@
 {% comment %} <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> {% endcomment %}
 <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 <style>
     .button-container {
@@ -129,9 +131,10 @@
                 <div class="dropdown">
                     <button type="button" id="btnGroupDrop2" class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown" style="height: 40px; margin-left: 20px;">Sort</button>
                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
-                        <a class="dropdown-item" href="#" data-sort="Profile">All</a>
+                    
                         <a class="dropdown-item" href="#" data-sort="Vendor">Vendor</a>
-                        <a class="dropdown-item" href="#" data-sort="Customer">Expense</a>
+                        <a class="dropdown-item" href="#" data-sort="Expense Account">Expense Account</a>
+                        <a class="dropdown-item" href="#" data-sort="All">All</a>
                     </div>
                 </div>
             </div>
@@ -140,15 +143,16 @@
                 
                 
                 <div class="dropdown">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-solid fa-filter" style="font-size: 17px;"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <a class="dropdown-item" href="#" data-sort="Profile">Profile</a>
-                        <a class="dropdown-item" href="#" data-sort="Vendor">Vendor</a>
-                        <a class a="dropdown-item" href="#" data-sort="Customer">Customer</a>
-                        <a class="dropdown-item" href="#" data-sort="All">All</a>
+                    <a class="btn text-center px-4 pt-2 btn-outline-warning" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    role="button" ><i class="fa fa-filter"></i>
+                    </a>
+                    <div class="dropdown-menu ">
+                        <a class="dropdown-item dropdown-filter">All</a>
+                        <a class="dropdown-item dropdown-filter">Save</a>
+                        <a class="dropdown-item dropdown-filter">Draft</a> 
                     </div>
+                       
+                    
                 </div>
                 <button type="button" class="btn btn-outline-warning" style="width: 100px; margin-left: 20px;" onclick="window.location.href='{% url 'recurringhome' %}'">+New</button>
             </div>
@@ -159,16 +163,15 @@
             <table class="table table-bordered" id="dataTable">
                 <thead class="thead-dark">
                     <tr>
-                        
-                        <th id="profileNameHeader">Profile Name</th>
                         <th>Start Date</th>
+                        <th id="profileNameHeader">Profile Name</th>
+                        <th id="expenseAccountHeader">Expense Account</th>
                         <th id="vendorNameHeader">Vendor</th>
-                        <th>Vendor EmailId </th>
-                        <th id="customerNameHeader">Customer</th>
-                        <th>Customer EmailId </th>
+                        <th>Paid Through</th>
                         <th>Expense Type</th>
-
+                        <th id="customerNameHeader">Customer</th>
                         <th>Amount</th>
+                        <th >Status</th>
                         
                         {% comment %} <th>Vendor GST Treatment</th>
                         
@@ -181,21 +184,26 @@
                 
                 <tbody>
                     {% for e in expenses %}
-                    <tr class="text-light">
-                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.profile_name }}</a></td>
+                    <tr class="text-light" data-status="{{ e.status }}">
+                        
                         <td><a href="{% url 'show_recurring' e.id %}">{{ e.start_date }}</a></td>
+                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.profile_name }}</a></td>
+                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.expense_account.accountName }}</a></td>
                         <td><a href="{% url 'show_recurring' e.id %}">{{ e.vendor.first_name }} {{ e.vendor.last_name }}</a></td>
-                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.vendor.vendor_email }}</a></td>
-                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.customer.customerName }}</a></td>
-                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.customeremail }}</a></td>
-
-                        {% comment %} <td>{{ e.gst_treatment }}</td> {% endcomment %}
+                        
+                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.paidthrough }}</a></td>
                         <td><a href="{% url 'show_recurring' e.id %}">{{ e.expense_type }}</a></td>
+                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.customer.customerName }}</a></td>
+                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.amount }}</td>
+                        <td><a href="{% url 'show_recurring' e.id %}">{{ e.status }}</td>
+                      
+                        {% comment %} <td>{{ e.gst_treatment }}</td> {% endcomment %}
+                     
                        
                         {% comment %} <td>{{ e.ends_on }}</td>
                         <td>{{ e.notes }}</td>
                         {% endcomment %}
-                         <td><a href="{% url 'show_recurring' e.id %}">{{ e.amount }}</td>
+                        
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -251,50 +259,46 @@
                     </div>
                 </div>
             </div>
-        </div
-   
+        </div>
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-
-
+<script>
+    $(document).ready(function() {
+        $(".dropdown-filter").click(function() {
+            var selectedItem = $(this).text().trim();
+            console.log("Selected Item: " + selectedItem);
+    
+            if (selectedItem === 'Save' || selectedItem === 'Draft') {
+                filterResults(selectedItem);
+            } else {
+                TableDataBind(); // Show all data when "All" is selected
+            }
+        });
+    });
+    
+    function filterResults(status) {
+        // Loop through each row in the table and check the 'data-status' attribute
+        $('#dataTable tbody tr').each(function () {
+            var rowStatus = $(this).data('status');
+    
+            if (status === 'All' || rowStatus === status) {
+                $(this).show(); // Show rows that match the selected status
+            } else {
+                $(this).hide(); // Hide rows that don't match
+            }
+        });
+    }
+    
+    function TableDataBind() {
+        // Show all rows by resetting the visibility of all rows
+        $('#dataTable tbody tr').show();
+    }
+    
+</script>
+    
 <script>
     $(document).ready(function () {
         var originalTable = $('#dataTable').clone(); // Clone the original table on page load
-
-        // Function to remove salutations and sort items by name
-        function sortByCustomerName(columnIndex) {
-            var rows = $('#dataTable tbody tr').get();
-            rows.sort(function (a, b) {
-                var keyA = $(a).find('td').eq(columnIndex).text().toUpperCase().replace(/(Ms|Mr|Dr)\.\s+/i, '');
-                var keyB = $(b).find('td').eq(columnIndex).text().toUpperCase().replace(/(Ms|Mr|Dr)\.\s+/i, '');
-                if (keyA < keyB) return -1;
-                if (keyA > keyB) return 1;
-                return 0;
-            });
-            $.each(rows, function (index, row) {
-                $('#dataTable tbody').append(row);
-            });
-        }
-
-        // Function to sort items by profile name
-        function sortByProfileName(columnIndex) {
-            var rows = $('#dataTable tbody tr').get();
-            rows.sort(function (a, b) {
-                var keyA = $(a).find('td').eq(columnIndex).text().toUpperCase();
-                var keyB = $(b).find('td').eq(columnIndex).text().toUpperCase();
-                if (keyA < keyB) return -1;
-                if (keyA > keyB) return 1;
-                return 0;
-            });
-            $.each(rows, function (index, row) {
-                $('#dataTable tbody').append(row);
-            });
-        }
 
         // Function to sort items by vendor name
         function sortByVendorName(columnIndex) {
@@ -311,15 +315,27 @@
             });
         }
 
+        function sortByExpenseAccount(columnIndex) {
+            var rows = $('#dataTable tbody tr').get();
+            rows.sort(function (a, b) {
+                var keyA = $(a).find('td').eq(columnIndex).text().toUpperCase();
+                var keyB = $(b).find('td').eq(columnIndex).text().toUpperCase();
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+                return 0;
+            });
+            $.each(rows, function (index, row) {
+                $('#dataTable tbody').append(row);
+            });
+        }
+
         // Event handler for the "Filter" dropdown
         $('.dropdown-item').on('click', function () {
             var sortType = $(this).data('sort');
-            if (sortType === 'Profile') {
-                sortByProfileName(0); // Sort by Profile Name (first column)
-            } else if (sortType === 'Vendor') {
-                sortByVendorName(2); // Sort by Vendor (third column)
-            } else if (sortType === 'Customer') {
-                sortByCustomerName(4); // Sort by Customer Name (fifth column) while ignoring salutations
+            if (sortType === 'Vendor') {
+                sortByVendorName(3);
+            } else if (sortType === 'Expense Account') {
+                sortByExpenseAccount(2);
             } else if (sortType === 'All') {
                 // Reset the table to its original order
                 $('#dataTable').replaceWith(originalTable.clone());
@@ -327,6 +343,8 @@
         });
     });
 </script>
+
+
 
 <script>
     // Function to handle the search

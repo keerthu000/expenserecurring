@@ -366,20 +366,19 @@
                         </div>
 
                         <div class="col-md-2 mt-2 mx-1">
-                            <a   id="sort-button"  class="btn text-center btn-primary bi bi-funnel px-3 py-1" data-bs-toggle="dropdown"
-                                role="button"></a>
-                            {% comment %} <div class="dropdown-menu " style="z-index: 1;">
-                                 <a class="dropdown-item" href="{% url 'view_custasc' recur_bill.id  %}">Customer A-Z</a>
-                                <a class="dropdown-item" href="{% url 'view_custdesc' recur_bill.id %}">Customer Z-A</a>
-                                <a class="dropdown-item" href="{% url 'view_vendorasc' recur_bill.id %}">Vendor A-Z</a>
-                                <a class="dropdown-item" href="{% url 'view_vendordesc' recur_bill.id %}">Vendor Z-A</a>
-                                <a class="dropdown-item" href="{% url 'view_profileasc' recur_bill.id %}">Profile A-Z</a>
-                                <a class="dropdown-item" href="{% url 'view_profiledesc' recur_bill.id %}">Profile Z-A</a>
-
-                            </div> {% endcomment %}
+                            {% comment %} <a   id="sort-button"  class="btn text-center btn-primary bi bi-funnel px-3 py-1" data-bs-toggle="dropdown" {% endcomment %}
+                                {% comment %} role="button"></a> {% endcomment %}
+                                <a class="btn text-center px-3 pt-2 btn-outline-warning status" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    role="button" ><i class="fa fa-filter"></i>
+                    </a>
+                                <div class="dropdown-menu ">
+                                    <a class="dropdown-item dropdown-filter">All</a>
+                                    <a class="dropdown-item dropdown-filter">Save</a>
+                                    <a class="dropdown-item dropdown-filter">Draft</a> 
+                                </div>
                         </div>
                         <div class="col-md-2 mr-4 mt-2">
-                            <a href="{% url 'recurringhome' %}" class="btn btn-primary fa fa-plus px-3 pt-1"
+                            <a href="{% url 'recurringhome' %}" class="btn btn-outline-warning fa fa-plus px-3 pt-2"
                                 role="button">
                             </a>
                         </div>
@@ -401,6 +400,7 @@
                                 <!-- <div class="col-md-1"></div> -->
                                 <div class="col-md-5 mt-3">
                                     <label style="color: rgb(129, 126, 126); font-size: 15px;">₹ {{ e.amount|floatformat:2 }} </label>
+                                    <label style="color: rgb(129, 126, 126); font-size: 15px;">{{ e.status }} </label>
                                 </div>
                             </div>
 
@@ -464,7 +464,7 @@
                         </div>
                         <div class="m-0">
                             <div class="dropdown m-0 p-0">
-                                <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;margin-top:-3.8rem;margin-left:50px;" class="expense-toggle-button btn btn-warning px-2 py-2" href="#" data-expense-id="{{ expense.id }}">{{ expense.active|yesno:"Inactive,active" }}</a>
+                                <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;margin-top:-3.8rem;margin-left:50px;" class="expense-toggle-button btn btn-warning px-2 py-2" href="#" data-expense-id="{{ expense.id }}">{{ expense.activation_tag}}</a>
                             </div>
                         </div>
                         
@@ -1204,6 +1204,32 @@
           }
         }
       </script> {% endcomment %}
+
+
+      <script>
+        $(document).ready(function() {
+            $(".dropdown-item").click(function() {
+                var selectedItem = $(this).text().trim();
+                console.log("Selected Item: " + selectedItem);
+        
+                filterExpenses(selectedItem);
+            });
+        });
+        
+        function filterExpenses(status) {
+            $('.bills a').each(function() {
+                var expenseStatus = $(this).find('.status').text().trim();
+        
+                if (status === 'All' || expenseStatus === status) {
+                    $(this).show(); // Show expenses that match the selected status
+                } else {
+                    $(this).hide(); // Hide expenses that don't match
+                }
+            });
+        }
+        
+    </script>
+        
       <script>
         var currentForm = 0;
         var formIds = ['form1', 'form2', 'form3','form1', 'Template'];

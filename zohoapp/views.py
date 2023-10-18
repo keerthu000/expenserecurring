@@ -2701,7 +2701,7 @@ def recurringhome(request):
     accounts = Account.objects.all()
     account_types = set(Account.objects.values_list('accountType', flat=True))
     repeat_list = repeat_every.objects.all()
-   
+    bank=Bankcreation.objects.filter(user=user_id)
     # repeat=repeat_every.objects.values_list('Terms', flat=True).distinct()
    
     selected_vendor = vendor_table.objects.filter(id=selected_vendor_id).first()
@@ -2709,6 +2709,12 @@ def recurringhome(request):
     customers=customer.objects.filter(user=user_id)
     payments=payment_terms.objects.filter(user=user_id)
     company = company_details.objects.get(user = request.user)
+    last_id = Expense.objects.filter(user=user_id).order_by('-id').values('id').first()
+    if last_id:
+        last_id = last_id['id']
+        next_no = last_id+1
+    else:
+        next_no = 1
     
     return render(request, 'recurring_home.html', {
         'vendors': vendors,
@@ -2721,14 +2727,16 @@ def recurringhome(request):
         'payments':payments,
         'company':company,
         'repeat_list':repeat_list,
-        
+        'bank':bank,
+        'num':next_no
     })
 
 @login_required(login_url='login')
 def add_expense(request):
     if request.method == 'POST':
+        print('savebutton click')
         # Retrieve form data
-        
+        userId=request.user.id
         profile_name = request.POST['profile_name']
         repeatevery = request.POST['repeat_every']
         repeat=repeat_every.objects.filter(id=repeatevery).first()
@@ -2736,7 +2744,7 @@ def add_expense(request):
         expense_account_id  = request.POST['expense_account']
         expense_account = Account.objects.filter(pk=expense_account_id).first()
 
-
+        refrenc=request.POST['refrnsid']
 
         expense_type = request.POST['expense_type']
           
@@ -2750,25 +2758,17 @@ def add_expense(request):
         gst_treatment=request.POST['gst_trt_inp']
         gst = request.POST.get('gstin_inp')
         vmail=request.POST['vmail']
-        destination = request.POST['destination']
+        vdestination = request.POST['destination']
         tax = request.POST['tax[]']
         notes = request.POST['notes']
         customer_id = request.POST['customername']
         customer_obj = get_object_or_404(customer, pk=customer_id)
-        
+        cust_gsttreatmnt=request.POST['cu_gst_trt']
         custemail=request.POST.get('mail')
-
+        cust_pos=request.POST['c_destination']
         # Handle the ends_on field
-        
-        never_expire = request.POST.get('neverExp')
-        
-        if never_expire == '1':
-           
-            endson = None            
-        else  :
-           endson = request.POST.get('ends_on')
-        
-        userId=request.user.id
+        file=request.FILES.get('file')
+       
         udata=User.objects.get(id=userId)
        
         # Create and save the Expense instance
@@ -2776,8 +2776,9 @@ def add_expense(request):
             profile_name=profile_name,
             repeatevery=repeat,
             start_date=start_date,
-            ends_on=endson,
+           
             expense_account=expense_account,
+            refrenceid=refrenc,
             expense_type=expense_type,
             hsn=hsn,
             sac=sac,
@@ -2787,14 +2788,96 @@ def add_expense(request):
             vendor=vendor,
             gst_treatment=gst_treatment,
             gst=gst,
-            destination=destination,
+            vendor_destination=vdestination,
             tax=tax,
             notes=notes,
             customer= customer_obj,
             customeremail=custemail,
+            cust_gsttreatment=cust_gsttreatmnt,
+            cust_placeofsupply=cust_pos,
             vendormail= vmail,
-            activation_tag="active", # Set the activation_tag to "active"
+            document=file,
+            activation_tag="Active", # Set the activation_tag to "active"
+            status='Save',
+           
+            user=udata,
+            
+        )
+        expense.save()
+
+        return redirect('recurringbase')
+    else:
+       
+        return render(request, 'recurring_home.html')
+def draft_expense(request):
+    if request.method == 'POST':
+        print('draftbutton click')
+        # Retrieve form data
+        userId=request.user.id
+        profile_name = request.POST['profile_name']
+        repeatevery = request.POST['repeat_every']
+        repeat=repeat_every.objects.filter(id=repeatevery).first()
+        start_date = request.POST['start_date']
+        expense_account_id  = request.POST['expense_account']
+        expense_account = Account.objects.filter(pk=expense_account_id).first()
+
+        refrenc=request.POST['refrnsid']
+
+        expense_type = request.POST['expense_type']
+          
+        hsn = request.POST['goods_label']
+        sac = request.POST['services_label']
+        amount = request.POST['amount']
+        currency = request.POST['currency']
+        paidthrough = request.POST['paidthrough']
+        vendor_id = request.POST['vendor']
+        vendor = get_object_or_404(vendor_table, pk=vendor_id)
+        gst_treatment=request.POST['gst_trt_inp']
+        gst = request.POST.get('gstin_inp')
+        vmail=request.POST['vmail']
+        vdestination = request.POST['destination']
+        tax = request.POST['tax[]']
+        notes = request.POST['notes']
+        customer_id = request.POST['customername']
+        customer_obj = get_object_or_404(customer, pk=customer_id)
+        cust_gsttreatmnt=request.POST['cu_gst_trt']
+        custemail=request.POST.get('mail')
+        cust_pos=request.POST['c_destination']
+        # Handle the ends_on field
+        file=request.FILES.get('file')
+       
+        udata=User.objects.get(id=userId)
+       
+        # Create and save the Expense instance
+        expense = Expense(
+            profile_name=profile_name,
+            repeatevery=repeat,
+            start_date=start_date,
+           
+            expense_account=expense_account,
+            refrenceid=refrenc,
+            expense_type=expense_type,
+            hsn=hsn,
+            sac=sac,
+            amount=amount,
+            currency=currency,
+            paidthrough=paidthrough,
+            vendor=vendor,
+            gst_treatment=gst_treatment,
+            gst=gst,
+            vendor_destination=vdestination,
+            tax=tax,
+            notes=notes,
+            customer= customer_obj,
+            customeremail=custemail,
+            cust_gsttreatment=cust_gsttreatmnt,
+            cust_placeofsupply=cust_pos,
+            vendormail= vmail,
+            document=file,
+            activation_tag="Active", # Set the activation_tag to "active"
+            status='Draft',
             user=udata
+            
         )
         expense.save()
 
@@ -2805,7 +2888,7 @@ def add_expense(request):
 
 def toggle_expense_status(request, expense_id):
     expense = get_object_or_404(Expense, id=expense_id)
-    expense.activation_tag = "inactive" if expense.activation_tag == "active" else "active"
+    expense.activation_tag = "Inactive" if expense.activation_tag == "Active" else "Active"
     expense.save()
     return JsonResponse({'status': expense.activation_tag})
 
@@ -2818,6 +2901,9 @@ def recurringbase(request):
     company = company_details.objects.get(user = request.user)
     
     return render(request, 'recurring_base.html',{'expenses': expenses,'company':company})
+
+
+
 
 
 @login_required(login_url='login')
@@ -2937,7 +3023,7 @@ def edit_expense(request, expense_id):
     payments=payment_terms.objects.all()
     company = company_details.objects.get(user = request.user)
     repeat_list = repeat_every.objects.all()
-    
+    bank=Bankcreation.objects.filter(user=user_id)
     
     
     if request.method == 'POST':
@@ -2981,7 +3067,7 @@ def edit_expense(request, expense_id):
     
     else:
         
-        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments,'company':company,'repeat_list':repeat_list})
+        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments,'company':company,'repeat_list':repeat_list,'bank':bank})
 
         
 @login_required(login_url='login')

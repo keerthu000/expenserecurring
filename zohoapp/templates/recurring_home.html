@@ -143,6 +143,12 @@
             </div>
         </div>
       </div>
+      <div class="form-group row mt-4">
+        <label class="col-sm-3 col-form-label">Refrence Id</label>
+        <div class="col-sm-6">
+          <input type="text" id="refrense" name="refrnsid" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;width:100%" value="EXP00{{num}}">
+        </div>
+      </div>
           <div class="form-group row mt-4">
             <label class="col-sm-3 col-form-label" style="margin-top:8px;">Expense Type</label>
             <div class="col-sm-6" style="display:flex;">
@@ -509,84 +515,44 @@
       </script>
 
       <script>
+        $(document).ready(function(){
+          checkTax();
+        })
         function checkTax() {
           // Get the selected place of supply
           var placeOfSupply = $("#c_destination").val().split(" ").slice(1).join(" ").trim();
-      
+        
           // Get the company's state and convert it to lowercase
           var companyState = $("#state").val().toLowerCase();
-      
+        
           // Convert the placeOfSupply to lowercase for consistent comparison
           placeOfSupply = placeOfSupply.toLowerCase();
-      
+        
           // Get the tax dropdown element
           var taxDropdown = document.getElementById("tax1");
-      
-          // Clear all existing options in the tax dropdown
-          taxDropdown.innerHTML = '';
-      
-          // Create a new array of options based on the conditions
-          var options = [];
-      
+        
+          // Get the optgroup elements inside the tax dropdown
+          
+        
           if (placeOfSupply === "kerala" && companyState === "kerala") {
             // If both company state and customer place of supply are Kerala, add GST options
-            options = [
-              { value: "GST0", label: "0% GST(0%)" },
-              { value: "GST3", label: "3.0% GST(3%)" },
-              { value: "GST5", label: "5.0% GST(5%)" },
-              { value: "GST12", label: "12.0% GST(12%)" },
-              { value: "GST18", label: "18.0% GST(18%)" },
-              { value: "GST28", label: "28.0% GST(28%)" }
-            ];
-          } else {
-            // If any other condition, add IGST options
-            options = [
-              { value: "IGST0", label: "0% IGST(0%)" },
-              { value: "IGST3", label: "3.0% IGST(3%)" },
-              { value: "IGST5", label: "5.0% IGST(5%)" },
-              { value: "IGST12", label: "12.0% IGST(12%)" },
-              { value: "IGST18", label: "18.0% IGST(18%)" },
-              { value: "IGST28", label: "28.0% IGST(28%)" }
-            ];
-          }
-      
-          // Populate the tax dropdown with the new options
-          for (var i = 0; i < options.length; i++) {
-            var option = document.createElement("option");
-            option.value = options[i].value;
-            option.text = options[i].label;
-            taxDropdown.appendChild(option);
-          }
-        };
-      
-      </script>
-      <script>
-        $(document).ready(function(){
-          toggleTaxInput()
-        })
-        function toggleTaxInput() {
-          var destinationSelect = document.getElementById("c_destination");
-          var selectedOption = destinationSelect.options[destinationSelect.selectedIndex].value;
-          
-          var taxSelect = document.getElementById("tax1"); // Assuming you want to change the first tax dropdown
-          
-          // Hide all options first
-        
-          if (selectedOption === "[KL]-Kerala") {
-            // Show GST options and hide IGST options
-            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
-            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            var gstOptgroup = taxDropdown.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxDropdown.querySelector('optgroup[label="IGST"]');
             gstOptgroup.style.display = "block";
             igstOptgroup.style.display = "none";
           } else {
-            // Show IGST options and hide GST options
-            var gstOptgroup = taxSelect.querySelector('optgroup[label="GST"]');
-            var igstOptgroup = taxSelect.querySelector('optgroup[label="IGST"]');
+            // If any other condition, add IGST options
+            var gstOptgroup = taxDropdown.querySelector('optgroup[label="GST"]');
+            var igstOptgroup = taxDropdown.querySelector('optgroup[label="IGST"]');
             gstOptgroup.style.display = "none";
             igstOptgroup.style.display = "block";
           }
-        }
+          
+        };
+        
+      
       </script>
+ 
 
     
       
