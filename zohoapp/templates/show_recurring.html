@@ -366,17 +366,14 @@
                         </div>
 
                         <div class="col-md-2 mt-2 mx-1">
-                            {% comment %} <a   id="sort-button"  class="btn text-center btn-primary bi bi-funnel px-3 py-1" data-bs-toggle="dropdown" {% endcomment %}
-                                {% comment %} role="button"></a> {% endcomment %}
-                                <a class="btn text-center px-3 pt-2 btn-outline-warning status" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                    role="button" ><i class="fa fa-filter"></i>
-                    </a>
-                                <div class="dropdown-menu ">
-                                    <a class="dropdown-item dropdown-filter">All</a>
-                                    <a class="dropdown-item dropdown-filter">Save</a>
-                                    <a class="dropdown-item dropdown-filter">Draft</a> 
-                                </div>
+                            <a class="btn text-center px-3 pt-2 btn-outline-warning status" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button"><i class="fa fa-filter"></i></a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item dropdown-filter" href="" >All</a>
+                                <a class="dropdown-item dropdown-filter"  href="">Save</a>
+                                <a class="dropdown-item dropdown-filter" >Draft</a>
+                            </div>
                         </div>
+                        
                         <div class="col-md-2 mr-4 mt-2">
                             <a href="{% url 'recurringhome' %}" class="btn btn-outline-warning fa fa-plus px-3 pt-2"
                                 role="button">
@@ -435,6 +432,8 @@
                    
                         <a href=" " class="fa fa-file-pdf btns btn_print px-2 py-2" id="toPDF"
                         data-toggle="tooltip" title="PDF" data-section="Template"  ></a>
+
+                        
                         
 
                         
@@ -444,6 +443,12 @@
 
                         <a href="" class="fa fa-envelope btns px-2 py-2" 
                             title="MAIL" data-toggle="modal" data-target="#emails" > </a>
+
+                        <a href="{% url 'covert_to_status' expense.id %}" class=" fa fa-arrows-h btns px-2 py-2"
+                            data-toggle="tooltip" title="CONVERT" > </a>
+                            
+                        
+                            
 
                         
                     </div>
@@ -460,6 +465,7 @@
                                 <a class="dropdown-item" download href=""><i
                                         class="fa fa-download"></i> Download File</a>
                                 {% endif %}
+                               
                             </div>
                         </div>
                         <div class="m-0">
@@ -1206,29 +1212,7 @@
       </script> {% endcomment %}
 
 
-      <script>
-        $(document).ready(function() {
-            $(".dropdown-item").click(function() {
-                var selectedItem = $(this).text().trim();
-                console.log("Selected Item: " + selectedItem);
-        
-                filterExpenses(selectedItem);
-            });
-        });
-        
-        function filterExpenses(status) {
-            $('.bills a').each(function() {
-                var expenseStatus = $(this).find('.status').text().trim();
-        
-                if (status === 'All' || expenseStatus === status) {
-                    $(this).show(); // Show expenses that match the selected status
-                } else {
-                    $(this).hide(); // Hide expenses that don't match
-                }
-            });
-        }
-        
-    </script>
+      
         
       <script>
         var currentForm = 0;
@@ -1251,9 +1235,6 @@
       
       
       
-      
-
-    
     
          <script type="text/javascript">
             $(document).ready(function ($) {
