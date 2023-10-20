@@ -192,7 +192,7 @@
                   <option value="Check">cheque</option>
                   <option value="UPI">UPI</option>
                   {% for b in bank %}
-                  <option value="b.name">{{b.name}}</option>
+                  <option value="{{b.name}}">{{b.name}}</option>
                   {% endfor %}
 
 
@@ -209,7 +209,8 @@
                   <option id="placeholderOption" value="" disabled class="text-dark bg-light" selected>Select a Vendor</option>
                 {% for v in vendors %}
                   
-                  <option value="{{ v.id }}"  data-gst="{{ v.gst_treatment }}" data-pos="{{ v.source_supply }}">{{ v.first_name }} {{ v.last_name }}</option>
+                <option value="{{ v.id }}" data-gst="{{ v.gst_treatment }}" data-pos="{{ v.source_supply }}">{{ v.first_name }} {{ v.last_name }}</option>
+
                 {% endfor %}
               </select>
               <div class="input-group">
@@ -250,7 +251,7 @@
               <select name="destination" id="destination" class="form-control bg-white text-dark" style="margin-left: -4px; width:555px;color:black;">
                 <option disabled selected>Select a Place</option>
                 {% for v in vendors %}
-                <option value="{{v.source_supply}}">{{v.source_supply}}</option>
+                 <option value="{{v.source_supply}}">{{v.source_supply}}</option>
                 <option value="[AN]-Andaman And Nicobar Islands">[AN]-Andaman And Nicobar Islands</option> <option value="[AD]-Andhra Pradesh">[AD]-Andhra Pradesh</option>
                 <option value="[AR]-Arunachal Pradesh">[AR]-Arunachal Pradesh	</option> <option value="[AS]-Assam">[AS]-Assam</option>
                 <option value="[BR]-Bihar">[BR]-Bihar</option> <option value="[CH]-	Chandhigarh">[CH]-	Chandhigarh</option><option value="[CG]-Chattisgarh">[CG]-Chattisgarh</option>
@@ -467,10 +468,11 @@
       
                 $('#vemail').val(data.email);
                 $('#emailid').show();
-      
+                $('#destination').val(data.pos);
                 // Set the selected place of supply in the dropdown
                 var placeOfSupplySelect = $('#destination');
                 placeOfSupplySelect.val(data.pos);
+                
               },
               error: function(error) {
                 console.log('Error fetching data:', error);
@@ -481,6 +483,7 @@
             $('#gst_trt_inp').val('');
             $('#gst_num_inp').val('');
             $('#vemail').val('');
+            $('#destination').val('')
             $('#textboxContainer').hide();
             $('#emailid').hide();
           }
@@ -490,7 +493,34 @@
       });
       
       </script>
+      
 
+
+      <script>
+        $(document).ready(function() {
+          $("#vendorSelect").on("change", function() {
+            var selectedVendorId = $(this).val();
+            if (selectedVendorId) {
+              // Send an Ajax request to your server to retrieve the place of supply
+              $.ajax({
+                url: '/get_vendor_place_of_supply/',  // Replace with your actual URL
+                method: 'GET',
+                data: { vendor: selectedVendorId },
+                success: function(data) {
+                  // Update the "Vendor place of supply" select box with the retrieved information
+                  $("#destination").val(data.source_supply);
+                },
+                error: function(xhr, status, error) {
+                  console.error(error);
+                }
+              });
+            } else {
+              // Handle the case where no vendor is selected
+              $("#destination").val(''); // Clear the value
+            }
+          });
+        });
+        </script>
  
     
       
