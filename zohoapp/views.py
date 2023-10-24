@@ -3189,6 +3189,9 @@ def add_expense(request):
         amount = request.POST['amount']
         currency = request.POST['currency']
         paidthrough = request.POST['paidthrough']
+        cheque_id = request.POST.get('chequeId')
+        upi_number = request.POST.get('upiNumber')
+        bank_account = request.POST.get('bankAccount')
         vendor_id = request.POST['vendor']
         vendor = get_object_or_404(vendor_table, pk=vendor_id)
         gst_treatment=request.POST['gst_trt_inp']
@@ -3221,6 +3224,9 @@ def add_expense(request):
             amount=amount,
             currency=currency,
             paidthrough=paidthrough,
+            cheque_id=cheque_id, 
+            upi_number=upi_number,
+            bank_account=bank_account,
             vendor=vendor,
             gst_treatment=gst_treatment,
             gst=gst,
@@ -3269,6 +3275,9 @@ def draft_expense(request):
         amount = request.POST['amount']
         currency = request.POST['currency']
         paidthrough = request.POST['paidthrough']
+        cheque_id = request.POST.get('chequeId')
+        upi_number = request.POST.get('upiNumber')
+        bank_account = request.POST.get('bankAccount')
         vendor_id = request.POST['vendor']
         vendor = get_object_or_404(vendor_table, pk=vendor_id)
         gst_treatment=request.POST['gst_trt_inp']
@@ -3301,6 +3310,9 @@ def draft_expense(request):
             amount=amount,
             currency=currency,
             paidthrough=paidthrough,
+            cheque_id=cheque_id, 
+            upi_number=upi_number,
+            bank_account=bank_account,
             vendor=vendor,
             gst_treatment=gst_treatment,
             gst=gst,
@@ -3327,6 +3339,39 @@ def draft_expense(request):
 
 
 
+def recurring_expense_draft(request,expense_id):
+   
+    userid = request.user.id
+    company = company_details.objects.get(user=userid)
+    expenses = Expense.objects.filter(user = userid, status = 'Draft')
+    expense = get_object_or_404(Expense, id=expense_id)
+ 
+  
+    context = {
+        'company': company,
+        'expense': expense,
+        'expenses':expenses
+       
+        
+    }
+    return render(request, 'show_recurring.html', context)
+
+
+
+def recurring_expense_save(request,expense_id):
+    userid = request.user.id
+    company = company_details.objects.get(user=userid)
+    expenses = Expense.objects.filter(user = userid, status = 'Save')
+    expense = get_object_or_404(Expense, id=expense_id)
+    
+    
+    context = {
+        'company': company,
+        'expense': expense,
+        'expenses':expenses
+        
+    }
+    return render(request, 'show_recurring.html', context)
 
 
 
@@ -3374,26 +3419,26 @@ def covert_to_status(request, id):
     
     return redirect('show_recurring', id)
 
-def filter_expenses(request, status):
-    userId = request.user.id
-    company = company_details.objects.get(user=userId)
+# def filter_expenses(request, status):
+#     userId = request.user.id
+#     company = company_details.objects.get(user=userId)
 
-    # Check the status values from the dropdown and adjust as needed
-    if status == 'All':
-        expenses = Expense.objects.filter(user=userId)
-    elif status == 'Save':
-        expenses = Expense.objects.filter(user=userId, status='Save')
-    elif status == 'Draft':
-        expenses = Expense.objects.filter(user=userId, status='Draft')
-    else:
-        # Handle other status values or invalid values if needed
-        expenses = Expense.objects.filter(user=userId)
+#     # Check the status values from the dropdown and adjust as needed
+#     if status == 'All':
+#         expenses = Expense.objects.filter(user=userId)
+#     elif status == 'Save':
+#         expenses = Expense.objects.filter(user=userId, status='Save')
+#     elif status == 'Draft':
+#         expenses = Expense.objects.filter(user=userId, status='Draft')
+#     else:
+#         # Handle other status values or invalid values if needed
+#         expenses = Expense.objects.filter(user=userId)
 
-    context = {
-        'company': company,
-        'expenses': expenses,
-    }
-    return render(request, 'show_recurring.html', context)
+#     context = {
+#         'company': company,
+#         'expenses': expenses,
+#     }
+#     return render(request, 'show_recurring.html', context)
 
 
 
@@ -3407,6 +3452,7 @@ def recurringbase(request):
 
 @login_required(login_url='login')
 def show_recurring(request, expense_id):
+    
     userid=request.user.id
     expense = get_object_or_404(Expense, id=expense_id)
     expenses = Expense.objects.filter(user=userid)
@@ -3476,13 +3522,18 @@ def edit_expense(request, expense_id):
         expense.start_date = request.POST.get('start_date')
         
         account_id = request.POST.get('expense_account')
+        
         selected_account = Account.objects.get(id=account_id)
+        expense.expense_account=selected_account
         expense.expense_type = request.POST.get('expense_type')
         expense.hsn = request.POST['goods_label']
         expense.sac = request.POST['services_label']
         expense.amount = request.POST.get('amount')
         expense.currency = request.POST.get('currency')
         expense.paidthrough = request.POST.get('paidthrough')
+        expense.cheque_id=request.POST.get('chequeId')
+        expense.upi_number=request.POST.get('upiNumber')
+        expense.bank_account = request.POST.get('bankAccount')
         expense.vendor_id = request.POST.get('vendor')
         expense.expense_type = request.POST.get('expense_type')
         expense.gst_treatment= request.POST.get('gst_trt_inp')
