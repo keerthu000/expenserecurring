@@ -199,6 +199,27 @@
               </select>
           </div>
           </div>
+          <div class="form-group row mt-4" id="chequeField" style="display: none; ">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Cheque ID</label></div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <input type="text" name="chequeId" id="chequeId" class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;">
+            </div>
+        </div>
+        
+        <div class="form-group row mt-4" id="upiField" style="display: none;">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>UPI Number</label></div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <input type="text" name="upiNumber" id="upiNumber" class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;">
+            </div>
+        </div>
+        
+        <div class="form-group row mt-4" id="bankField" style="display: none;">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Bank Account</label></div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <input type="text" name="bankAccount" id="bankAccount" class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;">
+            </div>
+        </div>
+        
     
 
           <div class="form-group row mt-4">
@@ -406,6 +427,23 @@
           </div>
       </form>
       </div>
+
+
+      <script>
+        var paidthroughSelect = document.getElementById('paidthrough');
+        var chequeField = document.getElementById('chequeField');
+        var upiField = document.getElementById('upiField');
+        var bankField = document.getElementById('bankField');
+    
+        paidthroughSelect.addEventListener('change', function () {
+            var selectedOption = paidthroughSelect.value;
+    
+            chequeField.style.display = (selectedOption === 'Check') ? 'block' : 'none';
+            upiField.style.display = (selectedOption === 'UPI') ? 'block' : 'none';
+            bankField.style.display = (selectedOption !== 'Cash' && selectedOption !== 'Check' && selectedOption !== 'UPI') ? 'block' : 'none';
+        });
+    </script>
+
       <script>
         function saveDialog() {
       
@@ -570,14 +608,22 @@
             var igstOptgroup = taxDropdown.querySelector('optgroup[label="IGST"]');
             gstOptgroup.style.display = "block";
             igstOptgroup.style.display = "none";
+            if (igstOptgroup) {
+              igstOptgroup.remove();
+            }
+            
           } else {
+            
             // If any other condition, add IGST options
             var gstOptgroup = taxDropdown.querySelector('optgroup[label="GST"]');
             var igstOptgroup = taxDropdown.querySelector('optgroup[label="IGST"]');
             gstOptgroup.style.display = "none";
             igstOptgroup.style.display = "block";
+            if (gstOptgroup) {
+              gstOptgroup.remove();
+            }
           }
-          
+         
         };
         
       

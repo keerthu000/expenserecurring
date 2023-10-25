@@ -81,9 +81,12 @@ cursor: pointer
         }
 
         table, th, td, tr, tbody {
-      border: 1px solid black; /* Ensure black borders when printing */
+        border: 1px solid black; /* Ensure black borders when printing */
+        color:black;
         }
-        
+        myTable{
+            color:black;
+        }
     
     .printable-content table {
         margin: 0;
@@ -113,9 +116,7 @@ cursor: pointer
             width: 100%;
             color:black!important;
            padding: 0%!important;
-            
-    }
-
+    
 
 }
       
@@ -323,10 +324,6 @@ cursor: pointer
     });
 </script>
 
-
-
-    
-
 <script>
     $(document).ready(function ($) {
         $(document).on('click', '.btn_print', function (event) {
@@ -376,6 +373,7 @@ cursor: pointer
                         border: 1px solid black;
                         padding: 5px;
                         text-align: center;
+                        width: 10%;
                         /* Adjust column widths as needed */
                     }
                     th#date, td#date {
@@ -407,7 +405,16 @@ cursor: pointer
             // Close the new window after printing
             printWindow.close();
         });
-    });
+    }); 
+
+</script>
+
+    
+
+{% comment %} <script>
+ 
+
+    
      
      
       
@@ -429,7 +436,7 @@ cursor: pointer
 
 
     // calctot(4, 'balance');
-</script>
+</script> {% endcomment %}
 {% comment %} <script>
     function setDate() {
         var startDate = new Date(document.getElementById("in1").value);
