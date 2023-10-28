@@ -124,17 +124,7 @@
         box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
     }
 
-    .form{
-        z-index:999;
-        position:absolute;
-        top:0;
-        left:0; 
-        width:100%;
-        height:100%;
-        padding: 6px 12px;
-        border-top: none;
-         
-    }
+   
 
     td {
         color: rgba(0, 0, 0, 0.5);
@@ -188,7 +178,7 @@
     }
 
     ::-webkit-scrollbar {
-        width: 0.5px;
+        width: 1px;
     }
 
     ::-webkit-scrollbar-track {
@@ -329,33 +319,46 @@
         display: none;
     }
     
-    .heading {
-        text-align: center;
-        color: #333;
-        padding: 10px;
-        background-color: #fff;
-       
-        margin: 0;
+    .form{
+        z-index:999;
+        position:absolute;
+        top:0;
+        left:0; 
+        width:100%;
+        height:100%;
+        padding: 6px 12px;
+        border-top: none;
+         
     }
+
 
 
 
     /* Style for Form 1 */
     #form1 {
-        z-index:9999;
-        {% comment %} margin:5px; {% endcomment %}
-        overflow:none;
-        background-color:#A9A9A9;
        
-        {% comment %} padding: 20px; {% endcomment %}
+        z-index:999;
+        position:absolute;
+        background-color:#A9A9A9;
+        color: #bcd0f7;
+        background: #1A233A;
         
+        visibility:visible;
+       
+        height:700px;
+        width:850px;
+        overflow:hide;
        
     }
     
     /* Style for Form 2 */
     #form2 {
-        background-color: lightgreen;
+        background-color: white;
+       
+        
         font-family: Verdana, sans-serif;
+        height:800px;
+        
     }
     
     /* Style for Form 3 */
@@ -526,9 +529,9 @@
                
                 <div id="Template" class=" print-only page tabcontent p-5 m-3" style="display: block; background-color:azure; visibility:visible;">
                     
-                    <div class="row pt-0 m-0 text-center">
+                    <div class="row pt-0 m-0 text-center"   >
                         <div class="col-4 "></div>
-                        <div class="col-4 ">
+                        <div class="col-4 " >
                             <h4 class="text-uppercase text-dark" > recurring expenses</h4>
                         </div>
                         <div class="col-4 "></div>
@@ -654,375 +657,10 @@
                         
 
                     </section>
-
-                    <div class="form"  id="form1" style="display: none;">
-                        <div class="row pt-0 m-0 text-center">
-                            <div class="col-4 "></div>
-                            <div class="col-4 ">
-                                <h4 class="text-uppercase text-dark heading" style="background-colour:#778899;font-size:20px;"> recurring expenses</h4>
-                            </div>
-                            <div class="col-4 "></div>
-                        </div>
-                        <div class="row extra-info pt-2 mt-3">
-                            <div class="col-1 "></div>
-                            <div class="col-5 ">
-                                <h3 class="text-uppercase" style="color: black;font-family: Arial, sans-serif;"><b>{{company.company_name }}</b></h3>
-                                <p style="color:black;" class="address  mx-2 p-2"> {{company.address}}<br>
-                                    {{company.city}} <br>
-                                    {{company.state}}<br>
-                                    {{company.pincode}}<br>
-                                </p>                    
-                            </div>
-                            <div class="col-1 "></div>
-                            <div class="col-5">
-                                
-                                <section class="d-flex justify-content-between">
-                                    <div class="top-right">
-                                        <div class="graphic-path text-center">
-                                            {% comment %} <h5 class="text-capitalize"  >{{expense.profile_name}}</h5> {% endcomment %}
-                                            <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
-    
-                                        </div>
-                                        <div class="position-relative">
-                                            <p style="color:black;">Start Date : &nbsp <span style="color: black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                                            <p style="color:black;">Due Date : &nbsp <span style="color: black;">{{expense.ends_on|date:'d-m-Y'|default:"Never expire"}}</span></p>
-                                            {% comment %} <p>Term : &nbsp <span style="color: black;">NET {{expense.payment_terms}}</span></p>  {% endcomment %}
-                                        </div>
-                                    </div>
-                                </section>
-    
-                            </div>
-                        </div>
-    
-    
-                        <section class="store-user mt-2">
-                            <div class="col-12">
-                                <div class="row pb-3">
-    
-                                    <div class="col-1 "></div>
-                                    <div class="col-5">
-                                        <p style=" font-size: 18px; font-style: italic; font-weight: 700;color:black;">Bill To,</p>
-                                        <h6  class="mx-3 text-capitalize" style="color: black; ">{{ vendor.salutation}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
-                                        
-                                        {% if expense.gst_treatment != 'unregistered Business' %}
-                                        <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;margin-top:1rem;color:black;">
-                                            {{vendor.gst_number}}</p>
-                                        {% endif %}
-                                        <p  style="margin-left: 15px;margin-top:1.5rem;color:black;">
-                                            {{vendor.vendor_email}}<br>
-                                            {{vendor.bstreet}}<br>
-                                            {{vendor.bcity}}<br>
-                                            {{vendor.bstate}}<br> 
-                                            {{vendor.bpin}}<br> 
-                                        </p>
-                                    </div>
-                                    <div class="col-1"></div>
-                                   
-    
-                                    <div class="col-5">
-                                        <p style=" font-size: 18px; font-family: Arial, sans-serif; font-weight: 700; color:black;">Deliver To,</p>
-                                        
-                                        <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.customerName}}</h6>
-                                        {% if customer.GSTIN != None %}
-                                        <p class=" col-6 mx-1 p-2" style="margin-left: 14px;font-size:12px;margin-top:1rem;color:black;">
-                                            {{customer.GSTIN}}</p>
-                                            {% endif %}
-                                        <p class="address col-6 mx-3 p-2" style="margin-left: -14px;margin-top:-1rem;color:black;">{{customer.customerEmail}}
-                                            {{customer.Address1}} <br>
-                                            
-                                            {{customer.city}}<br>
-                                            {{customer.state}}<br>
-                                            {{customer.zipcode}}<br>
-                                    
-    
-                                            
-                                        </p>
-    
-                                    </div>
-                                </div>
-    
-                            </div>
-                        </section>
-    
-                        <section class="product-area mt-0">
-                            <table class="table ">
-                                <thead style="background-color:burlywood; color: black;">
-                                    <tr>
-                                        <td>#</td>
-                                        <td>Start Date</td>
-                                        <td>Profile Name</td>
-    
-                                        {% comment %} <td>Ends Date</td> {% endcomment %}
-                                    
-                                        {% comment %} <td>Tax</td> {% endcomment %}
-                                        <td>Amount</td>
-                                    </tr>
-                                </thead>
-                                <tbody style=":hover{color: #ddd; background-color: transparent;}">
-    
-                                    {% comment %} {% for b in expense %} {% endcomment %}
-                                    <tr >
-                                        <td>{{ forloop.counter }}</td>
-                                        
-                                        <td>{{expense.start_date}} </td>
-                                        <td>{{expense.profile_name}}</td>
-                                        {% comment %} <td>{{expense.ends_on | default:"Never expire"}}</td> {% endcomment %}
-                                        
-                                        {% comment %} <td>{{expense.tax}}</td> {% endcomment %}
-                                        <td>{{expense.amount}}</td>
-                                    </tr>
-                                    {% comment %} {% endfor %} {% endcomment %}
-    
-                                </tbody>
-                            </table>
-                        </section>
                     
-    
-                    </div>
-                    <div class="form"  id="form2" style="display: none;">
-                        <div class="row pt-0 m-0 text-center">
-                            <div class="col-4 "></div>
-                            <div class="col-4 ">
-                                <h4 class="text-uppercase text-dark" style="font-family: Verdana, sans-serif;"> recurring expenses</h4>
-                            </div>
-                            <div class="col-4 "></div>
-                        </div>
-                        <div class="row extra-info pt-2 mt-3">
-                            <div class="col-1 "></div>
-                            <div class="col-5 ">
-                                <h3 class="text-uppercase" style="color: black;font-family: Verdana, sans-serif;"><b>{{company.company_name }}</b></h3>
-                                <p style="color:black;font-family: Verdana, sans-serif;" class="address text-dark mx-2 p-2"> {{company.address}}<br>
-                                    {{company.city}} <br>
-                                    {{company.state}}<br>
-                                    {{company.pincode}}<br>
-                                </p>                    
-                            </div>
-                            <div class="col-1 "></div>
-                            <div class="col-5">
-                                
-                                <section class="d-flex justify-content-between">
-                                    <div class="top-right">
-                                        <div class="graphic-path text-center">
-                                            {% comment %} <h5 class="text-capitalize"  >{{expense.profile_name}}</h5> {% endcomment %}
-                                            <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
-    
-                                        </div>
-                                        <div class="position-relative">
-                                            <p style="color:black;font-family: Verdana, sans-serif;">Start Date : &nbsp <span style="color: black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                                            <p style="color:black;font-family: Verdana, sans-serif;">Due Date : &nbsp <span style="color: black;">{{expense.ends_on|date:'d-m-Y'|default:"Never expire"}}</span></p>
-                                            {% comment %} <p>Term : &nbsp <span style="color: black;">NET {{expense.payment_terms}}</span></p>  {% endcomment %}
-                                        </div>
-                                    </div>
-                                </section>
-    
-                            </div>
-                        </div>
-    
-    
-                        <section class="store-user mt-2">
-                            <div class="col-12">
-                                <div class="row pb-3">
-    
-                                    <div class="col-1 "></div>
-                                    <div class="col-5">
-                                        <p style=" font-size: 18px; font-style: italic; font-weight: 700;color:black;">Bill To,</p>
-                                        <h6  class="mx-3 text-capitalize" style="color: black;font-family: Verdana, sans-serif; ">{{ vendor.salutation}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
-                                        
-                                        {% if expense.gst_treatment != 'unregistered Business' %}
-                                        <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-family: Verdana, sans-serif;margin-top:1rem;color:black;">
-                                            {{vendor.gst_number}}</p>
-                                        {% endif %}
-                                        <p  style="margin-left: 15px;margin-top:1.5rem;color:black;font-family: Verdana, sans-serif;">
-                                            {{vendor.vendor_email}}<br>
-                                            {{vendor.bstreet}}<br>
-                                            {{vendor.bcity}}<br>
-                                            {{vendor.bstate}}<br> 
-                                            {{vendor.bpin}}<br> 
-                                        </p>
-                                    </div>
-                                    <div class="col-1"></div>
-                                   
-    
-                                    <div class="col-5">
-                                        <p style=" font-size: 18px; font-style: italic; font-weight: 700; color:black;">Deliver To,</p>
-                                        
-                                        <h6  class="mx-2 text-capitalize" style="color: black;font-family: Verdana, sans-serif;">{{customer.customerName}}</h6>
-                                        {% if customer.GSTIN != None %}
-                                        <p class=" col-6 mx-1 p-2" style="margin-left: 14px;font-size:12px;font-style:Arial;margin-top:1rem;color:black;font-family: Verdana, sans-serif;">
-                                            {{customer.GSTIN}}</p>
-                                            {% endif %}
-                                        <p class="address col-6 mx-3 p-2" style="margin-left: -14px;margin-top:-1rem;color:black;font-family: Verdana, sans-serif;">{{customer.customerEmail}}
-                                            {{customer.Address1}} <br>
-                                            
-                                            {{customer.city}}<br>
-                                            {{customer.state}}<br>
-                                            {{customer.zipcode}}<br>
-                                    
-    
-                                            
-                                        </p>
-    
-                                    </div>
-                                </div>
-    
-                            </div>
-                        </section>
-    
-                        <section class="product-area mt-0">
-                            <table class="table ">
-                                <thead style="background-color:burlywood; color: black;">
-                                    <tr>
-                                        <td>#</td>
-                                        <td>Start Date</td>
-                                        <td>Profile Name</td>
-    
-                                        {% comment %} <td>Ends Date</td> {% endcomment %}
-                                    
-                                        {% comment %} <td>Tax</td> {% endcomment %}
-                                        <td>Amount</td>
-                                    </tr>
-                                </thead>
-                                <tbody style=":hover{color: #ddd; background-color: transparent;}">
-    
-                                    {% comment %} {% for b in expense %} {% endcomment %}
-                                    <tr >
-                                        <td>{{ forloop.counter }}</td>
-                                        
-                                        <td>{{expense.start_date}} </td>
-                                        <td>{{expense.profile_name}}</td>
-                                        {% comment %} <td>{{expense.ends_on | default:"Never expire"}}</td> {% endcomment %}
-                                        
-                                        {% comment %} <td>{{expense.tax}}</td> {% endcomment %}
-                                        <td>{{expense.amount}}</td>
-                                    </tr>
-                                    {% comment %} {% endfor %} {% endcomment %}
-    
-                                </tbody>
-                            </table>
-                           <section>
-                    </div>
-                    <div class="form"  id="form3" style="display: none;">
-                        <div class="row pt-0 m-0 text-center">
-                            <div class="col-4 "></div>
-                            <div class="col-4 ">
-                                <h4 class="text-uppercase text-dark" style="font-family: Verdana, sans-serif;"> recurring expenses</h4>
-                            </div>
-                            <div class="col-4 "></div>
-                        </div>
-                        <div class="row extra-info pt-2 mt-3">
-                            <div class="col-1 "></div>
-                            <div class="col-5 ">
-                                <h3 class="text-uppercase" style="color: black;font-family: Verdana, sans-serif;"><b>{{company.company_name }}</b></h3>
-                                <p style="color:black;font-family: Verdana, sans-serif;" class="address text-dark mx-2 p-2"> {{company.address}}<br>
-                                    {{company.city}} <br>
-                                    {{company.state}}<br>
-                                    {{company.pincode}}<br>
-                                </p>                    
-                            </div>
-                            <div class="col-1 "></div>
-                            <div class="col-5">
-                                
-                                <section class="d-flex justify-content-between">
-                                    <div class="top-right">
-                                        <div class="graphic-path text-center">
-                                            {% comment %} <h5 class="text-capitalize"  >{{expense.profile_name}}</h5> {% endcomment %}
-                                            <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
-    
-                                        </div>
-                                        <div class="position-relative">
-                                            <p style="color:black;font-family: Verdana, sans-serif;">Start Date : &nbsp <span style="color: black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                                            <p style="color:black;font-family: Verdana, sans-serif;">Due Date : &nbsp <span style="color: black;">{{expense.ends_on|date:'d-m-Y'|default:"Never expire"}}</span></p>
-                                            {% comment %} <p>Term : &nbsp <span style="color: black;">NET {{expense.payment_terms}}</span></p>  {% endcomment %}
-                                        </div>
-                                    </div>
-                                </section>
-    
-                            </div>
-                        </div>
-    
-    
-                        <section class="store-user mt-2">
-                            <div class="col-12">
-                                <div class="row pb-3">
-    
-                                    <div class="col-1 "></div>
-                                    <div class="col-5">
-                                        <p style=" font-size: 18px; font-style: italic; font-weight: 700;color:black;">Bill To,</p>
-                                        <h6  class="mx-3 text-capitalize" style="color: black;font-family: Verdana, sans-serif; ">{{ vendor.salutation}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
-                                        
-                                        {% if expense.gst_treatment != 'unregistered Business' %}
-                                        <p class=" col-6 mx-1 p-2" style="margin-left: -14px;font-size:12px;font-family: Verdana, sans-serif;margin-top:1rem;color:black;">
-                                            {{vendor.gst_number}}</p>
-                                        {% endif %}
-                                        <p  style="margin-left: 15px;margin-top:1.5rem;color:black;font-family: Verdana, sans-serif;">
-                                            {{vendor.vendor_email}}<br>
-                                            {{vendor.bstreet}}<br>
-                                            {{vendor.bcity}}<br>
-                                            {{vendor.bstate}}<br> 
-                                            {{vendor.bpin}}<br> 
-                                        </p>
-                                    </div>
-                                    <div class="col-1"></div>
-                                   
-    
-                                    <div class="col-5">
-                                        <p style=" font-size: 18px; font-style: italic; font-weight: 700; color:black;">Deliver To,</p>
-                                        
-                                        <h6  class="mx-2 text-capitalize" style="color: black;font-family: Verdana, sans-serif;">{{customer.customerName}}</h6>
-                                        {% if customer.GSTIN != None %}
-                                        <p class=" col-6 mx-1 p-2" style="margin-left: 14px;font-size:12px;font-style:Arial;margin-top:1rem;color:black;font-family: Verdana, sans-serif;">
-                                            {{customer.GSTIN}}</p>
-                                            {% endif %}
-                                        <p class="address col-6 mx-3 p-2" style="margin-left: -14px;margin-top:-1rem;color:black;font-family: Verdana, sans-serif;">{{customer.customerEmail}}
-                                            {{customer.Address1}} <br>
-                                            
-                                            {{customer.city}}<br>
-                                            {{customer.state}}<br>
-                                            {{customer.zipcode}}<br>
-                                    
-    
-                                            
-                                        </p>
-    
-                                    </div>
-                                </div>
-    
-                            </div>
-                        </section>
-    
-                        <section class="product-area mt-0">
-                            <table class="table ">
-                                <thead style="background-color:burlywood; color: black;">
-                                    <tr>
-                                        <td>#</td>
-                                        <td>Start Date</td>
-                                        <td>Profile Name</td>
-    
-                                        {% comment %} <td>Ends Date</td> {% endcomment %}
-                                    
-                                        {% comment %} <td>Tax</td> {% endcomment %}
-                                        <td>Amount</td>
-                                    </tr>
-                                </thead>
-                                <tbody style=":hover{color: #ddd; background-color: transparent;}">
-    
-                                    {% comment %} {% for b in expense %} {% endcomment %}
-                                    <tr >
-                                        <td>{{ forloop.counter }}</td>
-                                        
-                                        <td>{{expense.start_date}} </td>
-                                        <td>{{expense.profile_name}}</td>
-                                        {% comment %} <td>{{expense.ends_on | default:"Never expire"}}</td> {% endcomment %}
-                                        
-                                        {% comment %} <td>{{expense.tax}}</td> {% endcomment %}
-                                        <td>{{expense.amount}}</td>
-                                    </tr>
-                                    {% comment %} {% endfor %} {% endcomment %}
-    
-                                </tbody>
-                            </table>
-                           <section>
-                    </div>
+                    
+                 
+                          
                     
                 </div>
 
@@ -1034,12 +672,11 @@
                 
                
                 
-               
             
                
 
                 <!-- overview -->
-                <div id="Overview" class="  tabcontent  p-5 m-3"  style="overflow-x: hidden; border-top: #ccc double 2px; background-color: burlywood ;border-radius: 5px;display:block;">
+                <div id="Overview" class="  tabcontent  p-5 m-3"  style="overflow-x: hidden; border-top: #ccc double 2px; background-color: burlywood ;border-radius: 1px;display:block;">
 
                     <h3 class="mb-0 mx-5 text-muted" style="color: rgb(161, 195, 226);">{{ company.company_name }}</h3>
                     <center>
@@ -1233,16 +870,196 @@
                 </div>
 
 
+                <div class="form" id="form1" style="display:none;overflow: hidden;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h1>RECURRING EXPENSES</h1>
+                        </div>
+                        <div  style="margin-left: 540px;">
+                            <p style="color:#bcd0f7;">Start Date : &nbsp <span style="color:#bcd0f7;">{{expense.start_date|date:'d-m-Y'}}</span></p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="row mb-4">
+                                <div class="col-sm-6" style="margin-left: 140px;">
+                                    <h6 class="mb-3 text-uppercase" style="font-size:35px;"><b>{{company.company_name }}</b></h6>
+                                <div>
+                                <strong> {{company.address}}</strong>
+                            </div>
+                            <div>{{company.city}}</div>
+                            <div>  {{company.state}}</div>
+                            <div> {{company.pincode}}</div>
+                    
+                        </div>
 
+
+                        <div class="card-body" style="text-align: left; margin-left:50px;">
+                            <div class="row mb-4">
+                                <div class="col-sm-6">
+                                    <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
+
+                                    <h6 class="mb-3">Bill To;</h6>
+                                <div>
+                                <strong>{{ vendor.salutation}}{{vendor.first_name}} {{ vendor.last_name}} </strong>
+                            </div>
+                            {% if expense.gst_treatment != 'unregistered Business' %} 
+                            <div>{{vendor.gst_number}}</div>
+                            {% endif %} 
+                            <div> {{vendor.vendor_email}}</div>
+                            <div> {{vendor.bstreet}}</div>
+                            <div> {{vendor.bcity}}</div>
+                            <div>  {{vendor.bstate}}</div>
+                            <div>  {{vendor.bpin}}</div>
                 
+                        </div>
+                
+                        <div class="col-sm-6" style="text-align: right;">
+                            <h6 class="mb-2" style="margin-right:100px;">Deliver To,</h6>
+                            <div>
+                                <strong style="margin-right:100px;">{{customer.customerName}}</strong>
+                            </div>
+                            {% if customer.GSTIN != None %}
+                            <div style="margin-right:100px;">  {{customer.GSTIN}}</div>
+                            {% endif %}
+                            <div style="margin-right:100px;">{{customer.customerEmail}}</div>
+                            <div style="margin-right:100px;">{{customer.Address1}}</div>
+                            <div style="margin-right:100px;"> {{customer.city}}</div>
+                            <div style="margin-right:100px;">{{customer.state}}</div>
 
-            </div>
+                            <div style="margin-right:100px;"> {{customer.zipcode}}</div>
+                        </div>
+            
+                
+                
+                    </div>
+                
+                    <div class="table-responsive-sm">
+                        <table class="table   table-striped table-active ">
+                                <thead>
+                                    <tr>
+                                        <th class="center">#</th>
+                                        <th>Start Date</th>
+                                        <th>Profile Name</th>
+                                        
+                                        <th class="right">Amount</th>
+                                        
+                                    </tr>
+                                </thead>
+                            <tbody>
+                                <tr >
+                                <td class="center"  style="color:#bcd0f7;">{{ forloop.counter }}</td>
+                                <td class="left strong" style="color:#bcd0f7;">{{expense.start_date}}</td>
+                                <td class="left"  style="color:#bcd0f7;"> {{expense.profile_name}}</td>
+                                
+                                <td class="right"  style="color:#bcd0f7;">{{expense.amount}}</td>
+                                    
+                                </tr>
+                            
+                            </tbody>
+                    </table>
+                </div>
+                
+                <div class="form" id="form2" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h1>RECURRING EXPENSES</h1>
+                        </div>
+                        <div  style="margin-left: 540px;">
+                            <p style="color:#bcd0f7;">Start Date : &nbsp <span style="color:#bcd0f7;">{{expense.start_date|date:'d-m-Y'}}</span></p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="row mb-4">
+                                <div class="col-sm-6" style="margin-left: 140px;">
+                                    <h6 class="mb-3 text-uppercase" style="font-size:35px;"><b>{{company.company_name }}</b></h6>
+                                <div>
+                                <strong> {{company.address}}</strong>
+                            </div>
+                            <div>{{company.city}}</div>
+                            <div>  {{company.state}}</div>
+                            <div> {{company.pincode}}</div>
+                    
+                        </div>
+
+
+                        <div class="card-body" style="text-align: left; margin-left:50px;">
+                            <div class="row mb-4">
+                                <div class="col-sm-6">
+                                    <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
+
+                                    <h6 class="mb-3">Bill To;</h6>
+                                <div>
+                                <strong>{{ vendor.salutation}}{{vendor.first_name}} {{ vendor.last_name}} </strong>
+                            </div>
+                            {% if expense.gst_treatment != 'unregistered Business' %} 
+                            <div>{{vendor.gst_number}}</div>
+                            {% endif %} 
+                            <div> {{vendor.vendor_email}}</div>
+                            <div> {{vendor.bstreet}}</div>
+                            <div> {{vendor.bcity}}</div>
+                            <div>  {{vendor.bstate}}</div>
+                            <div>  {{vendor.bpin}}</div>
+                
+                        </div>
+                
+                        <div class="col-sm-6" style="text-align: right;">
+                            <h6 class="mb-2" style="margin-right:100px;">Deliver To,</h6>
+                            <div>
+                                <strong style="margin-right:100px;">{{customer.customerName}}</strong>
+                            </div>
+                            {% if customer.GSTIN != None %}
+                            <div style="margin-right:100px;">  {{customer.GSTIN}}</div>
+                            {% endif %}
+                            <div style="margin-right:100px;">{{customer.customerEmail}}</div>
+                            <div style="margin-right:100px;">{{customer.Address1}}</div>
+                            <div style="margin-right:100px;"> {{customer.city}}</div>
+                            <div style="margin-right:100px;">{{customer.state}}</div>
+
+                            <div style="margin-right:100px;"> {{customer.zipcode}}</div>
+                        </div>
+            
+                
+                
+                    </div>
+                
+                    <div class="table-responsive-sm">
+                        <table class="table   table-striped table-active ">
+                                <thead>
+                                    <tr>
+                                        <th class="center">#</th>
+                                        <th>Start Date</th>
+                                        <th>Profile Name</th>
+                                        
+                                        <th class="right">Amount</th>
+                                        
+                                    </tr>
+                                </thead>
+                            <tbody>
+                                <tr >
+                                <td class="center"  style="color:#bcd0f7;">{{ forloop.counter }}</td>
+                                <td class="left strong" style="color:#bcd0f7;">{{expense.start_date}}</td>
+                                <td class="left"  style="color:#bcd0f7;"> {{expense.profile_name}}</td>
+                                
+                                <td class="right"  style="color:#bcd0f7;">{{expense.amount}}</td>
+                                    
+                                </tr>
+                            
+                            </tbody>
+                    </table>
+                </div>
+
+            
          
 
                 
+
+
+                
+            </div>
+                    
                 
 
         </div>
+        
+        
         <fieldset2 id="exp_slip" style="display: none;">
             <div class="p-3 mt-3" style="background-color: #8888889d;">
                 <div class="row">
@@ -1358,31 +1175,44 @@
             $('#dataTable tbody tr').removeClass("hidden"); // Show all rows
         }
     </script>   
-
-    <script>
+    {% comment %} <script>
         function toggleForm(formNumber) {
-            var formIds = ['form1', 'form2', 'form3'];
-            
-            // Hide all forms
-            for (var i = 0; i < formIds.length; i++) {
-                document.getElementById(formIds[i]).style.display = 'none';
-            }
-            
-            // Show the selected form
-            document.getElementById(formIds[formNumber - 1]).style.display = 'block';
-            
-            // Remove "active" class from all form buttons
-            var formButtons = document.getElementsByClassName("formbutton");
-            for (var i = 0; i < formButtons.length; i++) {
-                formButtons[i].classList.remove("active");
-            }
-            
-            // Add "active" class to the clicked form button
-            document.getElementById('formButton' + formNumber).classList.add("active");
-        }
+            // Get all form elements and buttons
+            var forms = document.querySelectorAll('.form');
+            var buttons = document.querySelectorAll('.tablinks');
         
-
-      </script> 
+            // Hide all forms
+            forms.forEach(function(form) {
+                form.style.display = 'none';
+            });
+        
+            // Show the selected form
+            forms[formNumber - 1].style.display = 'block';
+        
+            // Remove "active" class from all buttons
+            buttons.forEach(function(button) {
+                button.classList.remove('active');
+            });
+        
+            // Add "active" class to the clicked button
+            buttons[formNumber - 1].classList.add('active');
+        }
+        </script> {% endcomment %}
+        
+        <script>
+            function toggleForm(formNumber) {
+                var forms = document.querySelectorAll('.form');
+                forms.forEach(function(form) {
+                    form.style.display = 'none';
+                });
+            
+                var selectedForm = document.getElementById('form' + formNumber);
+                if (selectedForm) {
+                    selectedForm.style.display = 'block';
+                }
+            }
+            </script>
+            
 
 
       
