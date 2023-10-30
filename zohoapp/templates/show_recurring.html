@@ -337,14 +337,11 @@
     /* Style for Form 1 */
     #form1 {
        
-        z-index:999;
-        position:absolute;
+        z-index:9999;
+        
         background-color:#A9A9A9;
         color: #bcd0f7;
         background: #1A233A;
-        
-        visibility:visible;
-       
         height:700px;
         width:850px;
         overflow:hide;
@@ -353,18 +350,21 @@
     
     /* Style for Form 2 */
     #form2 {
-        background-color: white;
-       
-        
+        z-index:9999;
+        background-color: black;
+        color:white;
+        width:850px;
         font-family: Verdana, sans-serif;
-        height:800px;
+        height:700px;
         
     }
     
     /* Style for Form 3 */
     #form3 {
-        background-color: lightpink;
-        font-family: Courier New;
+        z-index:9999;
+        background-color: white;
+        width:850px;
+        height:900px;
     }
     
   
@@ -516,6 +516,8 @@
 
                 </div>
 
+               
+
                 <div class="tab">
                     <a class="tablinks  mx-2 btns px-2 py-2" onclick="openTab('Template')" role="button" id="template-btn"><i
                             class="fa fa-file-word "></i> Template</a>
@@ -525,7 +527,13 @@
             </div>
             <hr class="hr">
 
+
+
+
+
             <div style="position:relative;"> 
+
+                
                
                 <div id="Template" class=" print-only page tabcontent p-5 m-3" style="display: block; background-color:azure; visibility:visible;">
                     
@@ -648,31 +656,18 @@
 
                             </tbody>
                         </table>
-                        
-                       
-
-
-                        
-
-                        
-
                     </section>
                     
-                    
-                 
-                          
+   
+             
                     
                 </div>
-
+              
                 
-
-                <button class="btn btn-warning tablinks" id="formButton1" style="margin-top:50px; margin-left:280px;" onclick="toggleForm(1)">1</button>
-                <button class="btn btn-warning tablinks" id="formButton2" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(2)">2</button>
-                <button class="btn btn-warning tablinks" id="formButton3" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(3)">3</button>
                 
                
                 
-            
+                
                
 
                 <!-- overview -->
@@ -867,197 +862,286 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-
-                <div class="form" id="form1" style="display:none;overflow: hidden;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h1>RECURRING EXPENSES</h1>
-                        </div>
-                        <div  style="margin-left: 540px;">
-                            <p style="color:#bcd0f7;">Start Date : &nbsp <span style="color:#bcd0f7;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                        </div>
-                        <div style="text-align: center;">
-                            <div class="row mb-4">
-                                <div class="col-sm-6" style="margin-left: 140px;">
-                                    <h6 class="mb-3 text-uppercase" style="font-size:35px;"><b>{{company.company_name }}</b></h6>
-                                <div>
-                                <strong> {{company.address}}</strong>
-                            </div>
-                            <div>{{company.city}}</div>
-                            <div>  {{company.state}}</div>
-                            <div> {{company.pincode}}</div>
                     
-                        </div>
-
-
-                        <div class="card-body" style="text-align: left; margin-left:50px;">
-                            <div class="row mb-4">
-                                <div class="col-sm-6">
-                                    <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
-
-                                    <h6 class="mb-3">Bill To;</h6>
-                                <div>
-                                <strong>{{ vendor.salutation}}{{vendor.first_name}} {{ vendor.last_name}} </strong>
-                            </div>
-                            {% if expense.gst_treatment != 'unregistered Business' %} 
-                            <div>{{vendor.gst_number}}</div>
-                            {% endif %} 
-                            <div> {{vendor.vendor_email}}</div>
-                            <div> {{vendor.bstreet}}</div>
-                            <div> {{vendor.bcity}}</div>
-                            <div>  {{vendor.bstate}}</div>
-                            <div>  {{vendor.bpin}}</div>
-                
-                        </div>
-                
-                        <div class="col-sm-6" style="text-align: right;">
-                            <h6 class="mb-2" style="margin-right:100px;">Deliver To,</h6>
-                            <div>
-                                <strong style="margin-right:100px;">{{customer.customerName}}</strong>
-                            </div>
-                            {% if customer.GSTIN != None %}
-                            <div style="margin-right:100px;">  {{customer.GSTIN}}</div>
-                            {% endif %}
-                            <div style="margin-right:100px;">{{customer.customerEmail}}</div>
-                            <div style="margin-right:100px;">{{customer.Address1}}</div>
-                            <div style="margin-right:100px;"> {{customer.city}}</div>
-                            <div style="margin-right:100px;">{{customer.state}}</div>
-
-                            <div style="margin-right:100px;"> {{customer.zipcode}}</div>
-                        </div>
-            
-                
-                
+                </div>
+              
+               
+                    <div>
+                        <button class="btn btn-warning tablinks" id="formButton1" style="margin-top:50px; margin-left:280px;" onclick="toggleForm(1)">1</button>
+                        <button class="btn btn-warning tablinks" id="formButton2" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(2)">2</button>
+                        <button class="btn btn-warning tablinks" id="formButton3" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(3)">3</button>
+                     
                     </div>
                 
-                    <div class="table-responsive-sm">
-                        <table class="table   table-striped table-active ">
-                                <thead>
-                                    <tr>
-                                        <th class="center">#</th>
-                                        <th>Start Date</th>
-                                        <th>Profile Name</th>
-                                        
-                                        <th class="right">Amount</th>
-                                        
-                                    </tr>
-                                </thead>
-                            <tbody>
-                                <tr >
-                                <td class="center"  style="color:#bcd0f7;">{{ forloop.counter }}</td>
-                                <td class="left strong" style="color:#bcd0f7;">{{expense.start_date}}</td>
-                                <td class="left"  style="color:#bcd0f7;"> {{expense.profile_name}}</td>
-                                
-                                <td class="right"  style="color:#bcd0f7;">{{expense.amount}}</td>
-                                    
-                                </tr>
-                            
-                            </tbody>
-                    </table>
-                </div>
-                
-                <div class="form" id="form2" style="display:none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h1>RECURRING EXPENSES</h1>
-                        </div>
-                        <div  style="margin-left: 540px;">
-                            <p style="color:#bcd0f7;">Start Date : &nbsp <span style="color:#bcd0f7;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                        </div>
-                        <div style="text-align: center;">
-                            <div class="row mb-4">
-                                <div class="col-sm-6" style="margin-left: 140px;">
-                                    <h6 class="mb-3 text-uppercase" style="font-size:35px;"><b>{{company.company_name }}</b></h6>
-                                <div>
-                                <strong> {{company.address}}</strong>
+                    <div class="form" id="form1" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h1>RECURRING EXPENSES</h1>
                             </div>
-                            <div>{{company.city}}</div>
-                            <div>  {{company.state}}</div>
-                            <div> {{company.pincode}}</div>
+                            <div  style="margin-left: 540px;">
+                                <p style="color:#bcd0f7;">Start Date : &nbsp <span style="color:#bcd0f7;">{{expense.start_date|date:'d-m-Y'}}</span></p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="row mb-4">
+                                    <div class="col-sm-6" style="margin-left: 140px;">
+                                        <h6 class="mb-3 text-uppercase" style="font-size:35px;"><b>{{company.company_name }}</b></h6>
+                                    <div>
+                                    <strong> {{company.address}}</strong>
+                                </div>
+                                <div>{{company.city}}</div>
+                                <div>  {{company.state}}</div>
+                                <div> {{company.pincode}}</div>
+                        
+                            </div>
+            
+            
+                            <div class="card-body" style="text-align: left; margin-left:50px;">
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">
+                                        <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
+            
+                                        <h6 class="mb-3">Bill To;</h6>
+                                    <div>
+                                    <strong>{{ vendor.salutation}}{{vendor.first_name}} {{ vendor.last_name}} </strong>
+                                </div>
+                                {% if expense.gst_treatment != 'unregistered Business' %} 
+                                <div>{{vendor.gst_number}}</div>
+                                {% endif %} 
+                                <div> {{vendor.vendor_email}}</div>
+                                <div> {{vendor.bstreet}}</div>
+                                <div> {{vendor.bcity}}</div>
+                                <div>  {{vendor.bstate}}</div>
+                                <div>  {{vendor.bpin}}</div>
+                    
+                            </div>
+                    
+                            <div class="col-sm-6" style="text-align: right;">
+                                <h6 class="mb-2" style="margin-right:100px;">Deliver To,</h6>
+                                <div>
+                                    <strong style="margin-right:100px;">{{customer.customerName}}</strong>
+                                </div>
+                                {% if customer.GSTIN != None %}
+                                <div style="margin-right:100px;">  {{customer.GSTIN}}</div>
+                                {% endif %}
+                                <div style="margin-right:100px;">{{customer.customerEmail}}</div>
+                                <div style="margin-right:100px;">{{customer.Address1}}</div>
+                                <div style="margin-right:100px;"> {{customer.city}}</div>
+                                <div style="margin-right:100px;">{{customer.state}}</div>
+            
+                                <div style="margin-right:100px;"> {{customer.zipcode}}</div>
+                            </div>
+                
+                    
+                    
+                        
+                    
+                                <div class="table-responsive-sm">
+                                    <table class="table   table-striped table-active ">
+                                            <thead>
+                                                <tr>
+                                                    <th class="center">#</th>
+                                                    <th>Start Date</th>
+                                                    <th>Profile Name</th>
+                                                    
+                                                    <th class="right">Amount</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr >
+                                                    <td class="center"  style="color:#bcd0f7;">{{ forloop.counter }}</td>
+                                                    <td class="left strong" style="color:#bcd0f7;">{{expense.start_date}}</td>
+                                                    <td class="left"  style="color:#bcd0f7;"> {{expense.profile_name}}</td>
+                                                    
+                                                    <td class="right"  style="color:#bcd0f7;">{{expense.amount}}</td>
+                                                        
+                                                </tr>
+                                        
+                                            </tbody>
+                                    </table>
+                                </div>
+                        </div>
+                    </div>
+                     <div class="form" id="form2" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h1 style="text-align:center;">RECURRING EXPENSES</h1>
+                            </div>
+                            <div style="text-align: center;">
+                                <p style="color:white;">Start Date: <span style="color:white;">{{expense.start_date|date:'d-m-Y'}}</span></p>
+                            </div>
+                        
+                            <div class="row">
+                                <div class="col-sm-6" style="margin-left: 140px;">
+                                    <h6 class="mb-3 text-uppercase" style="font-size:35px;"><b>{{company.company_name}}</b></h6>
+                                    <div><strong>{{company.address}}</strong></div>
+                                    <div>{{company.city}}</div>
+                                    <div>{{company.state}}</div>
+                                    <div>{{company.pincode}}</div>
+                                </div>
+                            </div>
+                            <div>  
+                                <div class="col-sm-6" style="text-align: left;margin-left:140px;">
+                                    <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
+                                    <h6 class="mb-3">Bill To;</h6>
+                                    <div><strong>{{vendor.salutation}}{{vendor.first_name}} {{vendor.last_name}}</strong></div>
+                                    {% if expense.gst_treatment != 'unregistered Business' %}
+                                    <div>{{vendor.gst_number}}</div>
+                                    {% endif %}
+                                    <div>{{vendor.vendor_email}}</div>
+                                    <div>{{vendor.bstreet}}</div>
+                                    <div>{{vendor.bcity}}</div>
+                                    <div>{{vendor.bstate}}</div>
+                                    <div>{{vendor.bpin}}</div>
+                                </div>
+                            </div>
+                                
+                        
+                            <div class="row">
+                                    
+                                <div class="col-sm-6" style="margin-left:600px;margin-top:-150px;">
+                                    <h6 class="mb-2" style="margin-right:100px;">Deliver To,</h6>
+                                    <div><strong style="margin-right:100px;">{{customer.customerName}}</strong></div>
+                                    {% if customer.GSTIN != None %}
+                                    <div style="margin-right:100px;">{{customer.GSTIN}}</div>
+                                    {% endif %}
+                                    <div style="margin-right:100px;">{{customer.customerEmail}}</div>
+                                    <div style="margin-right:100px;">{{customer.Address1}}</div>
+                                    <div style="margin-right:100px;">{{customer.city}}</div>
+                                    <div style="margin-right:100px;">{{customer.state}}</div>
+                                    <div style="margin-right:100px;">{{customer.zipcode}}</div>
+                                </div>
+                            </div>
+                        
+                            <div class="table-responsive-sm">
+                                <table class="table table-striped table-active">
+                                    <thead>
+                                        <tr>
+                                            <th class="center">#</th>
+                                            <th>Start Date</th>
+                                            <th>Profile Name</th>
+                                            <th class="right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="center" style="color:white;">{{ forloop.counter }}</td>
+                                            <td class="left strong" style="color:white;">{{expense.start_date}}</td>
+                                            <td class="left" style="color:white;">{{expense.profile_name}}</td>
+                                            <td class="right" style="color:white;">{{expense.amount}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form" id="form3" style="display:none;">
+                    
+                        <div class="card-body">
+                    
+                        <div class="container">
+                            <div class="row">
+                            <div class="col-xl-12">
+                                
+                            </div>
+                            </div>
+                    
+                    
+                            <div class="row">
+                                <div class="col-xl-12">
+                    
+                                    <ul class="list-unstyled float-end" style="margin-left:500px;margin-top:20px;">
+                                    <li class="text-uppercase" style="font-size: 30px; color: red;"><b>{{company.company_name }}</b></li>
+                                    <li style="color:black">{{company.address}}</li>
+                                    <li style="color:black"> {{company.city}}</li>
+                                    <li style="color:black">{{company.state}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                    
+                            <div class="row text-center">
+                                <h3 class="text-uppercase text-center mt-3" style="font-size: 30px;color:black">Recurring Expense</h3>
+                            
+                            </div>
+                            <div style="margin-top:30px;margin-left:100px;">
+            
+                                <div class="col-sm-6" style="text-align: left;color:black;">
+                                    <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
+                                    <h6 class="mb-3">Bill To;</h6>
+                                    <div><strong>{{vendor.salutation}}{{vendor.first_name}} {{vendor.last_name}}</strong></div>
+                                    {% if expense.gst_treatment != 'unregistered Business' %}
+                                    <div>{{vendor.gst_number}}</div>
+                                    {% endif %}
+                                    <div>{{vendor.vendor_email}}</div>
+                                    <div>{{vendor.bstreet}}</div>
+                                    <div>{{vendor.bcity}}</div>
+                                    <div>{{vendor.bstate}}</div>
+                                    <div>{{vendor.bpin}}</div>
+                                </div>
+                            </div>
+                            <div  style="margin-top:-50px;">
+                                <div class="col-sm-6" style="margin-left:500px;color:black;">
+                                    <h6 class="mb-2" >Deliver To,</h6>
+                                    <div><strong style="margin-right:100px;">{{customer.customerName}}</strong></div>
+                                    {% if customer.GSTIN != None %}
+                                    <div style="margin-right:100px;">{{customer.GSTIN}}</div>
+                                    {% endif %}
+                                    <div style="margin-right:100px;">{{customer.customerEmail}}</div>
+                                    <div style="margin-right:100px;">{{customer.Address1}}</div>
+                                    <div style="margin-right:100px;">{{customer.city}}</div>
+                                    <div style="margin-right:100px;">{{customer.state}}</div>
+                                    <div style="margin-right:100px;">{{customer.zipcode}}</div>
+                                </div>
+                            </div>
+                            <div><br><br>
+                                <div class="row mx-3">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">Profile Name</th>
+                                        <th scope="col">Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                    
+                                        <td>{{expense.start_date}}</td>
+                                    
+                                        <td>{{expense.profile_name}}</td>
+                                    
+                                        <td>{{expense.amount}}</td>
+                                    
+                                    </tr>
+                                    </tbody>
+                                </table>
+                        
+                        
+                    
                     
                         </div>
-
-
-                        <div class="card-body" style="text-align: left; margin-left:50px;">
-                            <div class="row mb-4">
-                                <div class="col-sm-6">
-                                    <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
-
-                                    <h6 class="mb-3">Bill To;</h6>
-                                <div>
-                                <strong>{{ vendor.salutation}}{{vendor.first_name}} {{ vendor.last_name}} </strong>
-                            </div>
-                            {% if expense.gst_treatment != 'unregistered Business' %} 
-                            <div>{{vendor.gst_number}}</div>
-                            {% endif %} 
-                            <div> {{vendor.vendor_email}}</div>
-                            <div> {{vendor.bstreet}}</div>
-                            <div> {{vendor.bcity}}</div>
-                            <div>  {{vendor.bstate}}</div>
-                            <div>  {{vendor.bpin}}</div>
-                
-                        </div>
-                
-                        <div class="col-sm-6" style="text-align: right;">
-                            <h6 class="mb-2" style="margin-right:100px;">Deliver To,</h6>
-                            <div>
-                                <strong style="margin-right:100px;">{{customer.customerName}}</strong>
-                            </div>
-                            {% if customer.GSTIN != None %}
-                            <div style="margin-right:100px;">  {{customer.GSTIN}}</div>
-                            {% endif %}
-                            <div style="margin-right:100px;">{{customer.customerEmail}}</div>
-                            <div style="margin-right:100px;">{{customer.Address1}}</div>
-                            <div style="margin-right:100px;"> {{customer.city}}</div>
-                            <div style="margin-right:100px;">{{customer.state}}</div>
-
-                            <div style="margin-right:100px;"> {{customer.zipcode}}</div>
-                        </div>
             
-                
-                
-                    </div>
-                
-                    <div class="table-responsive-sm">
-                        <table class="table   table-striped table-active ">
-                                <thead>
-                                    <tr>
-                                        <th class="center">#</th>
-                                        <th>Start Date</th>
-                                        <th>Profile Name</th>
-                                        
-                                        <th class="right">Amount</th>
-                                        
-                                    </tr>
-                                </thead>
-                            <tbody>
-                                <tr >
-                                <td class="center"  style="color:#bcd0f7;">{{ forloop.counter }}</td>
-                                <td class="left strong" style="color:#bcd0f7;">{{expense.start_date}}</td>
-                                <td class="left"  style="color:#bcd0f7;"> {{expense.profile_name}}</td>
-                                
-                                <td class="right"  style="color:#bcd0f7;">{{expense.amount}}</td>
-                                    
-                                </tr>
-                            
-                            </tbody>
-                    </table>
-                </div>
-
-            
-         
-
-                
-
-
-                
+                    </div>  
+                           
             </div>
+                  
+          
+           
+               
+        </div>
                     
-                
+          
+
+          
 
         </div>
+     
+       
+
+       
         
         
         <fieldset2 id="exp_slip" style="display: none;">
@@ -1143,6 +1227,7 @@
         
     
     </div>
+ 
     
         
     <script>
@@ -1199,25 +1284,12 @@
         }
         </script> {% endcomment %}
         
-        <script>
-            function toggleForm(formNumber) {
-                var forms = document.querySelectorAll('.form');
-                forms.forEach(function(form) {
-                    form.style.display = 'none';
-                });
-            
-                var selectedForm = document.getElementById('form' + formNumber);
-                if (selectedForm) {
-                    selectedForm.style.display = 'block';
-                }
-            }
-            </script>
-            
+    
 
 
       
         
-      {% comment %} <script>
+   {% comment %} <script>
         var currentForm = 0;
         var formIds = ['form1', 'form2', 'form3','form1', 'Template'];
         
@@ -1237,9 +1309,26 @@
           
         }
       </script>
-       {% endcomment %}
+        {% endcomment %}
       
-      
+        <script>
+        function toggleForm(formNumber) {
+            for (let i = 1; i < 4; i++) {
+                const form = document.getElementById(`form${i}`);
+                const button = document.getElementById(`formButton${i}`);
+        
+                if (i === formNumber) {
+                    form.style.display = "block";
+                    button.classList.add("active"); // Optionally, you can add a class for highlighting the active button.
+                } else {
+                    form.style.display = "none";
+                    button.classList.remove("active"); // Remove the active class for other buttons.
+                }
+            }
+        }
+        </script>
+     
+        
       
     
          <script type="text/javascript">

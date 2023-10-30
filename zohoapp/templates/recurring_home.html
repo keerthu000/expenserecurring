@@ -146,7 +146,7 @@
       <div class="form-group row mt-4">
         <label class="col-sm-3 col-form-label">Refrence Id</label>
         <div class="col-sm-6">
-          <input type="text" id="refrense" name="refrnsid" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;width:100%" value="EXP00{{num}}">
+          <input type="text" id="refrense" name="refrnsid" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;width:100%" value="{{num}}">
         </div>
       </div>
           <div class="form-group row mt-4">
@@ -192,7 +192,7 @@
                   <option value="Check">cheque</option>
                   <option value="UPI">UPI</option>
                   {% for b in bank %}
-                  <option value="{{b.name}}">{{b.name}}</option>
+                  <option value="{{b.name}}"  data-account="{{ b.ac_no }}">{{b.name}}</option>
                   {% endfor %}
 
 
@@ -214,9 +214,12 @@
         </div>
         
         <div class="form-group row mt-4" id="bankField" style="display: none;">
+          
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Bank Account</label></div>
             <div class="col-sm-12 col-md-6 col-lg-6">
-                <input type="text" name="bankAccount" id="bankAccount" class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;">
+             
+              <input type="text" name="bankAccount" id="bankAccount"   class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;">
+                
             </div>
         </div>
         
@@ -400,24 +403,20 @@
           
             
 
-            
             <div class="form-group row mt-4">
-              <!-- Add a hidden input field for the activation tag with value "active" -->
-              <input type="hidden" name="activation_tag" value="active">
-          </div>
-          <div class="form-group row mt-4">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Attach a File</label></div>
-              <div class="col-md-6 col-lg-6 col-sm-12 py-5 text-center rounded mt-4">
-                  <div style="width: 106%;background-color: rgba(243, 241, 241, 0.904);height:90px;margin-left:px;margin-top:-100px;">
-                    <label class="text-black mt-3 pt-3" for="">Attach File(s) to Recurring Expense</label><br>
-
-                    <label for="file-upload" class="btn text-white border-0" style="background-color: rgb(210, 132, 30);">
-                      <i class="fas fa-upload text-white"></i> Upload File
-                    </label>
-                    <input class="pb-3" id="file-upload" type="file" name="file" style="display:none;">
+              <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Attach a File</label></div>
+              <div class="col-md-6 col-lg-6 col-sm-12 py-3 text-center rounded mt-4">
+                  <div style="width: 106%; background-color: rgba(243, 241, 241, 0.904); height: 50px; margin-left: -0.2rem; margin-top: -40px;">
+                      <label class="text-black mt-1 pt-0" for="" >Attach File(s) to Recurring Expense</label><br>
+          
+                      <label for="file-upload" class="btn text-white border-0" style="background-color: rgb(210, 132, 30);">
+                          <i class="fas fa-upload text-white"></i> <span id="file-label">Upload File</span>
+                      </label>
+                      <input class="pb-3" id="file-upload" type="file" name="file" style="display: none;">
                   </div>
               </div>
           </div>
+        
         
           
           <div class="form-group" style="margin-left:40px;margin-top:100px;">
@@ -427,7 +426,20 @@
           </div>
       </form>
       </div>
+      <script>
+        // JavaScript to update the account number based on the selected bank
+        document.getElementById("paidthrough").addEventListener("change", function() {
+            var selectedBank = this.value;
+            var accountNumberInput = document.getElementById("bankAccount");
 
+            // Find the selected option and get the associated account number
+            var selectedOption = this.options[this.selectedIndex];
+            var accountNumber = selectedOption.getAttribute("data-account");
+
+            // Update the account number input field
+            accountNumberInput.value = accountNumber;
+        });
+    </script>
 
       <script>
         var paidthroughSelect = document.getElementById('paidthrough');
