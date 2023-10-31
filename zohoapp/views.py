@@ -3116,8 +3116,7 @@ def recurringhome(request):
     accounts = Account.objects.all()
     account_types = set(Account.objects.values_list('accountType', flat=True))
     repeat_list = repeat_every.objects.all()
-    bank=Bankcreation.objects.all()
-    # repeat=repeat_every.objects.values_list('Terms', flat=True).distinct()
+    bank=Bankcreation.objects.filter(user=user_id)
    
     selected_vendor = vendor_table.objects.filter(id=selected_vendor_id).first()
     gst_treatment = selected_vendor.gst_treatment if selected_vendor else ''
@@ -3143,8 +3142,11 @@ def recurringhome(request):
         'company':company,
         'repeat_list':repeat_list,
         'bank':bank,
-        'num':next_no
+        'num':next_no,
+        
     })
+
+
 
 
 def recurring_expense_details(request):
@@ -3170,7 +3172,7 @@ def recurring_expense_details(request):
 
 def add_expense(request):
     if request.method == 'POST':
-        print('savebutton click')
+        
         # Retrieve form data
         userId=request.user.id
         profile_name = request.POST['profile_name']
@@ -3382,7 +3384,8 @@ def get_customer_gsttrmnt(request):
         custmer = customer.objects.get(id=customer_id)
         gst_trtmnt=custmer.GSTTreatment
         pos=custmer.placeofsupply
-        return JsonResponse({'gst_trtmnt': gst_trtmnt,'pos':pos})
+        gstin=custmer.GSTIN
+        return JsonResponse({'gst_trtmnt': gst_trtmnt,'pos':pos,'gstin':gstin})
     
     return JsonResponse({'error': 'Invalid request method'}, status=400)
         
@@ -3414,7 +3417,7 @@ def covert_to_status(request, id):
     if expense.status == 'Draft':
         expense.status = 'Save'
     elif expense.status == 'Save':
-        expense.status = 'Draft'
+        expense.status = 'Save'
     expense.save()  
     
     return redirect('show_recurring', id)

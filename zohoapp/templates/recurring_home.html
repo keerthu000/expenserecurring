@@ -331,6 +331,14 @@
               <input type="text" name="cu_gst_trt" id="cust_gst_tr" class="form-control  bg-white text-dark" style=" width: 555px;color:black;margin-left:278px;margin-top:-25px;">
             </div>
           </div>
+          <div class="form-group row mt-4" id="gstContainer" style="display:none;">
+            <label class="col-sm-3 col-form-label" style="margin-top:1rem">Customer GSTIN</label>
+            <div class="col-sm-6">
+              <input type="text" id="cust_gst" class="form-control bg-white text-dark" name="cust_gstin" placeholder="Enter additional information" value="" style="width: 550px; color: black;  margin-top:1rem;">
+
+            </div>
+          </div>
+    
           <div class="form-group row mt-4">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer place of supply</label></div>
             <div class="col-sm-12 col-md-6 col-lg-6">
@@ -406,7 +414,7 @@
             <div class="form-group row mt-4">
               <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Attach a File</label></div>
               <div class="col-md-6 col-lg-6 col-sm-12 py-3 text-center rounded mt-4">
-                  <div style="width: 106%; background-color: rgba(243, 241, 241, 0.904); height: 50px; margin-left: -0.2rem; margin-top: -40px;">
+                  <div style="width: 106%; background-color: rgba(243, 241, 241, 0.904); height: 50px; margin-left:5px; margin-top: -40px;">
                       <label class="text-black mt-1 pt-0" for="" >Attach File(s) to Recurring Expense</label><br>
           
                       <label for="file-upload" class="btn text-white border-0" style="background-color: rgb(210, 132, 30);">
@@ -426,6 +434,15 @@
           </div>
       </form>
       </div>
+
+
+      
+      
+
+
+ 
+      
+      
       <script>
         // JavaScript to update the account number based on the selected bank
         document.getElementById("paidthrough").addEventListener("change", function() {
@@ -576,23 +593,34 @@
       
         <script type="text/javascript">
           $(document).ready(function () {
-              $('#customer-list').change(function () {
-                  var customer_id = $(this).val();
-                  if (customer_id) {
-                      // Make an AJAX request to get the customer's email
-                      $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
-                          $('#email').val(data.email);
-                      });
-      
-                      // Make an AJAX request to get the customer's GST treatment
-                      $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
-                          $('#cust_gst_tr').val(data.gst_trtmnt);
-                          $('#c_destination').val(data.pos)
-                      });
-                  }
-              });
-          });
+            $('#customer-list').change(function () {
+                var customer_id = $(this).val();
+                if (customer_id) {
+                    // Make an AJAX request to get the customer's email
+                    $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
+                        $('#email').val(data.email);
+                    });
+        
+                    // Make an AJAX request to get the customer's GST treatment
+                    $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
+                        $('#cust_gst_tr').val(data.gst_trtmnt);
+                        $('#c_destination').val(data.pos);
+                        $('#cust_gst').val(data.gstin);
+        
+                        // Check the GST treatment and show/hide the input field
+                        if (data.gst_trtmnt.toLowerCase().includes('unregistered business')) {
+                            $('#gstContainer').hide();
+                        } else {
+                            $('#gstContainer').show();
+                        }
+                    });
+                }
+            });
+        });
+        
       </script>
+      
+      
 
       <script>
         $(document).ready(function(){
