@@ -5,6 +5,8 @@
 <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
  
 
 
@@ -116,13 +118,13 @@
         z-index:999;
     }
 
-    .page {
+    {% comment %} .page {
         background: azure;
         display: block;
         margin: 0 auto;
         position: relative;
         box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
-    }
+    } {% endcomment %}
 
    
 
@@ -230,51 +232,98 @@
             color: black;
         }
 
-        @page {
+        {% comment %} @page {
             size: 100%;
             margin: 0;
             height: auto;
             color: black;
-        }
+        } {% endcomment %}
     }
-    {% comment %} @media print {
-        .print-only[size="A4"] {
-            width: 21cm;
-            height: 29.7cm;
-            display: none;
-            
-            
-        }
-        
-        body * {
-            visibility: hidden;
-        }
-    
-        header {
-            display: none;
-        }
-    
-        .print-only * {
-            visibility: visible;
-        }
-    
-        .print-only {
-            position: fixed;
-            left: 0;
-            top: 0;
-            right: 0;
-            height: auto;
-            page-break-before: always;
-            page-break-inside: avoid;
-            color: black;
-        }
-        @page {
-            size: 100%;
-            margin: 0;
-            height: auto;
-        }
-        
-    } {% endcomment %}
+
+
+
+
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+body {
+    background-color: var(--body-bg);
+}
+
+.page {
+    background: var(--white);
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: var(--pageShadow);
+}
+
+.page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+    overflow: hidden;
+}
+
+.bb {
+    border-bottom: 3px solid var(--darkWhite);
+}
+
+/* Top Section */
+.top-content {
+    padding-bottom: 15px;
+}
+@media print{
+    body{
+        visibility: hidden !important; /* hide everything in body when in print mode*/
+    }
+
+    .printContainer {
+        visibility: visible !important; /* Override the rule above to only show the printables*/
+        position: absolute;
+        z-index: 99999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: large;
+    } 
+}
+
+:root {
+    --white: #ffffff;
+    --pageShadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.page {
+    background: var(--white);
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: var(--pageShadow);
+}
+
+.page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+    overflow: hidden;
+}
+.vl {
+    border-left: 6px solid gray;
+}
+
+
+    .equal-length-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%; /* Make the container fill the height of the column */
+        margin-left: 2vh;
+        margin-right: 2vh;
+    }
+
+    .equal-length-item {
+        flex: 1;
+        text-align: center;
+    }
     
     .modal{
       z-index: 9999;
@@ -463,19 +512,15 @@
                         <a href="#" class="fa fa-file-pdf btns btn_print px-2 py-2" id="toPDF" 
                         data-toggle="tooltip" title="PDF"  ></a>
 
-                        {% comment %} <a href="# " class="fa fa-file-pdf btns btn_print px-2 py-2" id="toPDF1" onclick="printPdf('form1')"
-                        data-toggle="tooltip" title="PDF" data-section="Template"  ></a>
-                        <a href=" #" class="fa fa-file-pdf btns btn_print px-2 py-2" id="toPDF2" onclick="printPdf('form2')"
-                        data-toggle="tooltip" title="PDF" data-section="Template"  ></a>
-                        <a href=" #" class="fa fa-file-pdf btns btn_print px-2 py-2" id="toPDF3" onclick="printPdf('form')"
-                        data-toggle="tooltip" title="PDF" data-section="Template"  ></a> {% endcomment %}
-
-
+                        
 
                         
                         <a href="#" class=" fa fa-print btns px-2 py-2"   id="printTemplate"  
                         title="PRINT"  onclick="printSection('Template')"> </a>
+                       
                         
+                        {% comment %} <a href="#" class=" fa fa-print btns px-2 py-2"   id="printTemplate"  
+                        title="PRINT"  onclick="printSection('Template')" style="display:none;" > </a> {% endcomment %}
 
                         <a href="#" class=" fa fa-print btns px-2 py-2"   id="printTemplate1"
                             title="PRINT"  onclick="printSection('form1')"  style="display:none;"> </a>
@@ -501,7 +546,7 @@
 
                             <div class="dropdown-menu" aria-labelledby="attachmentDropdown">
                                 <a class="dropdown-item" style="cursor: pointer;" onclick="show_slip()"><i class="fas fa-eye"></i>View</a>
-                                <a class="dropdown-item" id="slip" style="cursor: pointer;" onclick="printSection('exp_slip')"><i class="fas fa-print"></i>&nbsp;Print</a>
+                                <a class="dropdown-item" id="slip" style="cursor: pointer;" onclick="printslip()"><i class="fas fa-print"></i>&nbsp;Print</a>
                                         
                             </div>
                         </div>
@@ -538,7 +583,7 @@
                
 
                 <div class="tab">
-                    <a class="tablinks  mx-2 btns px-2 py-2" onclick="openTab('Template')" role="button" id="template-btn"><i
+                    <a class="tablinks  mx-2 btns px-2 py-2" onclick="openTab('Template')" role="button" id="template-btn" ><i
                             class="fa fa-file-word "></i> Template</a>
                     <a class="tablinks  btns px-2 py-2" onclick="openTab('Overview')" role="button" id="overview-btn"><i class="fa fa-eye"></i>
                         Overview</a>
@@ -686,79 +731,79 @@
                 
                 
                 <div class="form formprint2" id="form2" style="margin-top:10px;">
-                    <div id="printdiv3">
+                    
                         <div class="card" >
-                            <div class="card-header "style="background-image: linear-gradient(#1b83e8, black);">
-                                <h1 style="text-align:center;background-image: linear-gradient(#1b83e8, black);color:white;">RECURRING EXPENSES</h1>
-                            </div>
-                            <div style="text-align: center;">
-                                <p style="color:black;">Start Date: <span style="color:black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
-                            </div>
-                        
-                            <div class="row">
-                                <div class="col-sm-6" style="margin-left: 140px;">
-                                    <h6 class="mb-3 text-uppercase" style="font-size:35px;color:darkblue"><b>{{company.company_name}}</b></h6>
-                                    <div><strong>{{company.address}}</strong></div>
-                                    <div>{{company.city}}</div>
-                                    <div>{{company.state}}</div>
-                                    <div>{{company.pincode}}</div>
+                            <div id="printdiv3">
+                                <div class="card-header text-dark "style="background-image: linear-gradient(#1b83e8, black);">
+                                    <h1 class="" style="text-align:center;background-image: linear-gradient(#1b83e8, black);color:white;">RECURRING EXPENSES</h1>
                                 </div>
-                            </div>
-                            <div <div class="row" style="margin-top:15px;">
-                                <div class="col-sm-4" style="text-align: left;margin-left:140px;">
-                                    <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
-                                    <div ><h6 class="mb-3 text-dark font-italic">Bill To;</b></div>
-                                    <div><strong>{{vendor.salutation}}{{vendor.first_name}} {{vendor.last_name}}</strong></div>
-                                    {% if expense.gst_treatment != 'unregistered Business' %}
-                                    <div>{{vendor.gst_number}}</div>
-                                    {% endif %}
-                                    <div>{{vendor.vendor_email}}</div>
-                                    <div>{{vendor.bstreet}}</div>
-                                    <div>{{vendor.bcity}}</div>
-                                    <div>{{vendor.bstate}}</div>
-                                    <div>{{vendor.bpin}}</div>
+                                <div style="text-align: center;">
+                                    <p style="color:black;">Start Date: <span style="color:black;">{{expense.start_date|date:'d-m-Y'}}</span></p>
                                 </div>
-                           
-                                
-                        
                             
-                                    
-                                <div class="col-sm-6" style="margin-left:500px;margin-top:-180px;">
-                                    <h6 class="mb-2" style="margin-right:100px;">Deliver To,</h6>
-                                    <div><strong style="margin-right:100px;">{{customer.customerName}}</strong></div>
-                                    {% if customer.GSTIN != None %}
-                                    <div style="margin-right:100px;">{{customer.GSTIN}}</div>
-                                    {% endif %}
-                                    <div style="margin-right:100px;">{{customer.customerEmail}}</div>
-                                    <div style="margin-right:100px;">{{customer.Address1}}</div>
-                                    <div style="margin-right:100px;">{{customer.city}}</div>
-                                    <div style="margin-right:100px;">{{customer.state}}</div>
-                                    <div style="margin-right:100px;">{{customer.zipcode}}</div>
+                                <div class="row">
+                                    <div class="col-sm-6" style="margin-left: 450px;">
+                                        <h6 class="mb-3 text-uppercase" style="font-size:15px;color:darkblue"><b>{{company.company_name}}</b></h6>
+                                        <div><strong>{{company.address}}</strong></div>
+                                        <div>{{company.city}}</div>
+                                        <div>{{company.state}}</div>
+                                        <div>{{company.pincode}}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        
-                            <div class="table-responsive-sm">
-                                <table class="table table-striped table-active ">
-                                    <thead class="table-dark">
-                                        <tr>
-                                            <th class="center">#</th>
-                                            <th>Start Date</th>
-                                            <th>Profile Name</th>
-                                            <th class="right">Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="center" style="">{{ forloop.counter }}</td>
-                                            <td class="left strong" style="">{{expense.start_date}}</td>
-                                            <td class="left" style="color:black;">{{expense.profile_name}}</td>
-                                            <td class="right" style="color:black;">{{expense.amount}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="row" style="margin-top:15px; color:black;">
+                                    <div class="col-sm-4" style="text-align: left;margin-left:30px;">
+                                        <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
+                                        <div><h6 class="mb-3 text-dark font-italic">Bill To;</b></div>
+                                        <div><strong>{{vendor.salutation}}{{vendor.first_name}} {{vendor.last_name}}</strong></div>
+                                        {% if expense.gst_treatment != 'unregistered Business' %}
+                                        <div>{{vendor.gst_number}}</div>
+                                        {% endif %}
+                                        <div>{{vendor.vendor_email}}</div>
+                                        <div>{{vendor.bstreet}}</div>
+                                        <div>{{vendor.bcity}}</div>
+                                        <div>{{vendor.bstate}}</div>
+                                        <div>{{vendor.bpin}}</div>
+                                    </div>
+                                
+                                    <div class="col-sm-3 float-end" >
+                                        <h6 class="mb-2 text-dark font-italic">Deliver To;</h6>
+                                        <div><strong>{{customer.customerName}}</strong></div>
+                                        {% if customer.GSTIN != None %}
+                                        <div>{{customer.GSTIN}}</div>
+                                        {% endif %}
+                                        <div>{{customer.customerEmail}}</div>
+                                        <div>{{customer.Address1}}</div>
+                                        <div>{{customer.city}}</div>
+                                        <div>{{customer.state}}</div>
+                                        <div>{{customer.zipcode}}</div>
+                                    </div>
+                                </div>
+                                <section class="product-area mt-2">
+                                
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-striped table-active ">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th class="center">#</th>
+                                                    <th>Start Date</th>
+                                                    <th>Profile Name</th>
+                                                    <th class="right">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="background-color: #999999;">
+                                                <tr>
+                                                    <td class="center text-dark" style="color:000;">{{ forloop.counter }}</td>
+                                                    <td class="left strong text-dark" style="color:000;">{{expense.start_date}}</td>
+                                                    <td class="left text-dark" style="color:000;">{{expense.profile_name}}</td>
+                                                    <td class="right text-dark" style="color:000;"d>{{expense.amount}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
                             </div>
                         </div>
-                    </div>
+                   
                 </div>
 
               
@@ -976,14 +1021,14 @@
                         <div id="printdiv2">
                             <div class="card" >
                                 <div class="card-header">
-                                    <h1>RECURRING EXPENSES</h1>
+                                    <h1 style="text-align:center;">RECURRING EXPENSES</h1>
                                 </div>
-                                <div  style="margin-left: 400px;">
+                                <div  style="margin-left: 300px;">
                                     <p style=""><b>Start Date : </b>&nbsp <span style=""><b>{{expense.start_date|date:'d-m-Y'}}</b></span></p>
                                 </div>
                                 <div style="text-align: center;">
                                     <div class="row mb-4">
-                                        <div class="col-sm-6" style="margin-left: 140px;">
+                                        <div class="col-sm-6" style="margin-left: 180px;">
                                             <h6 class="mb-3 text-uppercase" style="font-size:35px;"><b>{{company.company_name }}</b></h6>
                                         <div>
                                         <strong> {{company.address}}</strong>
@@ -995,7 +1040,7 @@
                                 </div>
                 
                 
-                                <div class="card-body" style="text-align: left; margin-left:50px;">
+                                <div class="card-body" style="text-align: left; margin-left:80px;">
                                     <div class="row mb-4">
                                         <div class="col-sm-6">
                                             <p class="text-capitalize" id="pid" hidden>{{expense.id}}</p>
@@ -1036,7 +1081,7 @@
                             
                         
                                 <div class="table-responsive-sm">
-                                        <table class="table   table-striped table-active ">
+                                        <table class="table   table-striped table-active table-secondary">
                                                 <thead>
                                                     <tr>
                                                         <th class="center">#</th>
@@ -1047,13 +1092,13 @@
                                                         
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody class="text-dark">
                                                     <tr >
-                                                        <td class="center"  style="color:#bcd0f7;">{{ forloop.counter }}</td>
-                                                        <td class="left strong" style="color:#bcd0f7;">{{expense.start_date}}</td>
-                                                        <td class="left"  style="color:#bcd0f7;"> {{expense.profile_name}}</td>
+                                                        <td class="center"  style="color:000;">{{ forloop.counter }}</td>
+                                                        <td class="left strong" style="color:000">{{expense.start_date}}</td>
+                                                        <td class="left"  style="color:000"> {{expense.profile_name}}</td>
                                                         
-                                                        <td class="right"  style="color:#bcd0f7;">{{expense.amount}}</td>
+                                                        <td class="right"  style="color:000;">{{expense.amount}}</td>
                                                             
                                                     </tr>
                                             
@@ -1072,162 +1117,7 @@
                  
             </div>
                   
-{% comment %}           
-            <div id="exp_slip" style="background-color: #243e54; border-radius: 2vh; display: none; ">
-                <div class="p-5"  >
-                    <div class="my-5 page" size="A4">
-                        <div class="row" style="margin-top: 20%;" id="printslip">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-6 ml-3">
-                                <div class="card bg-white" style="border: 1px dotted black;">
-                                    <div class="mt-2" style="text-align: center;">
-                                        <div class="text-center" style="font-size: 3vh; color: black;">
-                                            <b>{{cmp1.cname}} </b>
-                                        </div>
-                                        <span style="font-size: x-small; color: black;">{{ cmp1.caddress }} <br>
-                                            {{cmp1.city}},
-                                            {{cmp1.state}}
-                                            {{cmp1.pincode}} <br>
-                                            {{ cmp1.phone }} <br>{{ cmp1.cemail }} 
-                                        </span>
-                                    </div>
-                                    <div class="ml-4 mt-2" style="color: black;">
-                                        <div class="row">
-                                            <div class="col-md-6 text-left">Order No:</div>
-                                            <div class="col-md-5 text-right">{{sale.saleno}}</div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 text-left">Customer Name:</div>
-                                            <div class="col-md-5 text-right">{{cust.firstname}} {{cust.lastname}}</div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 text-left">Order Date :</div>
-                                            <div class="col-md-5 text-right">{{sale.saledate | date:'d-m-Y'}}</div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 text-left">Shipment Date:</div>
-                                            <div class="col-md-5 text-right">{{sale.shipmentdate | date:'d-m-Y'}}</div>
-                                        </div>
-                                    </div>
-                                    <div><br>
-                                        <div class="equal-length-container" style="color: black; font-weight: bold;">
-                                            <div class="equal-length-item" style=" text-align: center;">
-                                                Product
-                                                <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
-                                            </div>
-                                            <div class="equal-length-item ml-2"  style=" text-align:center;">
-                                                HSN
-                                                <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;">
-                                            </div>
-                                            <div class="equal-length-item"  style=" text-align: center; ">
-                                                Qty
-                                                <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
-                                            </div>
-                                            <div class="equal-length-item"  style=" text-align: center; ">
-                                                Price
-                                                <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
-                                            </div>
-                                            <div class="equal-length-item"  style=" text-align: center; ">
-                                                Tax
-                                                <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
-                                            </div>
-                                            <div class="equal-length-item" style=" text-align: center; ">
-                                                Total
-                                                <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        {% for j in saleitem %}
-                                        <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
-                                            <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
-                                                {{j.product}}
-                                            </div>
-                                            <div class="equal-length-item" style="text-align: right;">
-                                                {{j.hsn}}
-                                            </div>
-                                            <div class="equal-length-item" style="text-align: center; ">
-                                                {{j.qty}}
-                                            </div>
-                                            <div class="equal-length-item" style="text-align: center; ">
-                                                {{j.price}}
-                                            </div>
-                                            <div class="equal-length-item" style="text-align: center; ">
-                                                {{j.tax}}
-                                            </div>
-                                            <div class="equal-length-item" style="text-align: center; ">
-                                                {{j.total}}
-                                            </div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-    
-                                    <div><br>
-                                        <div class="row ml-1">
-                                            <div class="col-md-5 text-left" style=" color: black;">
-                                                Discount
-                                            </div>
-                                            <div class="col-md-6 text-right ml-2" style="color: black;">
-                                                {{ tot_dis }}
-                                            </div>
-                                        </div>
-                                        <div class="row ml-1">
-                                            <div class="col-md-5 text-left" style=" color: black;">
-                                                Subtotal
-                                            </div>
-                                            <div class="col-md-6 text-right ml-2" style="color: black;">
-                                                {{ sale.subtotal }}
-                                            </div>
-                                        </div>
-                                        {% if sale.IGST != '0' %}
-                                        <div class="row ml-1">
-                                            <div class="col-md-5 text-left " style=" color: black;">
-                                                IGST
-                                            </div>
-                                            <div class="col-md-6 text-right ml-2" style="color: black;">
-                                                {{ sale.IGST }}
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="row ml-1">
-                                            <div class="col-md-5 text-left" style=" color: black;">
-                                                CGST
-                                            </div>
-                                            <div class="col-md-6 text-right ml-2" style="color: black;">
-                                                {{ sale.CGST }}
-                                            </div>
-                                        </div>
-                                        <div class="row ml-1">
-                                            <div class="col-md-5 text-left" style=" color: black;">
-                                                SGST
-                                            </div>
-                                            <div class="col-md-6 text-right ml-2" style="color: black;">
-                                                {{ sale.SGST }}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
-                                    </div>
-    
-                                    <div class="mb-2">
-                                        <div class="row">
-                                            <div class="col-md-5 text-left ml-2" style=" font-size: large; color: black; font-weight: bold;">
-                                                Total
-                                            </div>
-                                            <div class="col-md-6 text-right ml-2" style="font-size: large; color: black; font-weight: bold;">
-                                                {{ sale.salestotal }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3"></div>
-                        </div>
-                    </div>
-    
-    
-                </div>
-            </div> {% endcomment %}
+
                
         </div>
                     
@@ -1235,7 +1125,7 @@
 
           
 
-        </div>
+    </div>
       
        
       
@@ -1248,7 +1138,7 @@
 
         
     
-    </div>
+</div>
 
     <div id="exp_slip" style="background-color: #243e54; border-radius: 2vh; display: none; ">
         <div class="p-5"  >
@@ -1256,146 +1146,66 @@
                 <div class="row" style="margin-top: 20%;" id="printslip">
                     <div class="col-md-3"></div>
                     <div class="col-md-6 ml-3">
-                        <div class="card bg-white" style="border: 1px dotted black;">
+                        <div class="card bg-white" style="border: 1px dotted black;height:500px;">
                             <div class="mt-2" style="text-align: center;">
-                                <div class="text-center" style="font-size: 3vh; color: black;">
-                                    <b>{{cmp1.cname}} </b>
+                                <div class="text-center" style="font-size: 6vh; color: black;">
+                                    <b>{{company.company_name}} </b>
                                 </div>
-                                <span style="font-size: x-small; color: black;">{{ cmp1.caddress }} <br>
-                                    {{cmp1.city}},
-                                    {{cmp1.state}}
-                                    {{cmp1.pincode}} <br>
-                                    {{ cmp1.phone }} <br>{{ cmp1.cemail }} 
+                                <span style="font-size:     small; color: black;"> {{ company.address }} <br>
+                                    {{company.city}},
+                                    {{company.state}}
+                                    {{company.pincode}} <br>
+                                    {{ company.phone }} <br>{{ company.cemail }} 
                                 </span>
                             </div>
                             <div class="ml-4 mt-2" style="color: black;">
                                 <div class="row">
-                                    <div class="col-md-6 text-left">Order No:</div>
-                                    <div class="col-md-5 text-right">{{sale.saleno}}</div>
+                                    <div class="col-md-6 text-left">Refrence No:</div>
+                                    <div class="col-md-5 text-right">{{expense.refrenceid}}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 text-left">Customer Name:</div>
-                                    <div class="col-md-5 text-right">{{cust.firstname}} {{cust.lastname}}</div>
+                                    <div class="col-md-5 text-right">{{ expense.customer.customerName }}</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 text-left">Order Date :</div>
-                                    <div class="col-md-5 text-right">{{sale.saledate | date:'d-m-Y'}}</div>
+                                    <div class="col-md-6 text-left">Start date: :</div>
+                                    <div class="col-md-5 text-right">{{expense.start_date | date:'d-m-Y'}}</div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6 text-left">Shipment Date:</div>
-                                    <div class="col-md-5 text-right">{{sale.shipmentdate | date:'d-m-Y'}}</div>
-                                </div>
+                              
                             </div>
                             <div><br>
-                                <div class="equal-length-container" style="color: black; font-weight: bold;">
-                                    <div class="equal-length-item" style=" text-align: center;">
-                                        Product
-                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
-                                    </div>
+                                <div class="equal-length-container" style="color: black; font-weight: bold;margin-top:10px">
+                                     
                                     <div class="equal-length-item ml-2"  style=" text-align:center;">
-                                        HSN
-                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;">
+                                        Profile Name
+                                         <hr style="border-bottom: 1px solid black; margin-top:1vh; width:85%;"> 
                                     </div>
                                     <div class="equal-length-item"  style=" text-align: center; ">
-                                        Qty
-                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        Amount
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:85%"> 
                                     </div>
-                                    <div class="equal-length-item"  style=" text-align: center; ">
-                                        Price
-                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
-                                    </div>
-                                    <div class="equal-length-item"  style=" text-align: center; ">
-                                        Tax
-                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
-                                    </div>
-                                    <div class="equal-length-item" style=" text-align: center; ">
-                                        Total
-                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
-                                    </div>
+                                
                                 </div>
                             </div>
                             <div>
-                                {% for j in saleitem %}
-                                <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
-                                    <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
-                                        {{j.product}}
-                                    </div>
-                                    <div class="equal-length-item" style="text-align: right;">
-                                        {{j.hsn}}
-                                    </div>
-                                    <div class="equal-length-item" style="text-align: center; ">
-                                        {{j.qty}}
+                              
+                                <div class="equal-length-container text-uppercase" style="color: black; font-size: small; word-wrap: break-word; margin-bottom:4vh;">
+                                    {% comment %} <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">#
+                                    </div> {% endcomment %}
+                                    <div class="equal-length-item" style="text-align: center;">
+                                        {{expense.profile_name}}
                                     </div>
                                     <div class="equal-length-item" style="text-align: center; ">
-                                        {{j.price}}
+                                        {{expense.amount}}
                                     </div>
-                                    <div class="equal-length-item" style="text-align: center; ">
-                                        {{j.tax}}
-                                    </div>
-                                    <div class="equal-length-item" style="text-align: center; ">
-                                        {{j.total}}
-                                    </div>
+                                   
                                 </div>
-                                {% endfor %}
+                            
                             </div>
 
-                            <div><br>
-                                <div class="row ml-1">
-                                    <div class="col-md-5 text-left" style=" color: black;">
-                                        Discount
-                                    </div>
-                                    <div class="col-md-6 text-right ml-2" style="color: black;">
-                                        {{ tot_dis }}
-                                    </div>
-                                </div>
-                                <div class="row ml-1">
-                                    <div class="col-md-5 text-left" style=" color: black;">
-                                        Subtotal
-                                    </div>
-                                    <div class="col-md-6 text-right ml-2" style="color: black;">
-                                        {{ sale.subtotal }}
-                                    </div>
-                                </div>
-                                {% if sale.IGST != '0' %}
-                                <div class="row ml-1">
-                                    <div class="col-md-5 text-left " style=" color: black;">
-                                        IGST
-                                    </div>
-                                    <div class="col-md-6 text-right ml-2" style="color: black;">
-                                        {{ sale.IGST }}
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="row ml-1">
-                                    <div class="col-md-5 text-left" style=" color: black;">
-                                        CGST
-                                    </div>
-                                    <div class="col-md-6 text-right ml-2" style="color: black;">
-                                        {{ sale.CGST }}
-                                    </div>
-                                </div>
-                                <div class="row ml-1">
-                                    <div class="col-md-5 text-left" style=" color: black;">
-                                        SGST
-                                    </div>
-                                    <div class="col-md-6 text-right ml-2" style="color: black;">
-                                        {{ sale.SGST }}
-                                    </div>
-                                </div>
-                                {% endif %}
-                                <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
-                            </div>
+                           
 
-                            <div class="mb-2">
-                                <div class="row">
-                                    <div class="col-md-5 text-left ml-2" style=" font-size: large; color: black; font-weight: bold;">
-                                        Total
-                                    </div>
-                                    <div class="col-md-6 text-right ml-2" style="font-size: large; color: black; font-weight: bold;">
-                                        {{ sale.salestotal }}
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                     <div class="col-md-3"></div>
@@ -1405,87 +1215,26 @@
 
         </div>
     </div>
-    {% comment %} <fieldset2 id="exp_slip" style="display: none;">
-        <div class="p-3 mt-3" style="background-color: #8888889d;">
-            <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-12">
-                    <div id="outer" style="width: 100%;border-radius: 15px;background-color: rgba(31, 31, 31, 0.774);">
-                        <div class="row">
-                            <div class="col-sm-3 col-md-3 col-lg-3"></div>
-                            <div class="col-sm-6 col-md-6 col-lg-6">
-                                <div id="print_slip" class="p-1 pb-5" style="width: 100%;background-color: beige;">
-                                    <div class="row">
-                                        <div class="col-sm-12 col-lg-12 col-md-12">
-                                          <h6 class="text-black" style="text-align: center;">Recurring Expense</h6>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12 col-lg-12 col-md-12">
-                                            <h6 class="text-dark mt-1" style="text-transform: uppercase;text-align: center;">{{ company.company_name }}</h6>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12 col-lg-12 col-md-12">                            
-                                           <p class="text-dark" style="text-align: center;"> {{ company.address }} , {{ company.city }} ,{{ company.state }}  </p>                           
-                                        </div>
-                                  </div>
-                                  <div class="row">
-                                    <div class="col-sm-12 col-lg-12 col-md-12">
-                                        <p class="text-dark" style="font-size: small;"><span class="text-black" style="font-size:medium;">Bill to :</span> <br>
-                                        
-                                         {{ expense.customer.customerName }} <br>{{ expense.customeremail }} <br><span class="text-black " style="font-size: medium;">Start date:</span> <br> {{expense.start_date }} </p>
-                                         <p class="text-dark" style="font-size: small;margin-left: 70%;margin-top: -20%;"><span class="text-black" style="font-size: medium;">Estimate no:</span><br>{{expense.refrenceid }}</p>
-        
-        
-        
-                                    </div>
-                                    <!-- <div class="col-sm-2 col-md-2 col-lg-2"></div>
-                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                    </div> -->
-                                  </div>
-                                  
-                                  <div class="row ">
-                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                        <table class="table-bordered mb-3" style="margin-top: 8%;">
-                                            <thead >
-                                                <tr>
-                                                    <td>#</td>
-                                                    <td>Start Date</td>
-                                                    <td>Profile Name</td>
-                                                    <td>Amount</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                               
-                                                <tr>
-                                                    <td>{{ forloop.counter }}</td>
-                                            
-                                                    <td>{{expense.start_date}} </td>
-                                                    <td>{{expense.profile_name}}</td>
-                                                        
-                                                    <td>{{expense.amount}}</td>
-                                                    </tr>
-                                    
-                                            </tbody>
-                                       
-                               
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-3 col-md-3 col-lg-3"></div>
-                        </div>
-        
-                    </div>
-        
-                </div>
-            </div>
-        </div>
-        
-    </fieldset2>  {% endcomment %}
-
     
- 
+    
+    <script>
+    function printslip(){
+        print4 = document.getElementById('exp_slip')
+        if (print4.style.display !== 'none'){
+                var printContents = document.getElementById("exp_slip").innerHTML;
+        }
+        var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
+        $printerDiv.html(printContents); // add the content to be printed
+        $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+        window.print(); // call print
+        $printerDiv.remove(); // remove the div
+        $('body').removeClass("printingContent");
+    }
+    
+</script>
+
+     
     
         
     <script>
@@ -1571,19 +1320,22 @@
       
         <script>
         function toggleForm(formNumber) {
-            const printbutton1=document.getElementById(`printTemplate`)
-            printbutton1.style.display="none";
+            //const printbutton1=document.getElementById(`printTemplate`)
+            //printbutton1.style.display="none";
+            
+            
             for (let i = 1; i <5; i++) {
                 const form = document.getElementById(`form${i}`);
                 const button = document.getElementById(`formButton${i}`);
                 const printbutton=document.getElementById(`printTemplate${i}`)
-                
+                const printbutton1=document.getElementById(`printTemplate`)
+              
         
                 if (i === formNumber) {
                     form.style.display = "block";
                     button.classList.add("active"); // Optionally, you can add a class for highlighting the active button.
                     printbutton.style.display="block";
-                  
+                    printbutton1.style.display="none";
 
                 } else {
                     form.style.display = "none";
@@ -1705,7 +1457,7 @@
                           margin: 1,
                           filename: 'Recurringexpense' + '.pdf',
                           image: { type: 'jpeg', quality: 0.98 },
-                          html2canvas: { scale: 3 },
+                          html2canvas: { scale: 4 },
                           jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }
                       };
                       html2pdf().set(opt).from(element).save();
@@ -1989,6 +1741,7 @@ $(document).ready(function() {
         if (tabName === 'Template') {
             template.style.zIndex = "999";
             overview.style.display = "none";
+            toggleForm('Template');
         } else if (tabName === 'Overview') {
             template.style.zIndex = "0";
             overview.style.display = "block";
