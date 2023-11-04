@@ -217,6 +217,7 @@
 
         .print-only  * {
             visibility: visible;
+            display: block; 
         }
 
         .print-only {
@@ -231,15 +232,54 @@
             page-break-inside: avoid;
             color: black;
         }
+        .printContainer {
+            display: block; 
+        }
+        .printContainer * {
+            visibility: visible;
+        }
 
-        {% comment %} @page {
-            size: 100%;
-            margin: 0;
-            height: auto;
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            {% comment %} position: absolute; {% endcomment %}
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+            position: static; /* Use the default position */
+            page-break-before: auto; /* Use the default page break behavior */
+            page-break-inside: auto; /* Use the default page break behavior */
             color: black;
-        } {% endcomment %}
+        } 
+     
+        
     }
-
+    {% comment %} @media print {
+        /* Define print-specific styles here */
+        body * {
+            visibility: hidden;
+        }
+        #exp_slip, #exp_slip * {
+            visibility: visible;
+        }
+        #exp_slip {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 10px; /* Adjust padding as needed for alignment */
+        }
+        .equal-length-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            margin-left: 2vh;
+            margin-right: 2vh;
+        }
+    } {% endcomment %}
 
 
 
@@ -271,7 +311,7 @@ body {
 .top-content {
     padding-bottom: 15px;
 }
-@media print{
+{% comment %} @media print{
     body{
         visibility: hidden !important; /* hide everything in body when in print mode*/
     }
@@ -286,7 +326,7 @@ body {
         height: 100%;
         font-size: large;
     } 
-}
+} {% endcomment %}
 
 :root {
     --white: #ffffff;
@@ -544,9 +584,9 @@ body {
                                 data-bs-toggle="dropdown" id="attachmentDropdown" aria-haspopup="true" aria-expanded="false"> 
                             </a>
 
-                            <div class="dropdown-menu" aria-labelledby="attachmentDropdown">
+                            <div class="dropdown-menu  no-print" aria-labelledby="attachmentDropdown">
                                 <a class="dropdown-item" style="cursor: pointer;" onclick="show_slip()"><i class="fas fa-eye"></i>View</a>
-                                <a class="dropdown-item" id="slip" style="cursor: pointer;" onclick="printslip()"><i class="fas fa-print"></i>&nbsp;Print</a>
+                                <a class="dropdown-item" id="slip" style="cursor: pointer;" onclick="printSection('slipdiv')"><i class="fas fa-print"></i>&nbsp;Print</a>
                                         
                             </div>
                         </div>
@@ -1140,7 +1180,7 @@ body {
     
 </div>
 
-    <div id="exp_slip" style="background-color: #243e54; border-radius: 2vh; display: none; ">
+    <div id="slipdiv" style="background-color: #243e54; border-radius: 2vh; display: none; ">
         <div class="p-5"  >
             <div class="my-5 page" size="A4">
                 <div class="row" style="margin-top: 20%;" id="printslip">
@@ -1151,14 +1191,14 @@ body {
                                 <div class="text-center" style="font-size: 6vh; color: black;">
                                     <b>{{company.company_name}} </b>
                                 </div>
-                                <span style="font-size:     small; color: black;"> {{ company.address }} <br>
+                                <span style="font-size:small; color: black;"> {{ company.address }} <br>
                                     {{company.city}},
                                     {{company.state}}
                                     {{company.pincode}} <br>
                                     {{ company.phone }} <br>{{ company.cemail }} 
                                 </span>
                             </div>
-                            <div class="ml-4 mt-2" style="color: black;">
+                            <div class="ml-4 mt-3" style="color: black;margin-left:50px;">
                                 <div class="row">
                                     <div class="col-md-6 text-left">Refrence No:</div>
                                     <div class="col-md-5 text-right">{{expense.refrenceid}}</div>
@@ -1216,26 +1256,21 @@ body {
         </div>
     </div>
     
-    
+   
     <script>
-    function printslip(){
-        print4 = document.getElementById('exp_slip')
-        if (print4.style.display !== 'none'){
-                var printContents = document.getElementById("exp_slip").innerHTML;
+        function printfun() {
+            var printContents = document.getElementById("slipdiv").innerHTML;
+            var $printerDiv = $('<div class="printContainer"></div>');
+            $printerDiv.html(printContents);
+            $('body').append($printerDiv).addClass("printingContent");
+    
+            setTimeout(function () {
+                window.print();
+                $printerDiv.remove();
+                $('body').removeClass("printingContent");
+            }, 1000);
         }
-        var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
-        $printerDiv.html(printContents); // add the content to be printed
-        $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
-
-        window.print(); // call print
-        $printerDiv.remove(); // remove the div
-        $('body').removeClass("printingContent");
-    }
-    
-</script>
-
-     
-    
+    </script>
         
     <script>
         $(document).ready(function() {
@@ -1486,7 +1521,7 @@ body {
         <script>
             function show_slip()
             {
-            document.getElementById("exp_slip").style.display="block";
+            document.getElementById("slipdiv").style.display="block";
             document.getElementById("Template").style.display="none";
             document.getElementById("Overview").style.display="none";
             document.getElementById("formButton1").style.display="none";
