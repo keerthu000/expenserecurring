@@ -24,6 +24,7 @@
         border-style: none;
         color:azure;
         justify-content: center;
+        
     }
  
 
@@ -69,53 +70,40 @@ tr:hover {
 
 
     
-    @media print and (color){
-        * {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
+    @media print {
         body * {
             visibility: hidden;
         }
-
-        table, th, td, tr, tbody {
-        border: 1px solid rgb(218, 164, 48); /* Ensure rgb(218, 164, 48) borders when printing */
-        color:black;
+    
+        table {
+            border: 1px solid black;
+            color: black;
+            width: 80%;
         }
-       
     
-    .printable-content table {
-        margin: 0;
-
+        th, td {
+            padding: 5px;
+            width: 10%;
+            border: 1px solid black;
+            font-size: 10px; 
+            
+        }
     
-    }
         .printable-content, .printable-content * {
             visibility: visible;
-            color:rgb(218, 164, 48)!important;
-            padding: 10px!important;
-
-           
+            display: block; 
         }
+    
         .printable-content {
-            width: 100%;  
-            max-width: 100%; 
-            padding: 10px;
-            color:rgb(218, 164, 48)!important;
-            
-           
-        }
-        .printable-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* width: 91vw; */
             width: 100%;
-            color:rgb(218, 164, 48)!important;
-           padding: 0%!important;
+            page-break-before: always;
+            border: 1px solid black;
         }
+    
+        
+    }
+    
 
-}
-      
       
 </style>
 
@@ -177,39 +165,41 @@ tr:hover {
                 </div>
                
             </div> 
-            <div  class="printable-content" id="pdf-card">
-                <div class="card-body  text">
-                <div class="container-fluid over" >
-                    <div class="table-responsive">
-                    <table class="table table-responsive-md mt-4 table-bordered" id="myTable" style="  width: 85%; border-collapse: collapse;border: 1px solid black;border: none;">
-                        <thead style="border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">
-                        <tr style="border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">
-                            
-                            <th style="color: rgb(218, 164, 48);  border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;"  id="date"   class="text- fw-bold print__text">Date</th>
-                            <th style="color: rgb(218, 164, 48);  border: 1px solid rgb(218, 164, 48); 3px;text-align: center; width: 10%;" id="exp_acc" class="text- fw-bold print__text">Expense Account</th>
-                            <th style="color: rgb(218, 164, 48);  border: 1px solid rgb(218, 164, 48); 5px;text-align: center; width: 10%;" id="paid" class="text- fw-bold print__text">Paid Through</th>
-                            <th style="color: rgb(218, 164, 48);  border: 1px solid rgb(218, 164, 48); 5px;text-align: center; width: 10%;" id="vendor" class="text- fw-bold print__text">Vendor Name</th>
-                            <th style="color: rgb(218, 164, 48);  border: 1px solid rgb(218, 164, 48); 5px;text-align: center; width: 10%;" id="customer" class="text- fw-bold print__text">Customer Name</th>
-                            <th style="color: rgb(218, 164, 48);  border: 1px solid rgb(218, 164, 48); 5px;text-align: center; width: 10%;" id="amount" class="text- fw-bold print__text">Amount</th>
-                        </tr>
-                        </thead>
-                        <tbody style="border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">
-                        {% for e in expense %}
-                        <tr class="text-dark" style="border: 1px solid black;padding: 5px;text-align: center; width: 10%;">
-                            <td style="color:white;  border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">{{ e.start_date | date:'Y-m-d' }}</a></td>
-                            <td style="color:white;  border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">{{ e.expense_account.accountName }}</a></td>
-                            <td style="color:white;  border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">{{ e.paidthrough }}</a></td>
-                            <td style="color: white;  border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">{{ e.vendor.first_name }} {{ e.vendor.last_name }}</a></td>
-                            <td style="color: white;  border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">{{ e.customer.customerName }}</a></td>
-                            <td style="color:white;  border: 1px solid rgb(218, 164, 48);padding: 5px;text-align: center; width: 10%;">{{ e.amount }}</a></td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="printable-content">
+                <div  id="pdf-card">
+                    <div class="card-body text">
+                        <div class="container-fluid">
+                            <div >
+                                <table class="table mt-4 table-bordered" id="myTable" style="border: 1px solid black;">
+                                    <thead>
+                                        <tr>
+                                            <th style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 14px;">Date</th>
+                                            <th style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 14px;">Expense Account</th>
+                                            <th style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 14px;">Paid Through</th>
+                                            <th style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 14px;">Vendor Name</th>
+                                            <th style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 14px;">Customer Name</th>
+                                            <th style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 14px;">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for e in expense %}
+                                        <tr>
+                                            <td style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 13px;">{{ e.start_date | date:'Y-m-d' }}</td>
+                                            <td style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 13px;">{{ e.expense_account.accountName }}</td>
+                                            <td style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 13px;">{{ e.paidthrough }}</td>
+                                            <td style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 13px;">{{ e.vendor.first_name }} {{ e.vendor.last_name }}</td>
+                                            <td style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 13px;">{{ e.customer.customerName }}</td>
+                                            <td style="border: 1px solid black;width:10%;width:10%; padding: 5px;font-size: 13px;">{{ e.amount }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
             </div>
+            
       
 
 
@@ -580,4 +570,4 @@ tr:hover {
 
 
 
-{% endblock %}
+{% endblock %}          

@@ -1048,7 +1048,7 @@ body {
                 </div>
                 
                
-                    <div>
+                    <div id="formButton">
 
 
                         
@@ -1200,27 +1200,27 @@ body {
                             </div>
                             <div class="ml-4 mt-3" style="color: black;margin-left:50px;">
                                 <div class="row">
-                                    <div class="col-md-6 text-left">Refrence No:</div>
-                                    <div class="col-md-5 text-right">{{expense.refrenceid}}</div>
+                                    <div class="col-md-6 text-left" style="display: inline-block; width: 50%;">Refrence No:</div>
+                                    <div class="col-md-5 text-right" style="display: inline-block; width: 50%;">{{expense.refrenceid}}</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 text-left">Customer Name:</div>
-                                    <div class="col-md-5 text-right">{{ expense.customer.customerName }}</div>
+                                    <div class="col-md-6 text-left" style="display: inline-block; width: 50%;">Customer Name:</div>
+                                    <div class="col-md-5 text-right" style="display: inline-block; width: 50%;">{{ expense.customer.customerName }}</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 text-left">Start date: :</div>
-                                    <div class="col-md-5 text-right">{{expense.start_date | date:'d-m-Y'}}</div>
+                                    <div class="col-md-6 text-left" style="display: inline-block; width: 50%;">Start date: :</div>
+                                    <div class="col-md-5 text-right" style="display: inline-block; width: 50%;">{{expense.start_date | date:'d-m-Y'}}</div>
                                 </div>
                               
                             </div>
                             <div><br>
-                                <div class="equal-length-container" style="color: black; font-weight: bold;margin-top:10px">
+                                <div class="equal-length-container" style="color: black; font-weight: bold;margin-top:10px;display: flex;align-items: center;  justify-content: space-between; height: 100%;  margin-left: 2vh;margin-right: 2vh;  ">
                                      
-                                    <div class="equal-length-item ml-2"  style=" text-align:center;">
+                                    <div class="equal-length-item ml-2"  style=" text-align:center;flex: 1;">
                                         Profile Name
                                          <hr style="border-bottom: 1px solid black; margin-top:1vh; width:85%;"> 
                                     </div>
-                                    <div class="equal-length-item"  style=" text-align: center; ">
+                                    <div class="equal-length-item"  style=" text-align: center; flex: 1;">
                                         Amount
                                         <hr style="border-bottom: 1px solid black; margin-top:1vh; width:85%"> 
                                     </div>
@@ -1229,13 +1229,13 @@ body {
                             </div>
                             <div>
                               
-                                <div class="equal-length-container text-uppercase" style="color: black; font-size: small; word-wrap: break-word; margin-bottom:4vh;">
+                                <div class="equal-length-container text-uppercase" style="color: black; font-size: small; word-wrap: break-word; margin-bottom:4vh;display: flex;align-items: center;  justify-content: space-between; height: 100%;  margin-left: 2vh;margin-right: 2vh;  ">
                                     {% comment %} <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">#
                                     </div> {% endcomment %}
-                                    <div class="equal-length-item" style="text-align: center;">
+                                    <div class="equal-length-item" style="text-align: center;flex: 1;">
                                         {{expense.profile_name}}
                                     </div>
-                                    <div class="equal-length-item" style="text-align: center; ">
+                                    <div class="equal-length-item" style="text-align: center; flex: 1;">
                                         {{expense.amount}}
                                     </div>
                                    
@@ -1463,7 +1463,7 @@ body {
                       print1 = document.getElementById('Template')
                       print2 = document.getElementById('form1')
                       print3 = document.getElementById('form2')
-                      //print4 = document.getElementById('slipdiv')
+                      print4 = document.getElementById('slipdiv')
       
                       if (print1.style.display !== 'none'){
                           var element = document.getElementById('printdiv1') 
@@ -1480,9 +1480,10 @@ body {
                           element.style.color = 'black';
                       }
       
-                      //if (print4.style.display !== 'none'){
-                        //  var element = document.getElementById('printslip') 
-                     //}
+                      if (print4.style.display !== 'none'){
+                          var element = document.getElementById('printslip') 
+                          element.style.color = 'black';
+                     }
       
                        
                        //element.style.color = 'black';
@@ -1524,10 +1525,15 @@ body {
             document.getElementById("slipdiv").style.display="block";
             document.getElementById("Template").style.display="none";
             document.getElementById("Overview").style.display="none";
-            document.getElementById("formButton1").style.display="none";
-            document.getElementById("formButton2").style.display="none";
-            document.getElementById("formButton3").style.display="none";
+            document.getElementById("formButton").style.display="none";
+            //document.getElementById("formButton2").style.display="none";
+            //document.getElementById("formButton3").style.display="none";
 
+            }
+            function show_template() {
+                document.getElementById("slipdiv").style.display = "none";
+                document.getElementById("Template").style.display = "block";
+                document.getElementById("Overview").style.display = "none";
             }
           
             </script>
@@ -1771,15 +1777,33 @@ $(document).ready(function() {
     function openTab(tabName) {
         var template = document.getElementById('Template');
         var overview = document.getElementById('Overview');
+        var slipdiv = document.getElementById('slipdiv');
         var formButton=document.getElementById('formButton');
+       // var formButton2=document.getElementById('formButton2');
+       // var formButton2=document.getElementById('formButton3');
     
-        if (tabName === 'Template') {
-            template.style.zIndex = "999";
-            overview.style.display = "none";
-            toggleForm('Template');
-        } else if (tabName === 'Overview') {
-            template.style.zIndex = "0";
-            overview.style.display = "block";
+        if (slipdiv.style.display !== "none") {
+            if (tabName === 'Template') {
+                // "slipdiv" is visible, show the "Template" content but don't switch tabs
+                template.style.display = "block";
+                overview.style.display = "none";
+                slipdiv.style.display="none";
+                formButton.style.display="block";
+
+            } else if (tabName === 'Overview') {
+                // "slipdiv" is visible, switch to the "Overview" tab
+                template.style.zIndex = "0";
+                overview.style.display = "block";
+            }
+        } else {
+            // "slipdiv" is not visible, perform regular tab switching
+            if (tabName === 'Template') {
+                template.style.zIndex = "999";
+                overview.style.display = "none";
+            } else if (tabName === 'Overview') {
+                template.style.zIndex = "0";
+                overview.style.display = "block";
+            }
         }
     
         // Remove "active" class from all tablinks
@@ -1790,9 +1814,9 @@ $(document).ready(function() {
     
         // Add "active" class to the clicked tablink
         document.querySelector('[onclick="openTab(\'' + tabName + '\')"]').classList.add("active");
-        
     }
-
+        
+    
     
     function showTax() {
         if ('{{gst_or_igst}}' == "GST") {
