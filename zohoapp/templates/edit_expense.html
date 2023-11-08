@@ -72,190 +72,200 @@
                 </div>
             </div>
           
-          
               
           
             <!-- Repeat Every -->
             <div class="form-group row mt-4">
-                <label for="repeat_every" class="col-sm-3 col-form-label">Repeat Every</label>
-                <div class="col-sm-6">
-                  
+              <label for="repeat_every" class="col-sm-3 col-form-label">Repeat Every</label>
+              <div class="col-sm-6">
                   <select class="form-control text-dark" id="repeat_select" name="repeat_every">
-                    {% if  expense.repeatevery%}
-                    <option class="text-dark" value="{{ expense.repeatevery.id }}"  selected> {{ expense.repeatevery.Terms }}</option>
-                    {% endif %}
-                    {% for repeat_item in repeat_list %}
-                    
-                    <option class="text-dark" value="{{ repeat_item.id }}" {% if repeat_item.id == repeat_id.id %} {% endif %}> {{ repeat_item.Terms }}</option>
-                  
-                    {% endfor %}
-                
-                </select>
-                  </div>
-                  <div class="input-group-append">
-                    <button class="btn btn-primary" type="button" data-toggle="modal" id="openModal" data-target="#repeatevery" class="text-capitalize" style="width:100px;height:38px;margin-left:-123px;">Add</button>
-                  </div>
-                </div>
-
-            <!-- Start Date -->
-            <div class="form-group row mt-4">
-                <label for="start_date" class="col-sm-3 col-form-label">Start Date</label>
-                <div class="col-sm-6">
-                    <input type="date" id="start_date" value="{{ expense.start_date|date:'Y-m-d' }}" name="start_date"
-                        class="form-control bg-white text-dark">
-                </div>
-            </div>
-
+                      {% if expense.repeatevery %}
+                          <option class="text-dark" value="{{ expense.repeatevery.id }}" selected>{{ expense.repeatevery.Terms }}</option>
+                      {% endif %}
+                      {% for repeat_item in repeat_list %}
+                          <option class="text-dark" value="{{ repeat_item.id }}" {% if repeat_item.id == repeat_id.id %}{% endif %}>{{ repeat_item.Terms }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="input-group-append">
+                  <button class="btn btn-outline-warning" type="button" data-toggle="modal" id="openModal" data-target="#repeatevery" style="height: 38px; margin-left: -25px;"><b>+</b></button>
+              </div>
+          </div>
+          
+          <!-- Start Date -->
+          <div class="form-group row mt-4">
+              <label for "start_date" class="col-sm-3 col-form-label">Start Date</label>
+              <div class="col-sm-6">
+                  <input type="date" id="start_date" value="{{ expense.start_date|date:'Y-m-d' }}" name="start_date" class="form-control bg-white text-dark">
+              </div>
+          </div>
+          
             
             <!-- Expense Account -->
             <div class="form-group row mt-4">
-                <label for="expense_account" class="col-sm-3 col-form-label">Expense Account</label>
-                <div class="col-sm-6">
-                    <div class="input-group">
-                        <select class="form-control bg-white text-dark" id="expense_account" name="expense_account">
-                            {% for account_type in items %}
-                            <optgroup label="{{ account_type }}">
-                                {% for account in accounts %}
-                                {% if account.accountType == account_type %}
-                                
-                                <option value="{{ account.id }}"    {% if account.id == selected_account.id%} selected   {% endif %}> {{ account.accountName }}</option>
-                              
-                                {% endif %}
-                                {% endfor %}
-                            </optgroup>
-                            {% endfor %}
-                        </select>
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newAccountModal"
-                                class="text-capitalize" style="height: 38px;">New Account</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Expense Type -->
-            <div class="form-group row mt-4">
-                <label class="col-sm-3 col-form-label" style="margin-top: 8px;">Expense Type</label>
-                <div class="col-sm-6" style="display: flex;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="expense_type" id="expense_type_goods" value="goods"
-                            {% if expense.expense_type == 'goods' %} checked {% endif %} required>
-                        <label class="form-check-label" for="expense_type_goods" style="margin-left: 10px;">Goods</label>
-                    </div>
-                    <div class="form-check" style="margin-left: 30px;">
-                        <input class="form-check-input" type="radio" name="expense_type" id="expense_type_services" value="services"
-                            {% if expense.expense_type == 'services' %} checked {% endif %} style="margin-left: 30px;" required>
-                        <label class="form-check-label" for="expense_type_services" style="margin-left: 30px;">Service</label>
-                    </div>
-                    <div class="form-group" id="goods-bottom" style="display: none;">
-                        <div style="margin-left: -300px;"><label for="goods-label" style="margin-top: 74px;margin-left: -176px;">HSN</label></div>
-                        <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label"
-                            value="{{expense.hsn}}" oninput="validateHSN(this)" style="margin-left: -13.5rem;width: 545px;">
-                        <small id="hsn-error" class="text-danger"></small>
-                    </div>
-                    <div class="form-group" id="services-bottom" style="display: none;">
-                        <div style="margin-left: -300px;"><label for="services-label"
-                                style="margin-top: 74px;margin-left: -187px;">SAC</label></div>
-                        <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label"
-                            value="{{expense.sac}}" oninput="validateSAC(this)" style="margin-left: -13.5rem;width: 551px;">
-                        <small id="sac-error" class="text-danger"></small>
-                    </div>
-                </div>
-            </div>
-
-        <div class="form-group row mt-4">
-          <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Amount</label></div>
-          <div class="col-sm-12 col-md-6 col-lg-6">
-            <div class="input-group-prepend" style="margin-left:-151px;">
-              <select class="form-control bg-white text-dark" id="currency" name="currency"   style="width:50px; margin-left:153px;color:white;margin-top:10px;">
-                <option value="INR" >INR</option>
-              </select>
-            </div>
-            <option value="INR" ></option><input type="text"  value="{{ expense.amount }}"  id="amount" name="amount" class="form-control bg-white text-dark" style="background-color:#2c2e33;color:black;margin-top:-57px;margin-left: 48px;width: 500px;">
-          </div>
-        </div>
-        <div class="form-group row mt-4">
-          <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Paid Through</label></div>
-          <div class="col-sm-12 col-md-6 col-lg-6">
-            <select name="paidthrough" id="paidthrough" class="form-control bg-white text-dark" style="width:550px;">
-                
-                <option value="{{expense.paidthrough}}">{{expense.paidthrough}}</option>
-                <option value="Cash" >Cash</option>
-                <option value="Cheque" >Cheque</option>
-               
-                <option value="UPI">UPI</option>
-                {% for b in bank %}
-                <option value="b.name">{{b.name}}</option>
-                  {% endfor %}
-
-               
-            </select>
-        </div>
-        </div> 
-  
-        <div class="form-group row mt-4" id="chequeField" style="display: none; ">
-          <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Cheque ID</label></div>
-          <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="text" name="chequeId" id="chequeId" class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;" value="{{expense.cheque_id}}">
-          </div>
-      </div>
-      
-      <div class="form-group row mt-4" id="upiField" style="display: none;">
-          <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>UPI Number</label></div>
-          <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="text" name="upiNumber" id="upiNumber" class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;" value="{{expense.upi_number}}">
-          </div>
-      </div>
-      
-      <div class="form-group row mt-4" id="bankField" style="display: none;">
-          <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Bank Account</label></div>
-          <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="text" name="bankAccount" id="bankAccount" class="form-control bg-white text-dark" style="width: 550px;margin-left:280px;margin-top:-35px;" value="{{expense.bank_account}}">
-          </div>
-      </div>
-      
-  
-        <div class="form-group row">
-          <label for="vendorSelect" class="col-sm-3 col-form-label">Vendor</label>
-          <div class="col-sm-6">
-              <div class="input-group">
-                  <select name="vendor" id="vendorSelect" class="form-control bg-white text-dark">
-                      <option value=""></option>
-                      {% for vendor in vendors %}
-                          <option value="{{ vendor.id }}" {% if vendor.id == expense.vendor_id %}selected{% endif %} data-gst="{{ vendor.gst_treatment }}">{{ vendor.first_name }} {{ vendor.last_name }}</option>
-                      {% endfor %}
-                  </select>
-                  <div class="input-group-append">
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newvendor" style="height: 38px;">Add new vendor</button>
+              <label for="expense_account" class="col-sm-3 col-form-label">Expense Account</label>
+              <div class="col-sm-6">
+                  <div class="input-group">
+                      <select class="form-control bg-white text-dark" id="expense_account" name="expense_account">
+                          {% for account_type in items %}
+                          <optgroup label="{{ account_type }}">
+                              {% for account in accounts %}
+                              {% if account.accountType == account_type %}
+                              <option value="{{ account.id }}" {% if account.id == selected_account.id %} selected {% endif %}>
+                                  {{ account.accountName }}
+                              </option>
+                              {% endif %}
+                              {% endfor %}
+                          </optgroup>
+                          {% endfor %}
+                      </select>
+                      <div class="input-group-append">
+                          <button class="btn btn-outline-warning" type="button" data-toggle="modal" data-target="#newAccountModal"
+                              id="openModalBtn" style="height: 38px; margin-left: 545px; margin-top: -60px;"><b>+</b></button>
+                      </div>
                   </div>
               </div>
           </div>
-      </div>
-        <!-- Vendor EmailId -->
-        <div class="form-group row">
-          <label for="vemail" class="col-sm-3 col-form-label">Vendor EmailId</label>
-          <div class="col-sm-6">
+          
+          <div class="form-group row mt-4">
+              <label class="col-sm-3 col-form-label">Reference Id</label>
+              <div class="col-sm-6">
+                  <input type="text" id="reference" name="reference_id" class="form-control bg-white text-dark" value="{{ expense.refrenceid }}"
+                      style="background-color: #2c2e33; color: black; width: 100%;">
+              </div>
+          </div>
+          
+          <!-- Expense Type -->
+          <div class="form-group row mt-4">
+              <label class="col-sm-3 col-form-label" style="margin-top: 8px;">Expense Type</label>
+              <div class="col-sm-6" style="display: flex;">
+                  <div class="form-check">
+                      <input class="form-check-input" type="radio" name="expense_type" id="expense_type_goods" value="goods" {% if expense.expense_type == 'goods' %} checked {% endif %} required>
+                      <label class="form-check-label" for="expense_type_goods" style="margin-left: 10px;">Goods</label>
+                  </div>
+                  <div class="form-check" style="margin-left: 30px;">
+                      <input class="form-check-input" type="radio" name="expense_type" id="expense_type_services" value="services" {% if expense.expense_type == 'services' %} checked {% endif %} style="margin-left: 30px;" required>
+                      <label class="form-check-label" for="expense_type_services" style="margin-left: 30px;">Service</label>
+                  </div>
+                  <div class="form-group" id="goods-bottom" style="display: none;">
+                      <div style="margin-left: -300px;">
+                          <label for="goods-label" style="margin-top: 95px; margin-left: -176px;">HSN</label>
+                      </div>
+                      <input type="text" class="form-control bg-white text-dark" id="goods-label" name="goods_label" value="{{ expense.hsn }}" oninput="validateHSN(this)"
+                          style="margin-left: -13.5rem; width: 545px;margin-top:-15px;">
+                      <small id="hsn-error" class="text-danger"></small>
+                  </div>
+                  <div class="form-group" id="services-bottom" style="display: none;">
+                      <div style="margin-left: -300px;">
+                          <label for="services-label" style="margin-top: 98px; margin-left: -187px;">SAC</label>
+                      </div>
+                      <input type="text" class="form-control bg-white text-dark" id="services-label" name="services_label" value="{{ expense.sac }}" oninput="validateSAC(this)"
+                          style="margin-left: -13.5rem; width: 545px;margin-top:-15px;">
+                      <small id="sac-error" class="text-danger"></small>
+                  </div>
+              </div>
+          </div>
+          
+
+          <div class="form-group row mt-4">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+              <label>Amount</label>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <div class="input-group-prepend" style="margin-left: -151px;">
+                <select class="form-control bg-white text-dark" id="currency" name="currency" style="width: 50px; margin-left: 153px; color: white; margin-top: 10px;">
+                  <option value="INR">INR</option>
+                </select>
+              </div>
+              <input type="text" value="{{ expense.amount }}" id="amount" name="amount" class="form-control bg-white text-dark" style="background-color: #2c2e33; color: black; margin-top: -38px; margin-left: 48px; width: 500px;">
+            </div>
+          </div>
+          
+          <div class="form-group row mt-4">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+              <label>Paid Through</label>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <select name="paidthrough" id="paidthrough" class="form-control bg-white text-dark" style="width: 550px;">
+                <option value="{{ expense.paidthrough }}">{{ expense.paidthrough }}</option>
+                <option value="Cash">Cash</option>
+                <option value="Cheque">Cheque</option>
+                <option value="UPI">UPI</option>
+                {% for b in bank %}
+                <option value="b.name">{{ b.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group row mt-4" id="chequeField" style="display: none;">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+              <label>Cheque ID</label>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <input type="text" name="chequeId" id="chequeId" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.cheque_id }}">
+            </div>
+          </div>
+          
+          <div class="form-group row mt-4" id="upiField" style="display: none;">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+              <label>UPI Number</label>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <input type="text" name="upiNumber" id="upiNumber" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.upi_number }}">
+            </div>
+          </div>
+          
+          <div class="form-group row mt-4" id="bankField" style="display: none;">
+            <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+              <label>Bank Account</label>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <input type="text" name="bankAccount" id="bankAccount" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.bank_account }}">
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label for="vendorSelect" class="col-sm-3 col-form-label">Vendor</label>
+            <div class="col-sm-6">
+              <div class="input-group">
+                <select name="vendor" id="vendorSelect" class="form-control bg-white text-dark">
+                  <option value=""></option>
+                  {% for vendor in vendors %}
+                  <option value="{{ vendor.id }}" {% if vendor.id == expense.vendor_id %}selected{% endif %} data-gst="{{ vendor.gst_treatment }}">{{ vendor.first_name }} {{ vendor.last_name }}</option>
+                  {% endfor %}
+                </select>
+                <div class="input-group-append">
+                  <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#newvendor" id="addVendorButton" style="height: 38px; margin-left: 545px; margin-top: -60px;"><b>+</b></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Vendor EmailId -->
+          <div class="form-group row">
+            <label for="vemail" class="col-sm-3 col-form-label">Vendor EmailId</label>
+            <div class="col-sm-6">
               <input type="text" class="form-control bg-white text-dark" id="vemail" name="vmail" value="{{ expense.vendormail }}">
+            </div>
           </div>
-      </div>
-
-        <!-- GST Treatment -->
-        <div class="form-group row">
-          <label for="gst_trt_inp" class="col-sm-3 col-form-label">GST Treatment</label>
-          <div class="col-sm-6">
+          
+          <!-- GST Treatment -->
+          <div class="form-group row">
+            <label for="gst_trt_inp" class="col-sm-3 col-form-label">GST Treatment</label>
+            <div class="col-sm-6">
               <input type="text" name="gst_trt_inp" id="gst_trt_inp" class="form-control bg-white text-dark" value="{{ expense.vendor.gst_treatment }}">
+            </div>
           </div>
-      </div>
-
-      <!-- Vendor GSTIN -->
-      <div class="form-group row" id="textboxContainer">
-          <label for="gst_num_inp" class="col-sm-3 col-form-label">Vendor GSTIN</label>
-          <div class="col-sm-6">
-              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="width:546px;color:black;margin-top:-30px;margin-left:280px;">
+          
+          <!-- Vendor GSTIN -->
+          <div class="form-group row" id="textboxContainer">
+            <label for="gst_num_inp" class="col-sm-3 col-form-label">Vendor GSTIN</label>
+            <div class="col-sm-6">
+              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="width: 546px; color: black; margin-top: -30px; margin-left: 280px;">
+            </div>
           </div>
-      </div>
-
-    
+          
 
       <div class="form-group row">
         <label for="destination" class="col-sm-3 col-form-label">Vendor Destination of Supply</label>
@@ -303,38 +313,40 @@
           </select>
             </select>
       </div>
-    </div>
-                <!-- Customer Name -->
-                <div class="form-group row">
-                  <label for="customer-list" class="col-sm-3 col-form-label">Customer Name</label>
-                  <div class="col-sm-6">
-                      <div class="input-group">
-                          <input type="hidden" value="{{ expense.customer.id }}" id="hid">
-                          <select name="customername" id="customer-list" class="form-control bg-white text-dark">
-                              {% for c in customers %}
-                                  <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
-                              {% endfor %}
-                          </select>
-                          <div class="input-group-append">
-                              <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#newcustomer" style="height:38px;">Add new customer</button>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <!-- Customer EmailId -->
-              <div class="form-group row">
-                  <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
-                  <div class="col-sm-6">
-                      <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}">
-                  </div>
-              </div>
-              <div class="form-group row mt-4"  style="display:block;">
-                <label class="col-sm-3 col-form-label">Customer GST Treatment</label>
-                <div class="col-sm-6">
-                  <input type="text" name="cu_gst_trt" id="cust_gst_tr" class="form-control  bg-white text-dark" style=" width: 555px;color:black;margin-left:278px;margin-top:-25px;" value="{{ expense.cust_gsttreatment }}">
+    </div><!-- Customer Name -->
+    <div class="form-group row">
+        <label for="customer-list" class="col-sm-3 col-form-label">Customer Name</label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" value="{{ expense.customer.id }}" id="hid">
+                <select name="customername" id="customer-list" class="form-control bg-white text-dark" style="width:500px;">
+                    {% for c in customers %}
+                        <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
+                    {% endfor %}
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-warning" type="button" data-toggle="modal" data-target="#newcustomer" style="height: 38px;"><b>+</b></button>
                 </div>
-              </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Customer EmailId -->
+    <div class="form-group row">
+        <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}">
+        </div>
+    </div>
+    
+    <div class="form-group row mt-4">
+      <label for="cu_gst_trt" class="col-sm-3 col-form-label">Customer GST Treatment</label>
+      <div class="col-sm-6">
+          <input type="text" name="cu_gst_trt" id="cust_gst_tr" class="form-control bg-white text-dark" style="width: 545px;" value="{{ expense.cust_gsttreatment }}">
+      </div>
+    </div>
+  
+    
               <div class="form-group row">
                 <label for="destination" class="col-sm-3 col-form-label">Customer Destination of Supply</label>
                 <div class="col-sm-6">
@@ -384,38 +396,38 @@
             </div>
 
       
-    <div class="form-group row">
-      <label for="tax1" class="col-sm-3 col-form-label">Tax</label>
-      <div class="col-sm-6">
-        <input type="hidden" id="state" value="{{ company.state }}">
-        <select name="tax[]" id="tax1" class="form-control bg-white text-dark" onclick="checkTax()" >
-          <optgroup class="text-left" label="GST" style="display: none; padding: 5px; margin: 0;">
-            <option value="GST0" {% if expense.tax == "GST0" %}selected{% endif %}>0% GST(0%)</option>
-            <option value="GST3" {% if expense.tax == "GST3" %}selected{% endif %}>3.0% GST(3%)</option>
-            <option value="GST5" {% if expense.tax == "GST5" %}selected{% endif %}>5.0% GST(5%)</option>
-            <option value="GST12" {% if expense.tax == "GST12" %}selected{% endif %}>12.0% GST(12%)</option>
-            <option value="GST18" {% if expense.tax == "GST18" %}selected{% endif %}>18.0% GST(18%)</option>
-            <option value="GST28" {% if expense.tax == "GST28" %}selected{% endif %}>28.0% GST(28%)</option>
-          </optgroup>
-          <optgroup class="text-left" label="IGST" style="display: none; padding: 5; margin: 0;">
-            <option value="IGST0" {% if expense.tax == "IGST0" %}selected{% endif %}>0% IGST(0%)</option>
-            <option value="IGST3" {% if expense.tax == "IGST3" %}selected{% endif %}>3.0% IGST(3%)</option>
-            <option value="IGST5" {% if expense.tax == "IGST5" %}selected{% endif %}>5.0% IGST(5%)</option>
-            <option value="IGST12" {% if expense.tax == "IGST12" %}selected{% endif %}>12.0% IGST(12%)</option>
-            <option value="IGST18" {% if expense.tax == "IGST18" %}selected{% endif %}>18.0% IGST(18%)</option>
-            <option value="IGST28" {% if expense.tax == "IGST28" %}selected{% endif %}>28.0% IGST(28%)</option>             
-          </optgroup>
-        </select>
-      </div>
-      
-    </div>
-    
             <div class="form-group row">
+              <label for="tax1" class="col-sm-3 col-form-label">Tax</label>
+              <div class="col-sm-6">
+                  <input type="hidden" id="state" value="{{ company.state }}">
+                  <select name="tax[]" id="tax1" class="form-control bg-white text-dark" onclick="checkTax()">
+                      <optgroup label="GST" style="display: none; padding: 5px; margin: 0;">
+                          <option value="GST0" {% if expense.tax == "GST0" %}selected{% endif %}>0% GST(0%)</option>
+                          <option value="GST3" {% if expense.tax == "GST3" %}selected{% endif %}>3.0% GST(3%)</option>
+                          <option value="GST5" {% if expense.tax == "GST5" %}selected{% endif %}>5.0% GST(5%)</option>
+                          <option value="GST12" {% if expense.tax == "GST12" %}selected{% endif %}>12.0% GST(12%)</option>
+                          <option value="GST18" {% if expense.tax == "GST18" %}selected{% endif %}>18.0% GST(18%)</option>
+                          <option value="GST28" {% if expense.tax == "GST28" %}selected{% endif %}>28.0% GST(28%)</option>
+                      </optgroup>
+                      <optgroup label="IGST" style="display: none; padding: 5px; margin: 0;">
+                          <option value="IGST0" {% if expense.tax == "IGST0" %}selected{% endif %}>0% IGST(0%)</option>
+                          <option value="IGST3" {% if expense.tax == "IGST3" %}selected{% endif %}>3.0% IGST(3%)</option>
+                          <option value="IGST5" {% if expense.tax == "IGST5" %}selected{% endif %}>5.0% IGST(5%)</option>
+                          <option value="IGST12" {% if expense.tax == "IGST12" %}selected{% endif %}>12.0% IGST(12%)</option>
+                          <option value="IGST18" {% if expense.tax == "IGST18" %}selected{% endif %}>18.0% IGST(18%)</option>
+                          <option value="IGST28" {% if expense.tax == "IGST28" %}selected{% endif %}>28.0% IGST(28%)</option>
+                      </optgroup>
+                  </select>
+              </div>
+          </div>
+          
+          <div class="form-group row">
               <label for="notes" class="col-sm-3 col-form-label">Notes</label>
               <div class="col-sm-6">
                   <input type="text" class="form-control bg-white text-dark" value="{{ expense.notes }}" id="notes" name="notes">
               </div>
-          </div><br>
+          </div>
+          
   
 
           <!-- Add a hidden input field for the activation tag with value "active" -->
@@ -424,18 +436,18 @@
 
           <div class="form-group row mt-4">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Attach a File</label></div>
-              <div class="col-md-6 col-lg-6 col-sm-12 py-5 text-center rounded mt-4">
-                  <div style="width: 100%;background-color: rgba(243, 241, 241, 0.904);height:90px;margin-left:2px;margin-top:-100px;">
-                    <label class="text-black mt-3 pt-3" for="">Attach File(s) to Recurring Expense</label><br>
-
+            <div class="col-md-6 col-lg-6 col-sm-12 py-3 text-center rounded mt-4">
+                <div style="width: 106%; background-color: rgba(243, 241, 241, 0.904); height: 50px; margin-left: -0.2rem; margin-top: -40px;width:550px;">
+                    <label class="text-black mt-1 pt-0" for="" >Attach File(s) to Recurring Expense</label><br>
+        
                     <label for="file-upload" class="btn text-white border-0" style="background-color: rgb(210, 132, 30);">
-                      <i class="fas fa-upload text-white"></i> Upload File
+                        <i class="fas fa-upload text-white"></i> <span id="file-label">Upload File</span>
                     </label>
-                    <input class="pb-3" id="file-upload" type="file" name="file" style="display:none;">
-                  </div>
-              </div>
-          </div>
-  
+                    <input class="pb-3" id="file-upload" type="file" name="file" style="display: none;">
+                </div>
+            </div>
+        </div>
+        
           <!-- Submit Buttons -->
           <div class="form-group row">
               <div class="col-sm-6 offset-sm-3">
@@ -448,155 +460,155 @@
 
 
 
-  <div class="modal fade" id="repeatevery">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
-        <div class="modal-header " style="background: rgb(32, 35, 37);">
-            <h3 class="m-3 text-uppercase">Add Repeat</h3>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body" style="background: rgb(32, 35, 37);">
-          <div class="card p-3 m-3">
-            <form action="" method="post" class="needs-validation" novalidate autocomplete="off" id="repeatForm">
-              <div class="row mt-2">
-                <div class="col-md-2 mt-2"></div>
-                <div class="col-md-4 mt-2">
-                  
-                </div>
-  
-              </div>
-  
-  
-              <div class="row mt-2">
-                <div class="col-md-2 mt-2">
-                  <center><label for="termname" style="color: rgb(190, 88, 88);">Add Repeat*</label></center>
-                </div>
-  
-                <div class="col-md-4 mt-2">
-                  <input type="text" class="form-control text-dark bg-light" id="repeats_input" name="repeatname" required>      
-                </div>
-  
-              
-  
-              </div>
-              
-              <div class="row mt-5">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                  <div class="d-flex">
-                    <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                    type="button"   data-dismiss="modal"  id="repeatSave">Save
-                    </button> 
+    <div class="modal fade" id="repeatevery">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
+          <div class="modal-header " style="background: rgb(32, 35, 37);">
+              <h3 class="m-3 text-uppercase">Add Repeat</h3>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body" style="background: rgb(32, 35, 37);">
+            <div class="card p-3 m-3">
+              <form action="" method="post" class="needs-validation" novalidate autocomplete="off" id="repeatForm">
+                <div class="row mt-2">
+                  <div class="col-md-2 mt-2"></div>
+                  <div class="col-md-4 mt-2">
                     
-  
-                    <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
-                      data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">Cancel</span>
-                    </button>
                   </div>
+    
                 </div>
-                <div class="col-md-4"></div>
-              </div>
-            </form>
+    
+    
+                <div class="row mt-2">
+                  <div class="col-md-2 mt-2">
+                    <center><label for="termname" style="color: rgb(190, 88, 88);">Add Repeat*</label></center>
+                  </div>
+    
+                  <div class="col-md-4 mt-2">
+                    <input type="text" class="form-control text-dark bg-light" id="repeats_input" name="repeatname" required>      
+                  </div>
+    
+                
+    
+                </div>
+                
+                <div class="row mt-5">
+                  <div class="col-md-4"></div>
+                  <div class="col-md-4">
+                    <div class="d-flex">
+                      <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
+                      type="button"   data-dismiss="modal"  id="repeatSave">Save
+                      </button> 
+                      
+    
+                      <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
+                        data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">Cancel</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-4"></div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      </div>  
     </div>  
-  </div>  
 
 
-  <script>
-    var paidthroughSelect = document.getElementById('paidthrough');
-    var chequeField = document.getElementById('chequeField');
-    var upiField = document.getElementById('upiField');
-    var bankField = document.getElementById('bankField');
+    <script>
+      var paidthroughSelect = document.getElementById('paidthrough');
+      var chequeField = document.getElementById('chequeField');
+      var upiField = document.getElementById('upiField');
+      var bankField = document.getElementById('bankField');
 
-    // Function to toggle input fields based on the selected option
-    function toggleInputFields() {
-        var selectedOption = paidthroughSelect.value;
+      // Function to toggle input fields based on the selected option
+      function toggleInputFields() {
+          var selectedOption = paidthroughSelect.value;
 
-        chequeField.style.display = (selectedOption === 'Cheque') ? 'block' : 'none';
-        upiField.style.display = (selectedOption === 'UPI') ? 'block' : 'none';
-        bankField.style.display = (selectedOption !== 'Cash' && selectedOption !== 'Cheque' && selectedOption !== 'UPI') ? 'block' : 'none';
-    }
+          chequeField.style.display = (selectedOption === 'Cheque') ? 'block' : 'none';
+          upiField.style.display = (selectedOption === 'UPI') ? 'block' : 'none';
+          bankField.style.display = (selectedOption !== 'Cash' && selectedOption !== 'Cheque' && selectedOption !== 'UPI') ? 'block' : 'none';
+      }
 
-    // Add an event listener to run the function when the page loads
-    window.addEventListener('load', toggleInputFields);
+      // Add an event listener to run the function when the page loads
+      window.addEventListener('load', toggleInputFields);
 
-    // Add an event listener to run the function when the select changes
-    paidthroughSelect.addEventListener('change', toggleInputFields);
-</script>
+      // Add an event listener to run the function when the select changes
+      paidthroughSelect.addEventListener('change', toggleInputFields);
+    </script>
 
 
 
-  <script type="text/javascript">
-    $(document).ready(function () {
-        $('#customer-list').change(function () {
-            var customer_id = $(this).val();
-            if (customer_id) {
-                // Make an AJAX request to get the customer's email
-                $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
-                    $('#email').val(data.email);
-                });
+    <script type="text/javascript">
+      $(document).ready(function () {
+          $('#customer-list').change(function () {
+              var customer_id = $(this).val();
+              if (customer_id) {
+                  // Make an AJAX request to get the customer's email
+                  $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
+                      $('#email').val(data.email);
+                  });
 
-                // Make an AJAX request to get the customer's GST treatment
-                $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
-                    $('#cust_gst_tr').val(data.gst_trtmnt);
-                    $('#c_destination').val(data.pos)
-                });
-            }
-        });
-    });
-</script>
+                  // Make an AJAX request to get the customer's GST treatment
+                  $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
+                      $('#cust_gst_tr').val(data.gst_trtmnt);
+                      $('#c_destination').val(data.pos)
+                  });
+              }
+          });
+      });
+    </script>
 
 
   
-  <script>
-    $(document).ready(function () {
-      $("#repeatSave").click(function (e) {
-        e.preventDefault(); // Prevent the form from submitting traditionally
-    
-        // Serialize the form data
-        var formData = $('#repeatForm').serialize();
-    
-        // Send an AJAX POST request to the server to save the data
-        $.ajax({
-          type: "POST",
-          url: "{% url 'get_repeat_every' %}", // Replace with the correct URL for your view that saves the item
-          data: formData,
-          headers: { "X-CSRFToken": "{{ csrf_token }}" },
-          success: function (data) {
-            // Clear the input field
-            $("#repeats_input").val("");
+    <script>
+      $(document).ready(function () {
+        $("#repeatSave").click(function (e) {
+          e.preventDefault(); // Prevent the form from submitting traditionally
+      
+          // Serialize the form data
+          var formData = $('#repeatForm').serialize();
+      
+          // Send an AJAX POST request to the server to save the data
+          $.ajax({
+            type: "POST",
+            url: "{% url 'get_repeat_every' %}", // Replace with the correct URL for your view that saves the item
+            data: formData,
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            success: function (data) {
+              // Clear the input field
+              $("#repeats_input").val("");
+              
+              var dropdown = $("#repeat_select");
+              // Only clear and update the dropdown if data.repeat_list exists
+              dropdown.empty();
             
-            var dropdown = $("#repeat_select");
-            // Only clear and update the dropdown if data.repeat_list exists
-            dropdown.empty();
-          
-            // Iterate through the received data and add options to the dropdown
-            $.each(data, function(key, value) {
-              var optionText = value[1];
-              var optionValue = key;
-              dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
-            });
-    
-            
-          },
-          error: function (error) {
-            console.log("AJAX Error:", error);
-          },
+              // Iterate through the received data and add options to the dropdown
+              $.each(data, function(key, value) {
+                var optionText = value[1];
+                var optionValue = key;
+                dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
+              });
+      
+              
+            },
+            error: function (error) {
+              console.log("AJAX Error:", error);
+            },
+          });
         });
       });
-    });
-    
-  </script>
+      
+    </script>
   
     
   
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
       <script>
           $(document).ready(function() {
               $('#customer-list').change(function() {
@@ -631,96 +643,57 @@
       </script>
       
       
-    <script>
-      function toggleDateInput() {
-        var checkbox = document.getElementById("never-expire-checkbox");
-        var dateInput = document.getElementById("ends_on");
-        
-        if (checkbox.checked) {
-            dateInput.disabled = true;
-        } 
-        else {
-            dateInput.disabled = false;
-        }
-    }
-  </script>
-  {% comment %} <script>
-    function toggleDate() {
-        var endsOnInput = document.getElementById("ends_on");
-        var neverExpireCheckbox = document.getElementById("never-expire-checkbox");
-        var startDateInput = document.getElementById("start_date");
-
-        if (neverExpireCheckbox.checked) {
-            endsOnInput.disabled = true;
-            endsOnInput.value = ""; // Clear the "Ends On" date
-        } else {
-            endsOnInput.disabled = false;
-        }
-    }
-
-    // Add an event listener to the "Start Date" input to prevent selecting the same date in "Ends On"
-    var startInput = document.getElementById("start_date");
-    var endsOnInput = document.getElementById("ends_on");
-
-    startInput.addEventListener("change", function () {
-        // Disable the "Ends On" date input if it matches the "Start Date"
-        if (startInput.value === endsOnInput.value) {
-            endsOnInput.value = ""; // Clear the "Ends On" date
-        }
-    });
-</script>
-    {% endcomment %}
-
-
-
+ 
+  
   
       <script>
-      $(document).ready(function() {
-          // Event listener for the vendor dropdown
-          $('#vendorSelect').on('change', function() {
-              // Get the selected vendor's ID
-              var selectedVendorId = $(this).val();
-      
-              // Check if a vendor is selected
-              if (selectedVendorId !== '') {
-                  // Send an AJAX request to fetch the GST treatment, GST number, and email for the selected vendor
-                  $.ajax({
-                      url: '/get_vendor_gst/' + selectedVendorId, // Replace with the actual URL to fetch vendor info
-                      method: 'GET',
-                      success: function(data) {
-                          console.log('Received data:', data);
-      
-                          // Update the GST treatment input field with the fetched data
-                          $('#gst_trt_inp').val(data.gst_treatment);
-      
-                          // Show or hide the GST number input field based on GST treatment
-                          if (data.gst_treatment === 'unregistered Business') {
-                              $('#textboxContainer').hide();
-                          } else {
-                              $('#textboxContainer').show();
-                              $('#gst_num_inp').val(data.gst_number); // Update GST number
-                          }
-      
-                          // Display the email input field with the fetched email
-                          $('#vemail').val(data.email);
-                          $('#emailid').show(); // Show the email input field container
-                      },
-                      error: function(error) {
-                          console.log('Error fetching data:', error);
-                      }
-                  });
-              } else {
-                  // Clear the input fields and hide the GST number input field if no vendor is selected
-                  $('#gst_trt_inp').val('');
-                  $('#gst_num_inp').val('');
-                  $('#vemail').val('');
-                  $('#textboxContainer').hide();
-                  $('#emailid').hide(); // Hide the email input field container
-              }
-          });
-      
-          // Rest of your JavaScript code...
-      });
+
+        $(document).ready(function() {
+            // Event listener for the vendor dropdown
+            $('#vendorSelect').on('change', function() {
+                // Get the selected vendor's ID
+                var selectedVendorId = $(this).val();
+        
+                // Check if a vendor is selected
+                if (selectedVendorId !== '') {
+                    // Send an AJAX request to fetch the GST treatment, GST number, and email for the selected vendor
+                    $.ajax({
+                        url: '/get_vendor_gst/' + selectedVendorId, // Replace with the actual URL to fetch vendor info
+                        method: 'GET',
+                        success: function(data) {
+                            console.log('Received data:', data);
+        
+                            // Update the GST treatment input field with the fetched data
+                            $('#gst_trt_inp').val(data.gst_treatment);
+        
+                            // Show or hide the GST number input field based on GST treatment
+                            if (data.gst_treatment === 'unregistered Business') {
+                                $('#textboxContainer').hide();
+                            } else {
+                                $('#textboxContainer').show();
+                                $('#gst_num_inp').val(data.gst_number); // Update GST number
+                            }
+        
+                            // Display the email input field with the fetched email
+                            $('#vemail').val(data.email);
+                            $('#emailid').show(); // Show the email input field container
+                        },
+                        error: function(error) {
+                            console.log('Error fetching data:', error);
+                        }
+                    });
+                } else {
+                    // Clear the input fields and hide the GST number input field if no vendor is selected
+                    $('#gst_trt_inp').val('');
+                    $('#gst_num_inp').val('');
+                    $('#vemail').val('');
+                    $('#textboxContainer').hide();
+                    $('#emailid').hide(); // Hide the email input field container
+                }
+            });
+        
+            // Rest of your JavaScript code...
+        });
       </script>
       
       
@@ -734,292 +707,331 @@
     
   
   
-<div class="modal fade" id="newAccountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="true">
-  <!-- Modal content here -->
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content" style="background: rgb(32, 35, 37); border-radius: 20px;">
-      <div class="modal-header" style="background: rgb(32, 35, 37);">
-        <h3 class="m-3 text-uppercase">New Account</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+      <div
+      class="modal fade"
+      id="newAccountModal" >
+      <!-- Modal content here -->
+      <div class="modal-dialog modal-xl">
+        <div
+          class="modal-content"
+          style="background: rgb(32, 35, 37); border-radius: 20px"
+        >
+          <div class="modal-header" style="background: rgb(32, 35, 37)">
+            <h3 class="m-3 text-uppercase">New Account</h3>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="background: rgb(32, 35, 37)">
+            <div class="card p-3 m-3">
+              <form
+                action=""
+                method="post"
+                class="needs-validation"
+                novalidate
+                autocomplete="off"
+                id="accountForm"
+              >
+                {% csrf_token %}
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="accountType">Account Type:</label>
+                    <select
+                      class="form-control text-dark"
+                      id="accountType"
+                      name="accountType"
+                    >
+                      <option value="" disabled>Select an option</option>
+                      <optgroup label="Assets">
+                        <option value="Other Current Asset">
+                          Other Current Asset
+                        </option>
+                        <option value="Cash">Cash</option>
+                        <option value="Bank">Bank</option>
+                        <option value="Stock">Stock</option>
+                        <option value="Payment Clearing">Payment Clearing</option>
+                        <option value="Fixed Asset">Fixed Asset</option>
+                      </optgroup>
+                      <optgroup label="Liability">
+                        <option value="Other Liability">Other Liability</option>
+                        <option value="Other Current Liability">
+                          Other Current Liability
+                        </option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Long Term Liability">
+                          Long Term Liability
+                        </option>
+                        <option value="Overseas Tax Payable">
+                          Overseas Tax Payable
+                        </option>
+                      </optgroup>
+                      <optgroup label="Expense">
+                        <option value="Expenses">Expenses</option>
+                        <option value="Cost Of Goods Sold">
+                          Cost Of Goods Sold
+                        </option>
+                        <option value="Other Expense">Other Expense</option>
+                      </optgroup>
+                      <optgroup label="Equity">
+                        <option value="Equity">Equity</option>
+                      </optgroup>
+                      <optgroup label="Income">
+                        <option value="Income">Income</option>
+                        <option value="Other Income">Other Income</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="accountName">Account Name:</label>
+                    <input
+                      type="text"
+                      class="form-control text-dark"
+                      id="accountName"
+                      name="accountName"
+                      required
+                    />
+                  </div>
+                </div>
+    
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="accountCode">Account Code:</label>
+                    <input
+                      type="text"
+                      class="form-control text-dark"
+                      id="accountCode"
+                      name="accountCode"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="description">Description:</label>
+                    <textarea
+                      class="form-control text-dark"
+                      id="description"
+                      name="description"
+                      rows="3"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+    
+                <div class="form-row mt-3">
+                  <div class="col-md-6">
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      id="accountSave">
+                      Save and Select
+                    </button>
+                    <button
+                        type="button"
+                        class="close btn btn-secondary"
+                        data-dismiss="modal"
+                        aria-label="Close" style="height:35px;"
+                      >
+                        <span aria-hidden="true">Cancel</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="modal-body" style="background: rgb(32, 35, 37);">
-        <div class="card p-3 m-3">
-          <form action=" " method="post" class="needs-validation" novalidate autocomplete="off" id="accountForm">
-            {% csrf_token  %}
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="accountType">Account Type:</label>
-                <select class="form-control bg-white text-dark" id="accountType" name="accountType">
-                  <option value=""  disabled class="btn btn text-dark   highlight-account-type"><b>Assets</b></option>
-                  {% comment %} <option value=""  ><b>Assets</b></option> {% endcomment %}
-                  <option value="Other Current Asset">Other Current Asset</option>
-                  <option value="Cash">Cash </option>
-                  <option value="Bank">Bank </option>
-                  <option value="Stock">Stock </option>
-                  <option value="Payment Clearing">Payment Clearing </option>
-                  <option value="Fixed Asset">Fixed Asset</option>
-                  
-                  <option value=""  disabled class="btn btn text-dark   highlight-account-type"><b>Liability</b></option>
-                  <option value="Other Liability">Other Liability</option>
-                  <option value="Other Current Liability">Other Current Liability</option>
-                  <option value="Credit Card">Credit Card</option>
-                  <option value="Long Term Liability">Long Term Liability</option>
-                  <option value="Overseas Tax Pyable">Overseas Tax Pyable</option>
-                  
-                  <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Expense</b></option>
-                  <option value="Expenses">Expenses</option>
-                  <option value="Cost Of Goods Sold">Cost Of Goods Sold</option>
-                  <option value="Other Expense">Other Expense</option>
-                  <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Equatity</b></option>
-                  <option value="Equality">Equatity</option>
-                  <option value="" disabled class="btn btn text-dark   highlight-account-type"><b>Income</b></option>
-                  <option value="Income">Income</option>
-                  <option value="other Income">Other Income</option>
-                
-                
-                
-                </select>
+    </div>
+
+
+
+    <script>
+
+      $(document).ready(function() {
+        $('#accountSave').click(function() {
+          var accountType = $('#accountType').val();
+          var accountName = $('#accountName').val();
+          var accountCode = $('#accountCode').val();
+          var description = $('#description').val();
+      
+          // Prepare the data to be sent as JSON
+          var data = {
+            accountType: accountType,
+            accountName: accountName,
+            accountCode: accountCode,
+            description: description,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()  // Include the CSRF token
+          };
+      
+          $.ajax({
+            url: '{% url 'save_recurring_data' %}',
+            type: 'POST',
+            data: data,
+            dataType: 'json',  // Expect JSON response
+            success: function(response) {
+              updateDropdown(response);
+              console.log('Data saved successfully');
+            },
+            error: function(error) {
+              console.error('Error saving data:', error);
+            }
+          });
+        });
+      });
+      
+      function updateDropdown(response) {
+        var expenseAccountDropdown = $("#expense_account");
+        var accountType = response.account_type;
+        var accountName = response.account_name;
+        var accountId = response.acc_id;
+      
+        var optgroup = expenseAccountDropdown.find("optgroup[label='" + accountType + "']");
+        if (optgroup.length === 0) {
+          optgroup = $("<optgroup>").attr("label", accountType);
+          expenseAccountDropdown.append(optgroup);
+        }
+      
+        var existingOption = optgroup.find("option:contains('" + accountName + "')");
+      
+        if (existingOption.length === 0) {
+          var newOption = $("<option>").val(accountId).text(accountName);
+          optgroup.append(newOption);
+        }
+      }
+        
+    </script>
+     
+
+
+
+
+  <div class="modal fade" id="newpayment">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
+        <div class="modal-header " style="background: rgb(32, 35, 37);">
+            <h3 class="m-3 text-uppercase">Add Payment Term</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" style="background: rgb(32, 35, 37);">
+          <div class="card p-3 m-3">
+            <form action="" method="post" class="needs-validation"  id="paymentTermsForm">
+              {% csrf_token %}
+              <div class="row mt-2">
+                <div class="col-md-2 mt-2"></div>
+                <div class="col-md-4 mt-2">
+                  <center><label for="termname" style="color: rgb(190, 88, 88);">Term Name *</label></center>
+                </div>
+
+                <div class="col-md-4 mt-2">
+                  <center><label for="termdays" style="color: rgb(190, 88, 88);">Number of Days *</label></center>
+                </div>
+                <div class="col-md-2 mt-2"></div>
               </div>
-              <div class="form-group col-md-6">
-                <label for="accountName">Account Name:</label>
-                <input type="text" class="form-control bg-white text-dark" id="accountName" name="accountName" required>
-              </div>
-            </div>
-            
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="accountCode">Account Code:</label>
-                <input type="text" class="form-control  bg-white text-dark" id="accountCode" name="accountCode" required>
-              </div>
-              <div class="form-group col-md-6">
-                <label for="description">Description:</label>
-                <textarea class="form-control bg-white text-dark" id="description" name="description" rows="3" required></textarea>
-              </div>
-            </div>
-            
-            <div class="form-row mt-3">
-              <div class="col-md-6" >
-                <button type="submit" class="btn btn-primary" style="margin-left:356px;"  id="accountSave">Save and Select</button>
+
+
+              <div class="row mt-2">
+                <div class="col-md-2 mt-2"></div>
+
+                <div class="col-md-4 mt-2">
+                  <input type="text" class="form-control text-dark bg-light" id="term_name" name="term_name" required>      
+                </div>
+
+                <div class="col-md-4 mt-2">
+                  <input type="text" class="form-control text-dark bg-light" id="term_days" name="term_days" required>
+                </div>
+                <div class="col-md-2 mt-2"></div>
+
               </div>
               
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+              <div class="row mt-5">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                  <div class="d-flex">
+                    <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
+                    type="submit"   id="paySave">Save
+                    </button> 
+                    
 
-
-
-<script>
-  $(document).ready(function() {
-    // Function to open the modal
-    $("#openModalBtn").click(function() {
-        $('#newAccountModal').modal('show');
-    });
-
-    // Function to handle form submission
-    $("#accountForm").on("submit", function(event) {
-        event.preventDefault();
-
-        // Client-side validation
-        var accountType = $("#accountType").val();
-        var accountName = $("#accountName").val();
-        if (!accountType || !accountName) {
-            alert("Please fill in all required fields.");
-            return;
-        }
-
-        var formData = new FormData($(this)[0]);
-
-        $.ajax({
-            url: "{% url 'save_recurring_data' %}",  // Replace with your Django URL
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                console.log('Success:', response);
-                // Update the dropdown options
-                updateDropdown(response);
-
-                // Clear the form fields
-                $("#accountForm")[0].reset();
-
-                // Close the modal
-                $('#newAccountModal').modal('hide');
-                closeForm1();
-            },
-            error: function(error) {
-                console.log("AJAX error:", error);
-            }
-        });
-    });
-
-
-        function updateDropdown(response) {
-            var expenseAccountDropdown = $("#expense_account");
-            var accountType = response.account_type;
-            var accountName = response.account_name;
-            var accountId = response.acc_id;
-
-            // Find or create the <optgroup> for the account type
-            var optgroup = expenseAccountDropdown.find("optgroup[label='" + accountType + "']");
-            if (optgroup.length === 0) {
-                optgroup = $("<optgroup>").attr("label", accountType);
-                expenseAccountDropdown.append(optgroup);
-            }
-
-            // Check if an option with the same text (accountName) already exists within the optgroup
-            var existingOption = optgroup.find("option:contains('" + accountName + "')");
-
-            if (existingOption.length === 0) {
-                // Create a new option element
-                var newOption = $("<option>")
-                    .val(accountId)
-                    .text(accountName);
-
-                // Append the new option to the optgroup
-                optgroup.append(newOption);
-            }
-        }
-    });
-    function closeForm1() {
-      let formContainer = document.getElementById("newAccountModal");
-      formContainer.style.display = "none";
-  }
-</script>
-
-
-
-
-<div class="modal fade" id="newpayment">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
-      <div class="modal-header " style="background: rgb(32, 35, 37);">
-          <h3 class="m-3 text-uppercase">Add Payment Term</h3>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-          </button>
-      </div>
-      <div class="modal-body" style="background: rgb(32, 35, 37);">
-        <div class="card p-3 m-3">
-          <form action="" method="post" class="needs-validation"  id="paymentTermsForm">
-            {% csrf_token %}
-            <div class="row mt-2">
-              <div class="col-md-2 mt-2"></div>
-              <div class="col-md-4 mt-2">
-                <center><label for="termname" style="color: rgb(190, 88, 88);">Term Name *</label></center>
-              </div>
-
-              <div class="col-md-4 mt-2">
-                <center><label for="termdays" style="color: rgb(190, 88, 88);">Number of Days *</label></center>
-              </div>
-              <div class="col-md-2 mt-2"></div>
-            </div>
-
-
-            <div class="row mt-2">
-              <div class="col-md-2 mt-2"></div>
-
-              <div class="col-md-4 mt-2">
-                <input type="text" class="form-control text-dark bg-light" id="term_name" name="term_name" required>      
-              </div>
-
-              <div class="col-md-4 mt-2">
-                <input type="text" class="form-control text-dark bg-light" id="term_days" name="term_days" required>
-              </div>
-              <div class="col-md-2 mt-2"></div>
-
-            </div>
-            
-            <div class="row mt-5">
-              <div class="col-md-4"></div>
-              <div class="col-md-4">
-                <div class="d-flex">
-                  <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                  type="submit"   id="paySave">Save
-                  </button> 
-                  
-
-                  <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
-                    data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">Cancel</span>
-                  </button>
+                    <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
+                      data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">Cancel</span>
+                    </button>
+                  </div>
                 </div>
+                <div class="col-md-4"></div>
               </div>
-              <div class="col-md-4"></div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </div>  
   </div>  
-</div>  
-<script>
-  $(document).ready(function() {
-    // AJAX for adding payment term
-    $("#paymentTermsForm").submit(function(event) {
-        event.preventDefault();
-        var formData = $(this).serialize();
-        $.ajax({
-            url: "{% url 'custmr_payment' %}",
-            type: "POST",
-            data: formData,
-            success: function(data) {
-                if (data.success) {
-                    console.log('Payment term added successfully:', data);
-                    // Clear the form and reload the dropdown on success
-                    $("#paymentTermsForm")[0].reset();
-                    loadPaymentTerms();
-                    closeForm()
-                } else {
-                    // Handle form validation errors
-                    console.log('Error adding payment term:', data.errors);
-                }
-            },
-            error: function(error) {
-                console.log("Error:", error);
-            }
-        });
-    });
+  <script>
+    $(document).ready(function() {
+      // AJAX for adding payment term
+      $("#paymentTermsForm").submit(function(event) {
+          event.preventDefault();
+          var formData = $(this).serialize();
+          $.ajax({
+              url: "{% url 'custmr_payment' %}",
+              type: "POST",
+              data: formData,
+              success: function(data) {
+                  if (data.success) {
+                      console.log('Payment term added successfully:', data);
+                      // Clear the form and reload the dropdown on success
+                      $("#paymentTermsForm")[0].reset();
+                      loadPaymentTerms();
+                      closeForm()
+                  } else {
+                      // Handle form validation errors
+                      console.log('Error adding payment term:', data.errors);
+                  }
+              },
+              error: function(error) {
+                  console.log("Error:", error);
+              }
+          });
+      });
 
-    // Function to load payment terms into the dropdown
-    function loadPaymentTerms() {
-        $.ajax({
-            url: "{% url 'payment_view' %}",
-            type: "GET",
-            success: function(data) {
-                console.log('Received payment terms data:', data);
-                var dropdown = $("#c_terms");
-                var dropdown1 = $("#paymentTermsDropdown"); 
-                dropdown.empty();
-                dropdown1.empty();
-                $.each(data, function(key, value) {
-                    var optionText = value[1];
-                    var optionValue = key;
-                    dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
-                    dropdown1.append($('<option></option>').attr('value', optionValue).text(optionText));
-                    console.log('Added option:', optionValue, optionText);
-                });
-            },
-            error: function(error) {
-                console.log("Error:", error);
-            }
-        });
-    }
+      // Function to load payment terms into the dropdown
+      function loadPaymentTerms() {
+          $.ajax({
+              url: "{% url 'payment_view' %}",
+              type: "GET",
+              success: function(data) {
+                  console.log('Received payment terms data:', data);
+                  var dropdown = $("#c_terms");
+                  var dropdown1 = $("#paymentTermsDropdown"); 
+                  dropdown.empty();
+                  dropdown1.empty();
+                  $.each(data, function(key, value) {
+                      var optionText = value[1];
+                      var optionValue = key;
+                      dropdown.append($('<option></option>').attr('value', optionValue).text(optionText));
+                      dropdown1.append($('<option></option>').attr('value', optionValue).text(optionText));
+                      console.log('Added option:', optionValue, optionText);
+                  });
+              },
+              error: function(error) {
+                  console.log("Error:", error);
+              }
+          });
+      }
 
-    // Initial load of payment terms
-    loadPaymentTerms();
-});
-function closeForm() {
-  let formContainer = document.getElementById("newpayment");
-  formContainer.style.display = "none";
-}
-</script>
+      // Initial load of payment terms
+      loadPaymentTerms();
+  });
+  function closeForm() {
+    let formContainer = document.getElementById("newpayment");
+    formContainer.style.display = "none";
+  }
+  </script>
 
 
 
@@ -1575,34 +1587,34 @@ function closeForm() {
 <!-- end modal -->
 
 <script>
-function addressSame() {
-    const billingStreet = document.getElementById("vstreet").value;
-    const billingCity = document.getElementById("vcity").value;
-    const billingState = document.getElementById("vstate").value;
-    const billingCountry = document.getElementById("vcountry").value;
-    const billingPincode = document.getElementById("vpincode").value;
-    const billingPhone = document.getElementById("vphone").value;
-    const billingFax = document.getElementById("vfax").value;
+  function addressSame() {
+      const billingStreet = document.getElementById("vstreet").value;
+      const billingCity = document.getElementById("vcity").value;
+      const billingState = document.getElementById("vstate").value;
+      const billingCountry = document.getElementById("vcountry").value;
+      const billingPincode = document.getElementById("vpincode").value;
+      const billingPhone = document.getElementById("vphone").value;
+      const billingFax = document.getElementById("vfax").value;
 
-    if (document.getElementById("vokay").checked) {
-        document.getElementById("vsstreet").value = billingStreet;
-        document.getElementById("vscity").value = billingCity;
-        document.getElementById("vsstate").value = billingState;
-        document.getElementById("vscountry").value = billingCountry;
-        document.getElementById("vspincode").value = billingPincode;
-        document.getElementById("vsphone").value = billingPhone;
-        document.getElementById("vsfax").value = billingFax;
-    } else {
-        // Clear the shipping address fields if checkbox is unchecked
-        document.getElementById("vsstreet").value = "";
-        document.getElementById("vscity").value = "";
-        document.getElementById("vsstate").value = "";
-        document.getElementById("vscountry").value = "";
-        document.getElementById("vspincode").value = "";
-        document.getElementById("vsphone").value = "";
-        document.getElementById("vsfax").value = "";
-    }
-}
+      if (document.getElementById("vokay").checked) {
+          document.getElementById("vsstreet").value = billingStreet;
+          document.getElementById("vscity").value = billingCity;
+          document.getElementById("vsstate").value = billingState;
+          document.getElementById("vscountry").value = billingCountry;
+          document.getElementById("vspincode").value = billingPincode;
+          document.getElementById("vsphone").value = billingPhone;
+          document.getElementById("vsfax").value = billingFax;
+      } else {
+          // Clear the shipping address fields if checkbox is unchecked
+          document.getElementById("vsstreet").value = "";
+          document.getElementById("vscity").value = "";
+          document.getElementById("vsstate").value = "";
+          document.getElementById("vscountry").value = "";
+          document.getElementById("vspincode").value = "";
+          document.getElementById("vsphone").value = "";
+          document.getElementById("vsfax").value = "";
+      }
+  }
 </script>
 
 
@@ -1744,7 +1756,7 @@ function addressSame() {
 
 
 
-  <script>
+<script>
   $(document).ready(function() {
       // Handle clicking the "Add Customer" button in the modal
       $("#addCustomerButton").on("click", function() {
@@ -1800,7 +1812,7 @@ function addressSame() {
       // Initial update of the customer dropdown list
   
   });
-  </script>
+</script>
 
 
 
@@ -2039,7 +2051,7 @@ function addressSame() {
     }
 }
 
-  </script>
+</script>
 
 
   
@@ -2072,7 +2084,7 @@ function addressSame() {
           document.getElementById("vsfax").value = "";
       }
   }
-  </script>
+</script>
   
   
     <script>
