@@ -72,7 +72,7 @@
     background: #555;
   }
 </style>
-<div style="margin-top: 2rem; margin-left: 8rem">
+ <div style="margin-top: 2rem; margin-left: 8rem">
   <h2>New Recurring Expenses</h2>
   <div style="height: 1700px">
     <form
@@ -688,7 +688,7 @@
               id="tax1"
               class="form-control bg-light text-dark border-1 tax"
               onclick="checkTax()"
-              style="margin-left: 4px; width: 557px; color: black"
+              style="margin-left: 4px; width: 550px; color: black"
             >
               <option value="" disabled selected>Select a Tax</option>
               <optgroup class="text-left" label="GST">
@@ -714,19 +714,17 @@
 
       <div class="form-group row mt-4">
         <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
-          <label>Notes</label>
+          <label for="notes">Notes</label>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6">
           <input
             type="text"
             class="form-control bg-white text-dark"
             id="notes"
-            name="notes"
-            style="margin-left: 4px; width: 557px; color: black"
-          />
+            name="notes" style="width:550px;"/>
         </div>
       </div>
-
+      
       <div class="form-group row mt-4">
         <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
           <label>Attach a File</label>
@@ -734,10 +732,10 @@
         <div class="col-md-6 col-lg-6 col-sm-12 py-3 text-center rounded mt-4">
           <div
             style="
-              width: 106%;
+              width: 103%;
               background-color: rgba(243, 241, 241, 0.904);
               height: 50px;
-              margin-left: 5px;
+              margin-left: -.2rem;
               margin-top: -40px;
             "
           >
@@ -763,7 +761,6 @@
           </div>
         </div>
       </div>
-
       <div class="form-group" style="margin-left: 80px; margin-top: 100px">
         <button
           type="submit"
@@ -792,9 +789,9 @@
       </div>
     </form>
   </div>
-</div>
+</div> 
 
-<script>
+  <script>
     // JavaScript to update the account number based on the selected bank
     document
       .getElementById("paidthrough")
@@ -809,9 +806,9 @@
         // Update the account number input field
         accountNumberInput.value = accountNumber;
       });
-</script>
+</script> 
 
-  <script>
+   <script>
     var paidthroughSelect = document.getElementById("paidthrough");
     var chequeField = document.getElementById("chequeField");
     var upiField = document.getElementById("upiField");
@@ -829,9 +826,9 @@
           ? "block"
           : "none";
     });
-  </script>
+  </script> 
 
-  <script>
+   <script>
     function saveDialog() {
       var frm = document.getElementById("expenseForm");
       frm.action = "{% url 'add_expense' %}";
@@ -1023,10 +1020,10 @@
     }
   </script> 
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+ 
   
 
- <script>
+  <script>
 
   $(document).ready(function() {
     $('#accountSave').click(function() {
@@ -1080,7 +1077,7 @@
     }
   }
     
-</script>
+</script> 
  
 
   <!--Add Newcustomer -->
@@ -2011,11 +2008,11 @@
         console.log(fullName);
       });
     });
-  </script>
+  </script>  
 
   <!-- Include jQuery library -->
   {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
-  <script>
+   <script>
     $(document).ready(function () {
       // Handle clicking the "Add Customer" button in the modal
       $("#addCustomerButton").on("click", function () {
@@ -2998,10 +2995,10 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> 
   <!-- end modal -->
 
-  <div class="modal fade" id="newpayment">
+   <div class="modal fade" id="newpayment">
     <div class="modal-dialog modal-xl">
       <div
         class="modal-content"
@@ -3182,9 +3179,9 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> 
 
-  {% comment %}
+  
   <script>
     $(document).ready(function () {
       $("#repeatForm").submit(function (e) {
@@ -3227,7 +3224,7 @@
       });
     });
   </script>
-  {% endcomment %}
+  
 
   <script>
     $(document).ready(function () {
@@ -3268,7 +3265,7 @@
         });
       });
     });
-  </script>
+  </script> 
 
   <script>
     $(document).ready(function () {

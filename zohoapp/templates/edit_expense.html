@@ -262,7 +262,7 @@
           <div class="form-group row" id="textboxContainer">
             <label for="gst_num_inp" class="col-sm-3 col-form-label">Vendor GSTIN</label>
             <div class="col-sm-6">
-              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="width: 546px; color: black; margin-top: -30px; margin-left: 280px;">
+              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="width: 546px; color: black; margin-top: -20px; margin-left: 280px;">
             </div>
           </div>
           
@@ -332,20 +332,35 @@
     </div>
     
     <!-- Customer EmailId -->
-    <div class="form-group row">
-        <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}">
+        <div class="form-group row">
+            <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}">
+            </div>
         </div>
-    </div>
-    
-    <div class="form-group row mt-4">
-      <label for="cu_gst_trt" class="col-sm-3 col-form-label">Customer GST Treatment</label>
-      <div class="col-sm-6">
-          <input type="text" name="cu_gst_trt" id="cust_gst_tr" class="form-control bg-white text-dark" style="width: 545px;" value="{{ expense.cust_gsttreatment }}">
-      </div>
-    </div>
-  
+        
+        <div class="form-group row mt-4">
+          <label for="cu_gst_trt" class="col-sm-3 col-form-label">Customer GST Treatment</label>
+          <div class="col-sm-6">
+              <input type="text" name="cu_gst_trt" id="cust_gst_tr" class="form-control bg-white text-dark" style="width: 545px;" value="{{ expense.cust_gsttreatment }}">
+          </div>
+        </div>
+        <div class="form-group row mt-4" id="gstContainer" style="display: none">
+          <label class="col-sm-3 col-form-label" style="margin-top: 1rem"
+            >Customer GSTIN</label
+          >
+          <div class="col-sm-6">
+            <input
+              type="text"
+              id="cust_gst"
+              class="form-control bg-white text-dark"
+              name="cust_gstin"
+              placeholder="Enter additional information"
+              value=""
+              style="width: 550px; color: black; margin-top: 1rem"
+            />
+          </div>
+        </div>
     
               <div class="form-group row">
                 <label for="destination" class="col-sm-3 col-form-label">Customer Destination of Supply</label>
@@ -543,25 +558,44 @@
 
 
 
-    <script type="text/javascript">
-      $(document).ready(function () {
-          $('#customer-list').change(function () {
-              var customer_id = $(this).val();
-              if (customer_id) {
-                  // Make an AJAX request to get the customer's email
-                  $.get('{% url "get_customer_email" %}', { customername: customer_id }, function (data) {
-                      $('#email').val(data.email);
-                  });
-
-                  // Make an AJAX request to get the customer's GST treatment
-                  $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id }, function (data) {
-                      $('#cust_gst_tr').val(data.gst_trtmnt);
-                      $('#c_destination').val(data.pos)
-                  });
-              }
-          });
-      });
-    </script>
+        <script type="text/javascript">
+        $(document).ready(function () {
+            $("#customer-list").change(function () {
+            var customer_id = $(this).val();
+            if (customer_id) {
+                // Make an AJAX request to get the customer's email
+                $.get(
+                '{% url "get_customer_email" %}',
+                { customername: customer_id },
+                function (data) {
+                    $("#email").val(data.email);
+                }
+                );
+    
+                // Make an AJAX request to get the customer's GST treatment
+                $.get(
+                '{% url "get_customer_gsttrmnt" %}',
+                { customername: customer_id },
+                function (data) {
+                    $("#cust_gst_tr").val(data.gst_trtmnt);
+                    
+                    $("#cust_gst").val(data.gstin);
+                    $("#c_destination").val(data.pos);
+    
+                    // Check the GST treatment and show/hide the input field
+                    if (
+                    data.gst_trtmnt.toLowerCase().includes("unregistered business")
+                    ) {
+                    $("#gstContainer").hide();
+                    } else {
+                    $("#gstContainer").show();
+                    }
+                }
+                );
+            }
+            });
+        });
+        </script>
 
 
   
@@ -707,7 +741,7 @@
     
   
   
-      <div
+    <div
       class="modal fade"
       id="newAccountModal" >
       <!-- Modal content here -->
@@ -848,62 +882,8 @@
 
 
 
-    <script>
 
-      $(document).ready(function() {
-        $('#accountSave').click(function() {
-          var accountType = $('#accountType').val();
-          var accountName = $('#accountName').val();
-          var accountCode = $('#accountCode').val();
-          var description = $('#description').val();
-      
-          // Prepare the data to be sent as JSON
-          var data = {
-            accountType: accountType,
-            accountName: accountName,
-            accountCode: accountCode,
-            description: description,
-            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()  // Include the CSRF token
-          };
-      
-          $.ajax({
-            url: '{% url 'save_recurring_data' %}',
-            type: 'POST',
-            data: data,
-            dataType: 'json',  // Expect JSON response
-            success: function(response) {
-              updateDropdown(response);
-              console.log('Data saved successfully');
-            },
-            error: function(error) {
-              console.error('Error saving data:', error);
-            }
-          });
-        });
-      });
-      
-      function updateDropdown(response) {
-        var expenseAccountDropdown = $("#expense_account");
-        var accountType = response.account_type;
-        var accountName = response.account_name;
-        var accountId = response.acc_id;
-      
-        var optgroup = expenseAccountDropdown.find("optgroup[label='" + accountType + "']");
-        if (optgroup.length === 0) {
-          optgroup = $("<optgroup>").attr("label", accountType);
-          expenseAccountDropdown.append(optgroup);
-        }
-      
-        var existingOption = optgroup.find("option:contains('" + accountName + "')");
-      
-        if (existingOption.length === 0) {
-          var newOption = $("<option>").val(accountId).text(accountName);
-          optgroup.append(newOption);
-        }
-      }
-        
-    </script>
-     
+    
 
 
 
@@ -2709,7 +2689,84 @@
     </div> 
     
 
-  
+    {% comment %} <script>
+      $(document).ready(function() {
+        // Function to open the modal
+        $("#openModalBtn").click(function() {
+            $('#newAccountModal').modal('show');
+        });
+    
+        // Function to handle form submission
+        $("#accountForm").on("submit", function(event) {
+            event.preventDefault();
+    
+            // Client-side validation
+            var accountType = $("#accountType").val();
+            var accountName = $("#accountName").val();
+            if (!accountType || !accountName) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+    
+            var formData = new FormData($(this)[0]);
+    
+            $.ajax({
+                url: "{% url 'save_recurring_data' %}",  // Replace with your Django URL
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Success:', response);
+                    // Update the dropdown options
+                    updateDropdown(response);
+    
+                    // Clear the form fields
+                    $("#accountForm")[0].reset();
+    
+                    // Close the modal
+                    $('#newAccountModal').modal('hide');
+                    closeForm1();
+                },
+                error: function(error) {
+                    console.log("AJAX error:", error);
+                }
+            });
+        });
+    
+    
+            function updateDropdown(response) {
+                var expenseAccountDropdown = $("#expense_account");
+                var accountType = response.account_type;
+                var accountName = response.account_name;
+                var accountId = response.acc_id;
+    
+                // Find or create the <optgroup> for the account type
+                var optgroup = expenseAccountDropdown.find("optgroup[label='" + accountType + "']");
+                if (optgroup.length === 0) {
+                    optgroup = $("<optgroup>").attr("label", accountType);
+                    expenseAccountDropdown.append(optgroup);
+                }
+    
+                // Check if an option with the same text (accountName) already exists within the optgroup
+                var existingOption = optgroup.find("option:contains('" + accountName + "')");
+    
+                if (existingOption.length === 0) {
+                    // Create a new option element
+                    var newOption = $("<option>")
+                        .val(accountId)
+                        .text(accountName);
+    
+                    // Append the new option to the optgroup
+                    optgroup.append(newOption);
+                }
+            }
+        });
+        function closeForm1() {
+          let formContainer = document.getElementById("newAccountModal");
+          formContainer.style.display = "none";
+      }
+    </script> {% endcomment %}
   
   
   
