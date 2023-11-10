@@ -200,7 +200,7 @@
           
           <div class="form-group row mt-4" id="chequeField" style="display: none;">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
-              <label>Cheque ID</label>
+              <label>Cheque Number</label>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6">
               <input type="text" name="chequeId" id="chequeId" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.cheque_id }}">
@@ -209,7 +209,7 @@
           
           <div class="form-group row mt-4" id="upiField" style="display: none;">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
-              <label>UPI Number</label>
+              <label>UPI ID</label>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6">
               <input type="text" name="upiNumber" id="upiNumber" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.upi_number }}">
@@ -764,7 +764,7 @@
           <div class="modal-body" style="background: rgb(32, 35, 37)">
             <div class="card p-3 m-3">
               <form
-                action=""
+                action="{% url 'save_recurring_data' %}"
                 method="post"
                 class="needs-validation"
                 novalidate
@@ -858,9 +858,9 @@
                 <div class="form-row mt-3">
                   <div class="col-md-6">
                     <button
-                      type="submit"
+                      type="button"
                       class="btn btn-primary"
-                      id="accountSave">
+                      id="accountSave"  data-dismiss="modal">
                       Save and Select
                     </button>
                     <button
@@ -2689,84 +2689,65 @@
     </div> 
     
 
-    {% comment %} <script>
+    <script>
+
       $(document).ready(function() {
-        // Function to open the modal
-        $("#openModalBtn").click(function() {
-            $('#newAccountModal').modal('show');
-        });
-    
-        // Function to handle form submission
-        $("#accountForm").on("submit", function(event) {
-            event.preventDefault();
-    
-            // Client-side validation
-            var accountType = $("#accountType").val();
-            var accountName = $("#accountName").val();
-            if (!accountType || !accountName) {
-                alert("Please fill in all required fields.");
-                return;
+        $('#accountSave').click(function() {
+          var accountType = $('#accountType').val();
+          var accountName = $('#accountName').val();
+          var accountCode = $('#accountCode').val();
+          var description = $('#description').val();
+         
+          // Prepare the data to be sent as JSON
+          var data = {
+            accountType: accountType,
+            accountName: accountName,
+            accountCode: accountCode,
+            description: description,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()  // Include the CSRF token
+          };
+      
+          $.ajax({
+            url: '{% url 'save_recurring_data' %}',
+            type: 'POST',
+            data: data,
+            dataType: 'json',  // Expect JSON response
+            success: function(response) {
+              $("#accountForm")[0].reset();
+              
+              
+              updateDropdown(response);
+              console.log('Data saved successfully');
+            },
+            error: function(error) {
+              console.error('Error saving data:', error);
             }
-    
-            var formData = new FormData($(this)[0]);
-    
-            $.ajax({
-                url: "{% url 'save_recurring_data' %}",  // Replace with your Django URL
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    console.log('Success:', response);
-                    // Update the dropdown options
-                    updateDropdown(response);
-    
-                    // Clear the form fields
-                    $("#accountForm")[0].reset();
-    
-                    // Close the modal
-                    $('#newAccountModal').modal('hide');
-                    closeForm1();
-                },
-                error: function(error) {
-                    console.log("AJAX error:", error);
-                }
-            });
+          });
         });
-    
-    
-            function updateDropdown(response) {
-                var expenseAccountDropdown = $("#expense_account");
-                var accountType = response.account_type;
-                var accountName = response.account_name;
-                var accountId = response.acc_id;
-    
-                // Find or create the <optgroup> for the account type
-                var optgroup = expenseAccountDropdown.find("optgroup[label='" + accountType + "']");
-                if (optgroup.length === 0) {
-                    optgroup = $("<optgroup>").attr("label", accountType);
-                    expenseAccountDropdown.append(optgroup);
-                }
-    
-                // Check if an option with the same text (accountName) already exists within the optgroup
-                var existingOption = optgroup.find("option:contains('" + accountName + "')");
-    
-                if (existingOption.length === 0) {
-                    // Create a new option element
-                    var newOption = $("<option>")
-                        .val(accountId)
-                        .text(accountName);
-    
-                    // Append the new option to the optgroup
-                    optgroup.append(newOption);
-                }
-            }
-        });
-        function closeForm1() {
-          let formContainer = document.getElementById("newAccountModal");
-          formContainer.style.display = "none";
+      });
+      
+      function updateDropdown(response) {
+        var expenseAccountDropdown = $("#expense_account");
+        var accountType = response.account_type;
+        var accountName = response.account_name;
+        var accountId = response.acc_id;
+      
+        var optgroup = expenseAccountDropdown.find("optgroup[label='" + accountType + "']");
+        if (optgroup.length === 0) {
+          optgroup = $("<optgroup>").attr("label", accountType);
+          expenseAccountDropdown.append(optgroup);
+        }
+      
+        var existingOption = optgroup.find("option:contains('" + accountName + "')");
+      
+        if (existingOption.length === 0) {
+          var newOption = $("<option>").val(accountId).text(accountName);
+          optgroup.append(newOption);
+        }
       }
-    </script> {% endcomment %}
+      
+        
+    </script> 
   
   
   

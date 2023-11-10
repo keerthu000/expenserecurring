@@ -1049,9 +1049,6 @@ body {
                 
                
                     <div id="formButton">
-
-
-                        
                         <button class="btn btn-warning tablinks" id="formButton1" style="margin-top:50px; margin-left:280px;" onclick="toggleForm('Template')">1</button>
                         <button class="btn btn-warning tablinks" id="formButton2" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(1)">2</button>
                         <button class="btn btn-warning tablinks" id="formButton3" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(2)">3</button>
@@ -1364,6 +1361,7 @@ body {
                 const button = document.getElementById(`formButton${i}`);
                 const printbutton=document.getElementById(`printTemplate${i}`)
                 const printbutton1=document.getElementById(`printTemplate`)
+                const overview=document.getElementById('Overview')
               
         
                 if (i === formNumber) {
@@ -1371,11 +1369,15 @@ body {
                     button.classList.add("active"); // Optionally, you can add a class for highlighting the active button.
                     printbutton.style.display="block";
                     printbutton1.style.display="none";
+                    overview.style.display="none";
+                    
 
                 } else {
                     form.style.display = "none";
                     button.classList.remove("active"); // Remove the active class for other buttons.
                     printbutton.style.display="none";
+                    overview.style.display="none";
+                
                 }
             }
         }
@@ -1459,11 +1461,13 @@ body {
               $(document).ready(function ($) {
                   $(document).on('click', '#toPDF', function (event) {
                       event.preventDefault();
+                      temp = document.getElementById('Template')
       
                       print1 = document.getElementById('Template')
                       print2 = document.getElementById('form1')
                       print3 = document.getElementById('form2')
                       print4 = document.getElementById('slipdiv')
+                    
       
                       if (print1.style.display !== 'none'){
                           var element = document.getElementById('printdiv1') 
@@ -1478,11 +1482,13 @@ body {
                       if (print3.style.display !== 'none'){
                           var element = document.getElementById('printdiv3') 
                           element.style.color = 'black';
+                          
                       }
       
                       if (print4.style.display !== 'none'){
                           var element = document.getElementById('printslip') 
                           element.style.color = 'black';
+                          
                      }
       
                        
@@ -1527,7 +1533,9 @@ body {
             document.getElementById("Overview").style.display="none";
             document.getElementById("formButton").style.display="none";
             //document.getElementById("formButton2").style.display="none";
-            //document.getElementById("formButton3").style.display="none";
+            document.getElementById("form1").style.display="none";
+            document.getElementById("form2").style.display="none";
+           
 
             }
             function show_template() {
@@ -1535,8 +1543,11 @@ body {
                 document.getElementById("Template").style.display = "block";
                 document.getElementById("Overview").style.display = "none";
             }
+        
           
-            </script>
+           
+
+            
         </script>
      
     
@@ -1779,8 +1790,8 @@ $(document).ready(function() {
         var overview = document.getElementById('Overview');
         var slipdiv = document.getElementById('slipdiv');
         var formButton=document.getElementById('formButton');
-       // var formButton2=document.getElementById('formButton2');
-       // var formButton2=document.getElementById('formButton3');
+        var form1=document.getElementById('form1');
+        var form2=document.getElementById('form2');
     
         if (slipdiv.style.display !== "none") {
             if (tabName === 'Template') {
@@ -1789,11 +1800,15 @@ $(document).ready(function() {
                 overview.style.display = "none";
                 slipdiv.style.display="none";
                 formButton.style.display="block";
+                form1.style.display="none";
+                form2.style.display="none";
 
-            } else if (tabName === 'Overview') {
+            } else if (tabName === 'Overview' ) {
                 // "slipdiv" is visible, switch to the "Overview" tab
                 template.style.zIndex = "0";
                 overview.style.display = "block";
+                form1.style.display = "none";
+                form2.style.display = "none";
             }
         } else {
             // "slipdiv" is not visible, perform regular tab switching
@@ -1803,6 +1818,8 @@ $(document).ready(function() {
             } else if (tabName === 'Overview') {
                 template.style.zIndex = "0";
                 overview.style.display = "block";
+                form1.style.display = "none";
+                form2.style.display = "none";
             }
         }
     
