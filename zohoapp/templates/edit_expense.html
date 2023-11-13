@@ -78,7 +78,7 @@
             <div class="form-group row mt-4">
               <label for="repeat_every" class="col-sm-3 col-form-label">Repeat Every</label>
               <div class="col-sm-6">
-                  <select class="form-control text-dark" id="repeat_select" name="repeat_every">
+                  <select class="form-control text-dark" id="repeat_select" name="repeat_every" style="width:4">
                       {% if expense.repeatevery %}
                           <option class="text-dark" value="{{ expense.repeatevery.id }}" selected>{{ expense.repeatevery.Terms }}</option>
                       {% endif %}
@@ -224,7 +224,6 @@
               <input type="text" name="bankAccount" id="bankAccount" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.bank_account }}">
             </div>
           </div>
-          
           <div class="form-group row">
             <label for="vendorSelect" class="col-sm-3 col-form-label">Vendor</label>
             <div class="col-sm-6">
@@ -236,7 +235,7 @@
                   {% endfor %}
                 </select>
                 <div class="input-group-append">
-                  <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#newvendor" id="addVendorButton" style="height: 38px; margin-left: 545px; margin-top: -60px;"><b>+</b></button>
+                  <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#newvendor" id="addVendorButton" style="height:38px;"><b>+</b></button>
                 </div>
               </div>
             </div>
@@ -262,7 +261,7 @@
           <div class="form-group row" id="textboxContainer">
             <label for="gst_num_inp" class="col-sm-3 col-form-label">Vendor GSTIN</label>
             <div class="col-sm-6">
-              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="width: 546px; color: black; margin-top: -20px; margin-left: 280px;">
+              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="margin-left:280px;margin-top:-35px;">
             </div>
           </div>
           
@@ -315,59 +314,62 @@
       </div>
     </div><!-- Customer Name -->
     <div class="form-group row">
-        <label for="customer-list" class="col-sm-3 col-form-label">Customer Name</label>
-        <div class="col-sm-6">
-            <div class="input-group">
-                <input type="hidden" value="{{ expense.customer.id }}" id="hid">
-                <select name="customername" id="customer-list" class="form-control bg-white text-dark" style="width:500px;">
-                    {% for c in customers %}
-                        <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
-                    {% endfor %}
-                </select>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-warning" type="button" data-toggle="modal" data-target="#newcustomer" style="height: 38px;"><b>+</b></button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Customer EmailId -->
-        <div class="form-group row">
-            <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
-            <div class="col-sm-6">
-                <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}">
-            </div>
-        </div>
-        
-        <div class="form-group row mt-4">
-          <label for="cu_gst_trt" class="col-sm-3 col-form-label">Customer GST Treatment</label>
-          <div class="col-sm-6">
-              <input type="text" name="cu_gst_trt" id="cust_gst_tr" class="form-control bg-white text-dark" style="width: 545px;" value="{{ expense.cust_gsttreatment }}">
+      <label for="" class="col-sm-3 col-form-label">Customer Name</label>
+      <div class="col-sm-6">
+          <div class="input-group">
+              <input type="hidden" value="{{ expense.customer.id }}" id="hid">
+              <select name="customername" id="customer-list" class="form-control bg-white text-dark" style="width: 300px;">
+                  {% for c in customers %}
+                      <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
+                  {% endfor %}
+              </select>
+              <div class="input-group-append">
+                  <button class="btn btn-outline-warning" type="button" data-toggle="modal" data-target="#newcustomer" style="height: 38px;"><b>+</b></button>
+              </div>
           </div>
-        </div>
-        <div class="form-group row mt-4" id="gstContainer" style="display: none">
-          <label class="col-sm-3 col-form-label" style="margin-top: 1rem"
-            >Customer GSTIN</label
-          >
-          <div class="col-sm-6">
-            <input
+      </div>
+  </div>
+  
+  <!-- Customer EmailId -->
+  <div class="form-group row">
+      <label for="email" class="col-sm-3 col-form-label">Customer EmailId</label>
+      <div class="col-sm-6">
+          <input type="text" class="form-control bg-white text-dark" id="email" name="mail" value="{{ expense.customeremail }}" style="width: 540px;">
+      </div>
+  </div>
+  
+  <div class="form-group row mt-4">
+      <label for="cu_gst_trt" class="col-sm-3 col-form-label">Customer GST Treatment</label>
+      <div class="col-sm-6">
+          <input type="text" name="cu_gst_trt" id="cust_gst_trt" class="form-control bg-white text-dark" style="width: 540px;" value="{{ expense.cust_gsttreatment }}">
+      </div>
+  </div>
+  <div class="form-group row mt-4" id="gstContainer" style="display: none">
+      <label class="col-sm-3 col-form-label" style="margin-top: 1rem">Customer GSTIN</label>
+      <div class="col-sm-6">
+          <input
               type="text"
               id="cust_gst"
               class="form-control bg-white text-dark"
               name="cust_gstin"
               placeholder="Enter additional information"
               value=""
-              style="width: 550px; color: black; margin-top: 1rem"
-            />
-          </div>
-        </div>
-    
+              style="width: 540px; color: black; margin-top: 1rem"
+          />
+      </div>
+  </div>
+  
+  
+  
               <div class="form-group row">
-                <label for="destination" class="col-sm-3 col-form-label">Customer Destination of Supply</label>
+                <label for="" class="col-sm-3 col-form-label">Customer Destination of Supply</label>
+                <input type="hidden" id="state" value="{{ company.state }}" />
                 <div class="col-sm-6">
                     <select name="c_destination" id="c_destination" class="form-control bg-white text-dark">
                     {% comment %} <select name="destination" id="destination" class="form-control bg-white text-dark" style="margin-left: 6px; width: 547px;color:black;"> {% endcomment %}
                       <option value="{{expense.cust_placeofsupply}}">{{expense.cust_placeofsupply}}</option>
+                      {% for c in customers %}
+                      <option value="{{c.placeofsupply}}">{{c.placeofsupply}}</option>
                       <option value="[AN]-Andaman And Nicobar Islands" {% if expense.cust_placeofsupply == "[AN]-Andaman And Nicobar Islands" %}selected{% endif %}>[AN]-Andaman And Nicobar Islands</option>
                       <option value="[AD]-Andhra Pradesh" {% if expense.cust_placeofsupply == "[AD]-Andhra Pradesh" %}selected{% endif %}>[AD]-Andhra Pradesh</option>
                       <option value="[AR]-Arunachal Pradesh" {% if expense.cust_placeofsupply == "[AR]-Arunachal Pradesh" %}selected{% endif %}>[AR]-Arunachal Pradesh</option>
@@ -405,10 +407,11 @@
                       <option value="[UK]-Utharakhand" {% if expense.cust_placeofsupply == "[UK]-Utharakhand" %}selected{% endif %}>[UK]-Utharakhand</option>
                       <option value="[WB]-West Bengal" {% if expense.cust_placeofsupply == "[WB]-West Bengal" %}selected{% endif %}>[WB]-West Bengal</option>
                       <option value="[OT]-Other Territory" {% if expense.cust_placeofsupply == "[OT]-Other Territory" %}selected{% endif %}>[OT]-Other Territory</option>
-                  </select>
+                 {% endfor %}
                     </select>
+                   
+                </div>
               </div>
-            </div>
 
       
             <div class="form-group row">
@@ -557,45 +560,51 @@
     </script>
 
 
-
-        <script type="text/javascript">
-        $(document).ready(function () {
-            $("#customer-list").change(function () {
-            var customer_id = $(this).val();
-            if (customer_id) {
-                // Make an AJAX request to get the customer's email
-                $.get(
-                '{% url "get_customer_email" %}',
-                { customername: customer_id },
-                function (data) {
-                    $("#email").val(data.email);
-                }
-                );
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $("#customer-list").change(function () {
+          var customer_id = $(this).val();
+          if (customer_id) {
+            // Make an AJAX request to get the customer's email
+            $.get(
+              '{% url "get_customer_email" %}',
+              { customername: customer_id },
+              function (data) {
+                $("#email").val(data.email);
+              }
+            );
     
-                // Make an AJAX request to get the customer's GST treatment
-                $.get(
-                '{% url "get_customer_gsttrmnt" %}',
-                { customername: customer_id },
-                function (data) {
-                    $("#cust_gst_tr").val(data.gst_trtmnt);
-                    
-                    $("#cust_gst").val(data.gstin);
-                    $("#c_destination").val(data.pos);
+            // Make an AJAX request to get the customer's GST treatment
+            $.get(
+              '{% url "get_customer_gsttrmnt" %}',
+              { customername: customer_id },
+              function (data) {
+                $("#cust_gst_trt").val(data.gst_trtmnt);
+                $("#cust_gst").val(data.gstin);
     
-                    // Check the GST treatment and show/hide the input field
-                    if (
-                    data.gst_trtmnt.toLowerCase().includes("unregistered business")
-                    ) {
-                    $("#gstContainer").hide();
-                    } else {
-                    $("#gstContainer").show();
-                    }
+                // Check the GST treatment and show/hide the input field
+                if (data.gst_trtmnt.toLowerCase().includes("unregistered business")) {
+                  $("#gstContainer").hide();
+                } else {
+                  $("#gstContainer").show();
                 }
-                );
-            }
-            });
+              }
+            );
+    
+            // Make an AJAX request to get the customer's Place of Supply
+            $.get(
+              '{% url "get_cust_pos" %}',
+              { customername: customer_id },
+              function (data) {
+                $("#c_destination").val(data.pos);
+              }
+            );
+          }
         });
-        </script>
+      });
+    </script>
+    
+    
 
 
   
@@ -643,39 +652,7 @@
   
 
     {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
-      <script>
-          $(document).ready(function() {
-              $('#customer-list').change(function() {
-                  var selectedCustomer = $(this).val();
-                  if (selectedCustomer !== '') {
-                      // Show the email input field
-                      $('#emailField').show();
-      
-                      // Fetch the email using AJAX and populate the input field
-                      $.ajax({
-                          url: "{% url 'get_customer_email' %}",
-                          data: { customername: selectedCustomer },
-                          dataType: 'json',
-                          success: function(data) {
-                              if (data.email) {
-                                  $('#email').val(data.email);
-                              } else {
-                                  // Handle the case where no email is found
-                                  $('#email').val('');
-                              }
-                          },
-                          error: function(xhr, status, error) {
-                              console.error(xhr.responseText);
-                          }
-                      });
-                  } else {
-                      // Hide the email input field if no customer is selected
-                      $('#emailField').hide();
-                  }
-              });
-          });
-      </script>
-      
+
       
  
   
@@ -699,9 +676,11 @@
         
                             // Update the GST treatment input field with the fetched data
                             $('#gst_trt_inp').val(data.gst_treatment);
+                            $('#destination').val(data.pos);
         
                             // Show or hide the GST number input field based on GST treatment
-                            if (data.gst_treatment === 'unregistered Business') {
+                            if data.gst_treatment.toLowerCase().includes("unregistered business")
+                             {
                                 $('#textboxContainer').hide();
                             } else {
                                 $('#textboxContainer').show();
@@ -721,17 +700,57 @@
                     $('#gst_trt_inp').val('');
                     $('#gst_num_inp').val('');
                     $('#vemail').val('');
+                    $('#destination').val('');
                     $('#textboxContainer').hide();
                     $('#emailid').hide(); // Hide the email input field container
+
                 }
             });
         
             // Rest of your JavaScript code...
         });
       </script>
+
+
+
+      {% comment %} <script>
+        $(document).ready(function() {
+          // Event listener for the vendor dropdown
+          $('#vendorSelect').on('change', function() {
+              // Get the selected vendor's ID
+              var selectedVendorId = $(this).val();
       
+              // Check if a vendor is selected
+              if (selectedVendorId !== '') {
+                  // Send an AJAX request to fetch the GST treatment and GST number for the selected vendor
+                  $.ajax({
+                      url: '/get_vendor_gst/' + selectedVendorId, // Replace with the actual URL to fetch GST treatment and GST number
+                      method: 'GET',
+                      success: function(data) {
+                          console.log('Received data:', data); // Add this line to check the received data
+                          // Update the GST treatment and GST number input fields with the fetched data
+                          $('#gst_trt_inp').val(data.gst_treatment);
+                          $('#gst_num_inp').val(data.gst_number);
+                          $('#destination').val(data.pos);
+                          
+                      },
+                      error: function(error) {
+                          console.log('Error fetching GST treatment and GST number:', error);
+                      }
+                  });
+              } else {
+                  // Clear the GST treatment and GST number input fields if no vendor is selected
+                  $('#gst_trt_inp').val('');
+                  $('#gst_num_inp').val('');
+                  $('#destination').val('');
+              }
+          });
       
+          // Rest of your JavaScript code...
+      });
       
+      </script>
+       {% endcomment %}
       
       
       
@@ -1187,7 +1206,7 @@
               </div> 
                     
             </div>
-            <div class="row gstrow d-none">
+            <div class="row gstrow d-none" > 
               <div class="col-md-3 mt-2">
                 <label id="glbl" style="color:rgb(190, 88, 88);">GSTIN/UIN *</label>
               </div>
@@ -1646,40 +1665,7 @@
 
 
 
-<script>
-  $(document).ready(function() {
-    // Event listener for the vendor dropdown
-    $('#vendorSelect').on('change', function() {
-        // Get the selected vendor's ID
-        var selectedVendorId = $(this).val();
 
-        // Check if a vendor is selected
-        if (selectedVendorId !== '') {
-            // Send an AJAX request to fetch the GST treatment and GST number for the selected vendor
-            $.ajax({
-                url: '/get_vendor_gst/' + selectedVendorId, // Replace with the actual URL to fetch GST treatment and GST number
-                method: 'GET',
-                success: function(data) {
-                    console.log('Received data:', data); // Add this line to check the received data
-                    // Update the GST treatment and GST number input fields with the fetched data
-                    $('#gst_trt_inp').val(data.gst_treatment);
-                    $('#gst_num_inp').val(data.gst_number);
-                },
-                error: function(error) {
-                    console.log('Error fetching GST treatment and GST number:', error);
-                }
-            });
-        } else {
-            // Clear the GST treatment and GST number input fields if no vendor is selected
-            $('#gst_trt_inp').val('');
-            $('#gst_num_inp').val('');
-        }
-    });
-
-    // Rest of your JavaScript code...
-});
-
-</script>
 
 <script>
   $(document).ready(function(){
@@ -2108,30 +2094,52 @@
 
     <div class="modal fade" id="newcustomer">
       <div class="modal-dialog modal-xl">
-        <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
-          <div class="modal-header " style="background: rgb(32, 35, 37);">
-              <h3 class="m-3 text-uppercase">New Customer</h3>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
+        <div
+          class="modal-content"
+          style="background: rgb(32, 35, 37); border-radius: 20px">
+          <div class="modal-header" style="background: rgb(32, 35, 37)">
+            <h3 class="m-3 text-uppercase">New Customer</h3>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <div class="modal-body" style="background: rgb(32, 35, 37);">
+          <div class="modal-body" style="background: rgb(32, 35, 37)">
             <div class="card p-3 m-3">
-              <form action=" " method="post" class="needs-validation" novalidate autocomplete="off" id="customerForm">
+              <form
+                action=""
+                method="post"
+                class="needs-validation"
+                novalidate
+                autocomplete="off"
+                id="customerForm">
                 {% csrf_token %}
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
-                    <label for="">Customer Type</label><br>
+                    <label for="">Customer Type</label><br />
                   </div>
                   <div class="col-md-6 mt-2">
                     <div class="d-flex">
                       <div class="radio_opt mx-5 mt-2">
-                        <input type="radio" id="business" name="type" value="Business" >
+                        <input
+                          type="radio"
+                          id="business"
+                          name="radioCust"
+                          value="Business"
+                        />
                         <label for="option1">Business</label>
                       </div>
                       <div class="radio_opt mx-4 mt-2">
-                        <input type="radio" id="individual" name="type" value="Individual" >
+                        <input
+                          type="radio"
+                          id="individual"
+                          name="radioCust"
+                          value="Individual"
+                        />
                         <label for="option2">Individual</label>
                       </div>
                     </div>
@@ -2142,7 +2150,11 @@
                     <label for="ctitle">Title</label>
                   </div>
                   <div class="col-md-3">
-                    <select name="ctitle" id="ctitle" class="form-control text-dark bg-light">
+                    <select
+                      name="ctitle"
+                      id="ctitle"
+                      class="form-control bg-light text-dark"
+                    >
                       <option value="Mr." selected>Mr.</option>
                       <option value="Mrs.">Mrs.</option>
                       <option value="Ms.">Ms.</option>
@@ -2156,175 +2168,299 @@
                     <label for="cfname">First name</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="cfname" name="cfirstname" required>
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="cfname"
+                      name="cfirstname"
+                      required
+                    />
                   </div>
                 </div>
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="clname">Last name</label>
-                    <label id="cdisplayname" name = "cdisplayname" hidden></label>
+                    <label id="cdisplayname" name="cdisplayname" hidden></label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="clname" name="clastname">
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="clname"
+                      name="clastname"
+                    />
                   </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="ccompany">Company Name</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="ccompany" name="ccompany_name">
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="ccompany"
+                      name="ccompany_name"
+                    />
                   </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="cemail">Customer Email</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="email" class="form-control text-dark bg-light" id="cemail" name="cemail" placeholder="example@gmail.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">    
-                  </div>              
+                    <input
+                      type="email"
+                      class="form-control bg-light text-dark"
+                      id="cemail"
+                      name="cemail"
+                      placeholder="example@gmail.com"
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                    />
+                  </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="email">Customer Phone</label>
                   </div>
                   <div class="col-md-3 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="cw_mobile" placeholder="Work Number" maxlength="10" name="cw_mobile">
-                  </div>        
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="cw_mobile"
+                      placeholder="Work Number"
+                      maxlength="10"
+                      name="cw_mobile"
+                    />
+                  </div>
                   <div class="col-md-3 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="cp_mobile" placeholder="Personal Number" maxlength="10" name="cp_mobile">
-                  </div>          
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="cp_mobile"
+                      placeholder="Personal Number"
+                      maxlength="10"
+                      name="cp_mobile"
+                    />
+                  </div>
                 </div>
-    
-          
-                <hr>
-                <center><h4 class="text-uppercase mb-3"><b>Other Details</b></h4></center>
+                <hr />
+                <center>
+                  <h4 class="text-uppercase mb-3"><b>Other Details</b></h4>
+                </center>
                 <div class="row mt-5">
                   <div class="col-md-3 mt-2">
                     <label for="facebook">Facebook</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="facebook" placeholder="www.example.com" name="facebook">
-                  </div>       
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="facebook"
+                      placeholder="www.example.com"
+                      name="facebook"
+                    />
+                  </div>
                 </div>
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="twitter">Twitter</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="twitter" placeholder="www.example.com" name="twitter">
-                  </div>       
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="twitter"
+                      placeholder="www.example.com"
+                      name="twitter"
+                    />
+                  </div>
                 </div>
-    
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="website">Website</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="website" placeholder="www.example.com" name="website">
-                  </div>       
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="website"
+                      placeholder="www.example.com"
+                      name="website"
+                    />
+                  </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="cskype">Skype name/Number</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="cskype" name="cskype">
-                  </div>       
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="cskype"
+                      name="cskype"
+                    />
+                  </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="c_desg">Designation</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="c_desg" name="c_desg">
-                  </div>       
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="c_desg"
+                      name="c_desg"
+                    />
+                  </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="c_dpt">Department</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control text-dark bg-light" id="c_dpt" name="c_dpt">
-                  </div>       
-                </div>
-    
-                <div class="form-group row mt-2">
-                  <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
-                    <label for="c_gsttype" style="color:rgb(190, 88, 88);">GST Treatment *</label>
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="c_dpt"
+                      name="c_dpt"
+                    />
                   </div>
-                  <div class="col-sm-12 col-md-6 col-lg-6">
-                    <select class="form-control text-dark bg-light" id="c_gsttype" name="c_gsttype" required>
-                      <option value="value" selected>Select a Gst Treatment</option>
-                      <option value="Registered Business-Regular Business that is registered under GST">Registered Business-Regular Business that is registered under GST</option>
-                      <option value="Registered Business-Composition Business that is registered under the Composition scheme in GST">Registered Business-Composition Business that is registered under the Composition scheme in GST</option>
-                      <option value="Unregistered Business-not Registered under GST">Unregistered Business-not Registered under GST</option>
-                      <option value="Consumer- A customer who is a regular Consumer">Consumer- A customer who is a regular Consumer</option>
-                      <option value="Overseas- Persons with who you do import or exports of supplies outside india">Overseas- Persons with who you do import or exports of supplies outside india</option>
-                      <option value="Special Economic Zone">Special Economic Zone</option>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-md-3 mt-2">
+                    <label for="c_gsttype" style="color: rgb(190, 88, 88)"
+                      >GST Treatment *</label
+                    >
+                  </div>
+                  <div class="col-md-6 mt-2">
+                    <select
+                      class="form-control bg-light text-dark"
+                      id="c_gsttype"
+                      name="c_gsttype"
+                      required
+                    >
+                      <option value="value" selected hidden>
+                        Select a Gst Treatment
+                      </option>
+                      <option
+                        value="Registered Business-Regular Business that is registered under GST"
+                      >
+                        Registered Business-Regular Business that is registered
+                        under GST
+                      </option>
+                      <option
+                        value="Registered Business-Composition Business that is registered under the Composition scheme in GST"
+                      >
+                        Registered Business-Composition Business that is
+                        registered under the Composition scheme in GST
+                      </option>
+                      <option
+                        value="Unregistered Business-not Registered under GST"
+                      >
+                        Unregistered Business-not Registered under GST
+                      </option>
+                      <option
+                        value="Consumer- A customer who is a regular Consumer"
+                      >
+                        Consumer- A customer who is a regular Consumer
+                      </option>
+                      <option
+                        value="Overseas- Persons with who you do import or exports of supplies outside india"
+                      >
+                        Overseas- Persons with who you do import or exports of
+                        supplies outside india
+                      </option>
+                      <option value="Special Economic Zone">
+                        Special Economic Zone
+                      </option>
                     </select>
-                    
-                  </div>       
+                  </div>
                 </div>
                 <div class="row gstroww d-none">
                   <div class="col-md-3 mt-2">
-                    <label id="glbl" style="color:rgb(190, 88, 88);">GSTIN/UIN *</label>
+                    <label id="glbl" style="color: rgb(190, 88, 88)"
+                      >GSTIN/UIN *</label
+                    >
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control" id="c_gstin" name="c_gstin" placeholder="29APPCK7465F1Z1">
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="c_gstin"
+                      name="c_gstin"
+                      placeholder="29APPCK7465F1Z1"
+                    />
                     <label id="gst_labell"></label>
-                  </div>       
+                  </div>
                 </div>
-                
-    
-                
-    
-    
                 <div class="row">
                   <div class="col-md-3 mt-2">
-                    <label for="v_pan">PAN Number</label>
+                    <label for="c_pan">PAN Number</label>
                   </div>
                   <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control" id="v_pan" name="v_pan" placeholder="APPCK7465F">
-                    <label id="pan_labell"></label>
-                  </div>       
-                </div> 
-    
+                    <input
+                      type="text"
+                      class="form-control text-dark"
+                      id="c_pan"
+                      name="c_pan"
+                      placeholder="APPCK7465F"
+                    />
+                    <label id="pan_label" style="display: none"></label>
+                  </div>
+                </div>
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
-                    <label for="" style="color: rgb(190, 88, 88);">Place of Supply *</label>
+                    <label for="" style="color: rgb(190, 88, 88)"
+                      >Place of Supply *</label
+                    >
                   </div>
                   <div class="col-md-6 mt-2">
-                    <select class="form-control text-dark bg-light" id="placesupply" name="placesupply">
-                      <option value="Nill"></option>
-                      <option value="[AN] Andaman and Nicobar Islads">[AN] Andaman and Nicobar Islads</option>
-                      <option value="[AD] Andhra Predhesh">[AD] Andhra Predhesh</option>
-                      <option value="[AR] Arunachal Predesh">[AR] Arunachal Predesh</option>
+                    <select
+                      class="form-control bg-light text-dark"
+                      id="placesupply"
+                      name="placesupply"
+                    >
+                      <option value="Nill" hidden></option>
+                      <option value="[AN] Andaman and Nicobar Islads">
+                        [AN] Andaman and Nicobar Islads
+                      </option>
+                      <option value="[AD] Andhra Pradhesh">
+                        [AD] Andhra Pradhesh
+                      </option>
+                      <option value="[AR] Arunachal Pradesh">
+                        [AR] Arunachal Pradesh
+                      </option>
                       <option value="[AS] Assam">[AS] Assam</option>
                       <option value="[BR] Bihar">[BR] Bihar</option>
                       <option value="[CH] Chandigarh">[CH] Chandigarh</option>
                       <option value="[CG] Chhattisgarh">[CG] Chhattisgarh</option>
-                      <option value="[DNH] Dadra and Nagar Haveli">[DNH] Dadra and Nagar Haveli</option>
-                      <option value="[DD] Damn anad Diu">[DD] Damn anad Diu</option>
+                      <option value="[DNH] Dadra and Nagar Haveli">
+                        [DNH] Dadra and Nagar Haveli
+                      </option>
+                      <option value="[DD] Damn anad Diu">
+                        [DD] Damn anad Diu
+                      </option>
                       <option value="[DL] Delhi">[DL] Delhi</option>
                       <option value="[GA] Goa">[GA] Goa</option>
                       <option value="[GJ] Gujarat">[GJ] Gujarat</option>
                       <option value="[HR] Haryana">[HR] Haryana</option>
-                      <option value="[HP] Himachal Predesh">[HP] Himachal Predesh</option>
-                      <option value="[JK] Jammu and Kashmir">[JK] Jammu and Kashmir</option>
+                      <option value="[HP] Himachal Pradesh">
+                        [HP] Himachal Pradesh
+                      </option>
+                      <option value="[JK] Jammu and Kashmir">
+                        [JK] Jammu and Kashmir
+                      </option>
                       <option value="[JH] Jharkhand">[JH] Jharkhand</option>
                       <option value="[KA] Karnataka">[KA] Karnataka</option>
                       <option value="[KL] Kerala">[KL] Kerala</option>
                       <option value="[LA] Ladakh">[LA] Ladakh</option>
                       <option value="[LD] Lakshadweep">[LD] Lakshadweep</option>
-                      <option value="[MP] Madhya Predesh">[MP] Madhya Predesh</option>
+                      <option value="[MP] Madhya Pradesh">
+                        [MP] Madhya Pradesh
+                      </option>
                       <option value="[MH] Maharashtra">[MH] Maharashtra</option>
                       <option value="[MN] Manipur">[MN] Manipur</option>
                       <option value="[ML] Meghalaya">[ML] Meghalaya</option>
@@ -2338,203 +2474,264 @@
                       <option value="[TN] Tamil Nadu">[TN] Tamil Nadu</option>
                       <option value="[TS] Telangana">[TS] Telangana</option>
                       <option value="[TR] Tripura">[TR] Tripura</option>
-                      <option value="[UP] Uttar Predesh">[UP] Uttar Predesh</option>
+                      <option value="[UP] Uttar Pradesh">
+                        [UP] Uttar Pradesh
+                      </option>
                       <option value="[UK] Uttarakhand">[UK] Uttarakhand</option>
                       <option value="[WB] West Bengal">[WB] West Bengal</option>
-                      <option value="[OT] Other Territory">[OT] Other Territory</option>
+                      <option value="[OT] Other Territory">
+                        [OT] Other Territory
+                      </option>
                     </select>
-                  </div>       
-                </div>
-    
-                <div class="row mt-2">
-                  <div class="col-md-3 mt-2">
-                    <label for="c_tax" style="color: rgb(190, 88, 88);">Tax Preference* </label>
                   </div>
-                  <div class="col-md-6 mt-2">
+                </div>
+                <div class="row mt-2">
+                  <div class="col-md-3">
+                    <label for="c_tax" style="color: rgb(190, 88, 88)"
+                      >Tax Preference *
+                    </label>
+                  </div>
+                  <div class="col-md-6">
                     <div class="d-flex">
                       <div class="radio_opt mx-5 mt-2">
-                        <input type="radio" id="custtax1" name="radioCust1" value="Taxable" >
-                        <label for="option1">Taxable</label>
+                        <input
+                          type="radio"
+                          id="item-tax3"
+                          name="radioOption2"
+                          value="Taxable"
+                        />
+                        <label for="option3">Taxable</label>
                       </div>
                       <div class="radio_opt mx-4 mt-2">
-                        <input type="radio" id="custtax2" name="radioCust1" value="Tax-exempt" >
-                        <label for="option2">Tax-exempt</label>
+                        <input
+                          type="radio"
+                          id="item-tax4"
+                          name="radioOption2"
+                          value="Tax-exempt"
+                        />
+                        <label for="option4">Tax-exempt</label>
                       </div>
                     </div>
-                  </div>       
+                  </div>
                 </div>
-    
+                <div class="row mt-2 mb-4 d-none inter-intra">
+                  <div class="col-md-3">
+                    <label for="intra">Intra-State TAX</label>
+                  </div>
+                  <div class="col-md-6">
+                    <select
+                      name="intra"
+                      class="form-control bg-light text-dark"
+                      id="intra1"
+                    >
+                      <option value="" hidden>Select GST</option>
+                      <option value="GST0[0%]">GST0[0%]</option>
+                      <option value="GST5[5%]">GST5[5%]</option>
+                      <option value="GST12[12%]">GST12[12%]</option>
+                      <option value="GST18[18%]">GST18[18%]</option>
+                      <option value="GST28[28%]">GST28[28%]</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3"></div>
+                  <div class="col-md-3">
+                    <label for="inter">Inter-State TAX</label>
+                  </div>
+                  <br />
+                  <div class="col-md-6">
+                    <select
+                      name="inter"
+                      class="form-control bg-light text-dark"
+                      id="inter1"
+                    >
+                      <option value="" hidden>Select GST</option>
+                      <option value="IGST0[0%]">IGST0[0%]</option>
+                      <option value="IGST5[5%]">IGST5[5%]</option>
+                      <option value="IGST12[12%]">IGST12[12%]</option>
+                      <option value="IGST18[18%]">IGST18[18%]]</option>
+                      <option value="IGST28[28%]">IGST28[28%]</option>
+                    </select>
+                  </div>
+                  <div class="col-md-1"></div>
+                </div>
+                <hr />
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="c_curn">Currency </label>
                   </div>
                   <div class="col-md-3 mt-2">
-                    <select class="form-control text-dark bg-light" id="c_curn" name="c_curn" required>
-                      <option selected disabled value="">Choose..</option>
+                    <select
+                      class="form-control bg-light text-dark"
+                      id="c_curn"
+                      name="c_curn"
+                      required
+                    >
+                      <option selected disabled value="" hidden>Choose..</option>
                       <option value="INR">INR</option>
                     </select>
-                  </div>       
+                  </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="c_open">Opening Balance</label>
                   </div>
-                  <div class="col-md-6 mt-2">
-                    <input type="number" class="form-control text-dark bg-light" id="c_open" name="c_open">
-                  </div>       
+                  <div class="col-md-6 mt-2 d-flex">
+                    <select
+                      name="bal"
+                      id="bal"
+                      style="width: 35%; height: 97%"
+                      class="form-gr form-select text-dark bg-light"
+                    >
+                      <option value="credit">Credit</option>
+                      <option value="debit">Debit</option>
+                    </select>
+                    <input
+                      type="text"
+                      class="form-control bg-light text-dark"
+                      id="c_open"
+                      name="c_open"
+                    />
+                  </div>
                 </div>
-    
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="c_terms">Payment Terms</label>
                   </div>
                   <div class="col-md-6 mt-2">
                     <div class="d-flex">
-                      <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
-                    
-                        {% for p in payments %}
-                        <option value="{{p.id}}">{{p.Terms}}</option>
+                      <select
+                        class="form-control bg-light text-dark"
+                        id="c_terms"
+                        name="c_terms"
+                        required
+                      >
+                        {% for p in pay %}
+                        <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
                         {% endfor %}
-                      </select>                
-                      <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   
+                      </select>
                     </div>
-                  </div>       
+                  </div>
                 </div>
-                
-    
-                <hr>
-    
+                <hr />
                 <div class="row mt-2">
                   <div class="col-md-6 mt-5 text-center text-uppercase">
                     <h4 class="mb-0">Billing Address</h4>
                   </div>
                   <div class="col-md-6 mt-5">
-                    <h4 class="mb-0 text-center text-uppercase">Shipping Address</h4>
+                    <h4 class="mb-0 text-center text-uppercase">
+                      Shipping Address
+                    </h4>
                   </div>
                 </div>
                 <div class="row mt-2 m-0 p-0 mb-2">
-                  <div class="col-md-9"> </div>
-                  <div class="col-md-3 text-right  m-0 p-0">
-                    <input type="checkbox" onclick="addressSame()" id="csokay" name="csokay">
-                    <label for="csokay" style="color: #909091;">Same As Billing Address</label>
+                  <div class="col-md-9"></div>
+                  <div class="col-md-3 text-right m-0 p-0">
+                    <input
+                      type="checkbox"
+                      onclick="address()"
+                      id="csokay"
+                      name="csokay"
+                    />
+                    <label for="csokay" style="color: #909091"
+                      >Same As Billing Address</label
+                    >
                   </div>
                 </div>
-    
+  
                 <div class="row mt-5">
                   <div class="col-md-1">
                     <label for="cstreet1">Address 1</label>
                   </div>
                   <div class="col-md-4">
-                    <textarea class="form-control street text-dark bg-light" id="cstreet1" name="cstreet1"></textarea>
+                    <textarea
+                      class="form-control street text-dark bg-light"
+                      id="cstreet1"
+                      name="cstreet1"
+                    ></textarea>
                   </div>
                   <div class="col-md-1"></div>
-    
+  
                   <div class="col-md-1">
                     <label for="csstreet1">Address 1</label>
                   </div>
-                  <div class="col-md-4 ">
-                    <textarea class="form-control street text-dark bg-light" id="csstreet1" name="csstreet1"></textarea>
+                  <div class="col-md-4">
+                    <textarea
+                      class="form-control street text-dark bg-light"
+                      id="csstreet1"
+                      name="csstreet1"
+                    ></textarea>
                   </div>
                   <div class="col-md-1"></div>
-    
                 </div>
                 <div class="row mt-5">
                   <div class="col-md-1">
                     <label for="cstreet2">Address 2</label>
                   </div>
                   <div class="col-md-4">
-                    <textarea class="form-control street text-dark bg-light" id="cstreet2" name="cstreet2"></textarea>
+                    <textarea
+                      class="form-control street text-dark bg-light"
+                      id="cstreet2"
+                      name="cstreet2"
+                    ></textarea>
                   </div>
                   <div class="col-md-1"></div>
-    
+  
                   <div class="col-md-1">
                     <label for="csstreet2">Address 2</label>
                   </div>
-                  <div class="col-md-4 ">
-                    <textarea class="form-control street text-dark bg-light" id="csstreet2" name="csstreet2"></textarea>
+                  <div class="col-md-4">
+                    <textarea
+                      class="form-control street text-dark bg-light"
+                      id="csstreet2"
+                      name="csstreet2"
+                    ></textarea>
                   </div>
                   <div class="col-md-1"></div>
-    
                 </div>
-    
+  
                 <div class="row mt-2">
                   <div class="col-md-1">
                     <label for="ccity">City</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="ccity" name="ccity" placeholder="City">  
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="ccity"
+                      name="ccity"
+                      placeholder="City"
+                    />
                   </div>
-                  <div class="col-md-1">
-                  </div>
+                  <div class="col-md-1"></div>
                   <div class="col-md-1">
                     <label for="cscity">City</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="cscity" name="cscity" placeholder="City">  
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="cscity"
+                      name="cscity"
+                      placeholder="City"
+                    />
                   </div>
-                  <div class="col-md-1">
-                  </div>
+                  <div class="col-md-1"></div>
                 </div>
-    
+  
                 <div class="row mt-2">
                   <div class="col-md-1">
                     <label for="cstate">State</label>
                   </div>
                   <div class="col-md-4">
-                    <select type="text" class="form-control text-dark bg-light" id="cstate" name="cstate">
+                    <select
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="cstate"
+                      name="cstate"
+                    >
                       <option value="" selected>Choose</option>
                       <option value="None Of This">None Of This</option>
-                      <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
-                      <option value="Andhra Predhesh">Andhra Predhesh</option>
-                      <option value="Arunachal Predesh">Arunachal Predesh</option>
-                      <option value="Assam">Assam</option>
-                      <option value="Bihar">Bihar</option>
-                      <option value="Chandigarh">Chandigarh</option>
-                      <option value="Chhattisgarh">Chhattisgarh</option>
-                      <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                      <option value="Damn anad Diu">Damn anad Diu</option>
-                      <option value="Delhi">Delhi</option>
-                      <option value="Goa">Goa</option>
-                      <option value="Gujarat">Gujarat</option>
-                      <option value="Haryana">Haryana</option>
-                      <option value="Himachal Predesh">Himachal Predesh</option>
-                      <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                      <option value="Jharkhand">Jharkhand</option>
-                      <option value="Karnataka">Karnataka</option>
-                      <option value="Kerala">Kerala</option>
-                      <option value="Ladakh">Ladakh</option>
-                      <option value="Lakshadweep">Lakshadweep</option>
-                      <option value="Madhya Predesh">Madhya Predesh</option>
-                      <option value="Maharashtra">Maharashtra</option>
-                      <option value="Manipur">Manipur</option>
-                      <option value="Meghalaya">Meghalaya</option>
-                      <option value="Mizoram">Mizoram</option>
-                      <option value="Nagaland">Nagaland</option>
-                      <option value="Odisha">Odisha</option>
-                      <option value="Puducherry">Puducherry</option>
-                      <option value="Punjab">Punjab</option>
-                      <option value="Rajasthan">Rajasthan</option>
-                      <option value="Sikkim">Sikkim</option>
-                      <option value="Tamil Nadu">Tamil Nadu</option>
-                      <option value="Telangana">Telangana</option>
-                      <option value="Tripura">Tripura</option>
-                      <option value="Uttar Predesh">Uttar Predesh</option>
-                      <option value="Uttarakhand">Uttarakhand</option>
-                      <option value="West Bengal">West Bengal</option>
-                      <option value="Other Territory">Other Territory</option>
-                    </select>
-                  </div>
-                  <div class="col-md-1"></div>
-    
-                  <div class="col-md-1">
-                    <label for="csstate">State</label>
-                  </div>
-                  <div class="col-md-4 ">
-                    <select type="text" class="form-control text-dark bg-light" id="csstate" name="csstate">
-                      <option value="" selected>Choose</option>
-                      <option value="None Of This">None Of This</option>
-                      <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads
+                      <option value="Andaman and Nicobar Islads">
+                        Andaman and Nicobar Islads
                       </option>
                       <option value="Andhra Predhesh">Andhra Predhesh</option>
                       <option value="Arunachal Predesh">Arunachal Predesh</option>
@@ -2542,7 +2739,9 @@
                       <option value="Bihar">Bihar</option>
                       <option value="Chandigarh">Chandigarh</option>
                       <option value="Chhattisgarh">Chhattisgarh</option>
-                      <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                      <option value="Dadra and Nagar Haveli">
+                        Dadra and Nagar Haveli
+                      </option>
                       <option value="Damn anad Diu">Damn anad Diu</option>
                       <option value="Delhi">Delhi</option>
                       <option value="Goa">Goa</option>
@@ -2575,119 +2774,236 @@
                       <option value="Other Territory">Other Territory</option>
                     </select>
                   </div>
-    
                   <div class="col-md-1"></div>
-    
+  
+                  <div class="col-md-1">
+                    <label for="csstate">State</label>
+                  </div>
+                  <div class="col-md-4">
+                    <select
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="csstate"
+                      name="csstate"
+                    >
+                      <option value="" selected>Choose</option>
+                      <option value="None Of This">None Of This</option>
+                      <option value="Andaman and Nicobar Islads">
+                        Andaman and Nicobar Islads
+                      </option>
+                      <option value="Andhra Predhesh">Andhra Predhesh</option>
+                      <option value="Arunachal Predesh">Arunachal Predesh</option>
+                      <option value="Assam">Assam</option>
+                      <option value="Bihar">Bihar</option>
+                      <option value="Chandigarh">Chandigarh</option>
+                      <option value="Chhattisgarh">Chhattisgarh</option>
+                      <option value="Dadra and Nagar Haveli">
+                        Dadra and Nagar Haveli
+                      </option>
+                      <option value="Damn anad Diu">Damn anad Diu</option>
+                      <option value="Delhi">Delhi</option>
+                      <option value="Goa">Goa</option>
+                      <option value="Gujarat">Gujarat</option>
+                      <option value="Haryana">Haryana</option>
+                      <option value="Himachal Predesh">Himachal Predesh</option>
+                      <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                      <option value="Jharkhand">Jharkhand</option>
+                      <option value="Karnataka">Karnataka</option>
+                      <option value="Kerala">Kerala</option>
+                      <option value="Ladakh">Ladakh</option>
+                      <option value="Lakshadweep">Lakshadweep</option>
+                      <option value="Madhya Predesh">Madhya Predesh</option>
+                      <option value="Maharashtra">Maharashtra</option>
+                      <option value="Manipur">Manipur</option>
+                      <option value="Meghalaya">Meghalaya</option>
+                      <option value="Mizoram">Mizoram</option>
+                      <option value="Nagaland">Nagaland</option>
+                      <option value="Odisha">Odisha</option>
+                      <option value="Puducherry">Puducherry</option>
+                      <option value="Punjab">Punjab</option>
+                      <option value="Rajasthan">Rajasthan</option>
+                      <option value="Sikkim">Sikkim</option>
+                      <option value="Tamil Nadu">Tamil Nadu</option>
+                      <option value="Telangana">Telangana</option>
+                      <option value="Tripura">Tripura</option>
+                      <option value="Uttar Predesh">Uttar Predesh</option>
+                      <option value="Uttarakhand">Uttarakhand</option>
+                      <option value="West Bengal">West Bengal</option>
+                      <option value="Other Territory">Other Territory</option>
+                    </select>
+                  </div>
+  
+                  <div class="col-md-1"></div>
                 </div>
-    
+  
                 <div class="row mt-2">
                   <div class="col-md-1">
                     <label for="ccountry">Country</label>
                   </div>
-                  <div class="col-md-4 ">
-                    <input type="text" class="form-control text-dark bg-light" id="ccountry" name="ccountry" placeholder="Country">  
+                  <div class="col-md-4">
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="ccountry"
+                      name="ccountry"
+                      placeholder="Country"
+                    />
                   </div>
                   <div class="col-md-1"></div>
-    
+  
                   <div class="col-md-1">
                     <label for="cscountry">Country</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="cscountry"  name="cscountry" placeholder="Country">
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="cscountry"
+                      name="cscountry"
+                      placeholder="Country"
+                    />
                   </div>
-                  <div class="col-md-1 "></div>
-    
+                  <div class="col-md-1"></div>
                 </div>
-    
+  
                 <div class="row mt-2">
-    
                   <div class="col-md-1">
                     <label for="cpincode">Pincode</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="cpincode" name="cpincode" maxlength="6" placeholder="PIN Code"> 
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="cpincode"
+                      name="cpincode"
+                      maxlength="6"
+                      placeholder="PIN Code"
+                    />
                   </div>
                   <div class="col-md-1"></div>
-    
+  
                   <div class="col-md-1">
                     <label for="cspincode">Pincode</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="cspincode" name="cspincode" maxlength="6" placeholder="PIN Code">  
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="cspincode"
+                      name="cspincode"
+                      maxlength="6"
+                      placeholder="PIN Code"
+                    />
                   </div>
                   <div class="col-md-1"></div>
-    
                 </div>
-    
+  
                 <div class="row mt-2">
-    
                   <div class="col-md-1">
                     <label for="cphone">Phone</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="cphone" name="cphone" placeholder="Phone"> 
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="cphone"
+                      name="cphone"
+                      placeholder="Phone"
+                    />
                   </div>
                   <div class="col-md-1"></div>
-    
+  
                   <div class="col-md-1">
                     <label for="csphone">Phone</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="csphone" name="csphone" placeholder="Phone">  
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="csphone"
+                      name="csphone"
+                      placeholder="Phone"
+                    />
                   </div>
                   <div class="col-md-1"></div>
-    
                 </div>
-    
+  
                 <div class="row mt-2">
-    
                   <div class="col-md-1">
                     <label for="cfax">Fax</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="cfax" name="cfax" placeholder="FAX"> 
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="cfax"
+                      name="cfax"
+                      placeholder="FAX"
+                    />
                   </div>
                   <div class="col-md-1"></div>
-    
+  
                   <div class="col-md-1">
                     <label for="csfax">Fax</label>
                   </div>
                   <div class="col-md-4">
-                    <input type="text" class="form-control text-dark bg-light" id="csfax" name="csfax" placeholder="FAX">  
+                    <input
+                      type="text"
+                      class="form-control text-dark bg-light"
+                      id="csfax"
+                      name="csfax"
+                      placeholder="FAX"
+                    />
                   </div>
                   <div class="col-md-1"></div>
-    
                 </div>
-    
                 <div class="row mt-2">
-                    <div class="col-md-6">
-                      <input type="checkbox" value="" id="invalidCheck" name="invalidCheck" required>
-                      <label for="invalidCheck" style="color: #909091;">Agree to terms and conditions</label>
-                      <div class="invalid-feedback text-warning" >You must agree before submitting.</div>
+                  <div class="col-md-6">
+                    <input
+                      type="checkbox"
+                      value=""
+                      id="invalidCheck"
+                      name="invalidCheck"
+                      required
+                    />
+                    <label for="invalidCheck" style="color: #909091"
+                      >Agree to terms and conditions</label
+                    >
+                    <div class="invalid-feedback text-warning">
+                      You must agree before submitting.
                     </div>
+                  </div>
                 </div>
                 <div class="row mt-5">
                   <div class="col-md-4"></div>
                   <div class="col-md-4">
                     <div class="d-flex">
-                      <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                      type="submit" data-dismiss="modal"  id="addCustomerButton">Submit
-                      </button> 
-    
-                      <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
-                        data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">Cancel</span>
+                      <button
+                        class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
+                        type="submit"
+                        data-dismiss="modal"
+                        id="addCustomerButton"
+                      >
+                        Submit
+                      </button>
+                      <button
+                        type="button"
+                        class="close btn save_btn rounded-pill text-grey w-50 my-4"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">Cancel</span>
                       </button>
                     </div>
                   </div>
                   <div class="col-md-4"></div>
+                </div>
               </form>
-                  </div>
-              </div>
+            </div>
           </div>
-      </div>  
-    </div> 
-    
+        </div>
+      </div>
+    </div>
 
     <script>
 

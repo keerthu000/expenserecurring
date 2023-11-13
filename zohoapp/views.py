@@ -3207,6 +3207,7 @@ def add_expense(request):
         cust_gsttreatmnt=request.POST['cu_gst_trt']
         custemail=request.POST.get('mail')
         cust_pos=request.POST['c_destination']
+        cust_gst=request.POST['cust_gstin']
         # Handle the ends_on field
         file=request.FILES.get('file')
        
@@ -3237,6 +3238,7 @@ def add_expense(request):
             notes=notes,
             customer= customer_obj,
             customeremail=custemail,
+            cust_gstin=cust_gst,
             cust_gsttreatment=cust_gsttreatmnt,
             cust_placeofsupply=cust_pos,
             vendormail= vmail,
@@ -3291,6 +3293,7 @@ def draft_expense(request):
         customer_id = request.POST['customername']
         customer_obj = get_object_or_404(customer, pk=customer_id)
         cust_gsttreatmnt=request.POST['cu_gst_trt']
+        cust_gst=request.POST['cust_gstin']
         custemail=request.POST.get('mail')
         cust_pos=request.POST['c_destination']
         # Handle the ends_on field
@@ -3325,6 +3328,7 @@ def draft_expense(request):
             customeremail=custemail,
             cust_gsttreatment=cust_gsttreatmnt,
             cust_placeofsupply=cust_pos,
+            cust_gstin=cust_gst,
             vendormail= vmail,
             document=file,
             activation_tag="Active", # Set the activation_tag to "active"
@@ -3382,19 +3386,29 @@ def get_customer_gsttrmnt(request):
     if request.method == 'GET':
         customer_id = request.GET.get('customername')
         custmer = customer.objects.get(id=customer_id)
-        gst_trtmnt=custmer.GSTTreatment
-        pos=custmer.placeofsupply
+        gst_treatmnt=custmer.GSTTreatment
+        
         gstin=custmer.GSTIN
-        return JsonResponse({'gst_trtmnt': gst_trtmnt,'pos':pos,'gstin':gstin})
+      
+        
+        return JsonResponse({'gst_trtmnt': gst_treatmnt, 'gstin': gstin, })  
     
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+def get_cust_pos(request):
+    if request.method == 'GET':
+        customer_id = request.GET.get('customername')
+        custmer = customer.objects.get(id=customer_id)
+        cust_pos=custmer.placeofsupply
+        return JsonResponse({ 'pos': cust_pos})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
         
     
 def get_vendor_gst(request, vendor_id):
     
     vendor = vendor_table.objects.get(pk=vendor_id)
     
-    return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email,})
+    return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email,'pos':vendor.source_supply})
 
 def get_vendor_place_of_supply(request):
     if request.method == 'GET':
@@ -3498,6 +3512,10 @@ def expense_details(request, pk):
         'company':company
     }
     return render(request, 'expenseview.html', context)
+
+
+
+from django.http import Http404
     
 def edit_expense(request, expense_id):
     
@@ -3510,6 +3528,7 @@ def edit_expense(request, expense_id):
     accounts = Account.objects.all()
     account_types = Account.objects.values_list('accountType', flat=True).distinct()
     selected_account = expense.expense_account
+    
     payments=payment_terms.objects.all()
     company = company_details.objects.get(user = request.user)
     repeat_list = repeat_every.objects.all()
@@ -3519,18 +3538,21 @@ def edit_expense(request, expense_id):
     if request.method == 'POST':
        
         expense.profile_name = request.POST.get('profile_name')
-        repeatevery_id= request.POST.get('repeat_every')
+        repeatevery_id=request.POST.get('repeat_every')
+        print(repeatevery_id)
         repeat_id=repeat_every.objects.get(id=repeatevery_id)
+        
         expense.repeatevery=repeat_id
         expense.start_date = request.POST.get('start_date')
         
         account_id = request.POST.get('expense_account')
         
         selected_account = Account.objects.get(id=account_id)
+        print(selected_account)
         expense.expense_account=selected_account
         expense.expense_type = request.POST.get('expense_type')
-        expense.hsn = request.POST['goods_label']
-        expense.sac = request.POST['services_label']
+        expense.hsn = request.POST.get('goods_label')
+        expense.sac = request.POST.get('services_label')
         expense.amount = request.POST.get('amount')
         expense.currency = request.POST.get('currency')
         expense.paidthrough = request.POST.get('paidthrough')
@@ -3545,13 +3567,16 @@ def edit_expense(request, expense_id):
         else:
             expense.gst=request.POST.get('gstin_inp')
         expense.vendormail=request.POST.get('vmail')
-        expense.destination = request.POST.get('destination')
+        expense.vendor_destination = request.POST.get('destination')
         expense.tax = request.POST.get('tax[]')
         expense.notes = request.POST.get('notes')
         customer_id= request.POST.get('customername')  # Get the customer ID from POST data
         customer_obj = get_object_or_404(customer, pk=customer_id)  # Fetch the customer object
         expense.customer = customer_obj
         expense.customeremail=request.POST.get('mail')
+        expense.cust_placeofsupply=request.POST.get('c_destination') 
+        expense.cust_gsttreatment=request.POST.get('cu_gst_trt')
+        expense.cust_gstin=request.POST.get('cust_gstin') 
         
         
         
@@ -14672,9 +14697,9 @@ def save_recurring_data(request):
     
 @login_required(login_url='login')
 def entr_recurring_custmr(request):
+    print('entered custmr')
     if request.method == 'POST':
-       
-
+        print('entered custmr')
         type = request.POST.get('radioCust')
         sal=request.POST.get('ctitle')
         fname= request.POST.get('cfirstname')
@@ -14698,6 +14723,7 @@ def entr_recurring_custmr(request):
         posply = request.POST.get('placesupply')
         tax1 = request.POST.get('radioCust1')
         crncy = request.POST.get('c_curn')
+        bal = request.POST.get('bal')
         obal = request.POST.get('c_open')
         
         selected_payment_label =int(request.POST.get('c_terms'))
@@ -14731,7 +14757,7 @@ def entr_recurring_custmr(request):
                         currency=crncy, OpeningBalance=obal,PaymentTerms=pterms,    
                         Facebook=facebook, Twitter=twitter, GSTIN=gstin,Fname=fname,Lname=lname,
                         country=bcountry, Address1=baddrs1, Address2=baddrs2,pan_no=pan,
-                        city=bcity, state=bstate, zipcode=bpincode, phone1=bphone,
+                        city=bcity, state=bstate, zipcode=bpincode, phone1=bphone,balance=bal,
                         fax=bfax, sAddress1=saddrs1, sAddress2=saddrs2, scity=scity, sstate=sstate,
                         scountry=scountry, szipcode=spincode, sphone1=sphone, sfax=sfax, user=u)
 

@@ -904,27 +904,29 @@ body {
                                 </div>
 
                                 
-
-                                {% comment %} <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                    <div class="col-md-6 mt-3">
-                                        <h6 class="mb-0 text-grey">Payment Terms:</h6>
-                                    </div>
-                                    <div class="col-md-6 mt-3">
-                                        <p class="mb-0" style="font-size: 18px; color: #434141;"> NET {{ expense.payment_terms }}</p>
-                                    </div>
-                                </div> {% endcomment %}
+                             
+                                
 
                                 <div class="row mb-4 d-flex justify-content-between align-items-center">
                                     <div class="col-md-6 mt-3">
                                         <h6 class="mb-0 text-grey">Tax :</h6>
                                     </div>
                                     <div class="col-md-6 mt-3">
-                                        <span style="font-size: 18px; color: #434141;">{{ gst_or_igst }} - </span>
+                                        <span style="font-size: 18px; color: #434141;">{{ gst_or_igst }} </span>
                                         {% comment %} {% for bi in tax %} {% endcomment %}
-                                            <input type="text" value="{{expense.tax }}%" style="font-size: 18px; color: #434141; width: 65px;margin-left:-10px;" class="tax 1 tx">
+                                            <input type="text" value="{{expense.tax }}%" style="font-size: 17px; color: #434141; width: 78px;margin-left:-10px;" class="tax 1 tx">
                                         <span class="text-muted"></span><br><span ></span>
                                         {% comment %} {% endfor %} {% endcomment %}
                                     </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-6 mt-3">
+                                        <h6 class="mb-0 text-grey">Vendor GST Number :</h6>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <p class="mb-0 text-capitalize" style="font-size: 16px; color: #434141;">{{ expense.gst }}</p>
+                                    </div>
+
                                 </div>
                                 <div class="row mb-4 d-flex justify-content-between align-items-center">
                                     <div class="col-md-6 mt-3">
@@ -982,21 +984,21 @@ body {
 
                                 <div class="d-flex justify-content-between mb-5">
                                     <div class="col-md-7 mt-2">
-                                        <h6 style="color: #ccc;">GST Treatment:</h6>
+                                        <h6 style="color: #ccc;">Cust GST Treatment:</h6>
                                     </div>
                                     <div class="col-md-5 mt-2">
                                         <div style="font-size: 14px; color: azure;">
-                                            {{ expense.gst_treatment }}
+                                            {{ expense.cust_gsttreatment }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="justify-content-between mb-3 d-none" id="igst">
                                     <div class="col-md-4 mt-3">
-                                        <h6 style="color: #ccc;">GST Number :</h5><br>
+                                        <h6 style="color: #ccc;">Customer GST Number :</h5><br>
                                     </div>
                                     <div class="col-md-8 mt-4 mx-3">
                                       
-                                        <input type="text" value="{{ expense.gst }} " class="amnt"
+                                        <input type="text" value="{{ customer.GSTIN }} " class="amnt"
                                             style="font-size: 16px; color: azure;margin-top:-3.6rem" readonly>
                                            
                                     
@@ -1029,9 +1031,41 @@ body {
                                             style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
                                     </div>
                                 </div>
-
+                                {% if expense.paidthrough == 'UPI' %}
                                 <div class="d-flex justify-content-between mb-5">
-                                    <div class="col-md-6 mt-3">
+                                    <div class="col-md-8 mt-3">
+                                        <h6 style="color: #ccc;">UPI ID :</h5><br>
+                                    </div>
+                                    <div class="col-md-4 mt-3 mx-3">
+                                        <input type="text" value="{{ expense.upi_number }}" class="amnt" style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
+                                    </div>
+                                </div>
+                            {% elif expense.paidthrough == 'Cheque' %}
+                                <div class="d-flex justify-content-between mb-5">
+                                    <div class="col-md-8 mt-3">
+                                        <h6 style="color: #ccc;">Cheque number :</h5><br>
+                                    </div>
+                                    <div class="col-md-4 mt-3 mx-3">
+                                        <input type="text" value="{{ expense.cheque_id }}" class="amnt" style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
+                                    </div>
+                                </div>
+                            {% else %}
+                               
+                                <div class="d-flex justify-content-between mb-5">
+                                    <div class="col-md-8 mt-3">
+                                        <h6 style="color: #ccc;">Bank Account:</h5><br>
+                                    </div>
+                                    <div class="col-md-4 mt-3 mx-3">
+                                        <input type="text" value="{{ expense.bank_account }}" class="amnt" style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
+                                    </div>
+                                </div>
+                               
+                            {% endif %}
+                            
+                               
+                               
+                                <div class="d-flex justify-content-between mb-5">
+                               <div class="col-md-6 mt-3">
                                         <h6 style="color: #ccc;margin-top:3rem">Expense Type:</h5><br>
                                     </div>
                                     <div class="col-md-6 mt-3 mx-3">
@@ -1049,9 +1083,9 @@ body {
                 
                
                     <div id="formButton">
-                        <button class="btn btn-warning tablinks" id="formButton1" style="margin-top:50px; margin-left:280px;" onclick="toggleForm('Template')">1</button>
-                        <button class="btn btn-warning tablinks" id="formButton2" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(1)">2</button>
-                        <button class="btn btn-warning tablinks" id="formButton3" style="margin-top:50px; margin-left:50px;" onclick="toggleForm(2)">3</button>
+                        <button class="btn btn-warning tablinks" id="formButton1" style="margin-top:50px; margin-left:350px;" onclick="toggleForm('Template')">1</button>
+                        <button class="btn btn-warning tablinks" id="formButton2" style="margin-top:50px; margin-left:20px;" onclick="toggleForm(1)">2</button>
+                        <button class="btn btn-warning tablinks" id="formButton3" style="margin-top:50px; margin-left:20px;" onclick="toggleForm(2)">3</button>
                      
                     </div>
                     <div class="form formprint1" id="form1" >
@@ -1252,6 +1286,15 @@ body {
 
         </div>
     </div>
+
+
+
+
+    
+    
+    
+    
+    
     
    
     <script>

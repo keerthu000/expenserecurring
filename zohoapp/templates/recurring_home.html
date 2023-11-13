@@ -303,7 +303,7 @@
             style="width: 550px"
           >
             <option value="Cash">Cash</option>
-            <option value="Check">cheque</option>
+            <option value="Cheque">cheque</option>
             <option value="UPI">UPI</option>
             {% for b in bank %}
             <option value="{{b.name}}" data-account="{{ b.ac_no }}">
@@ -781,8 +781,8 @@
         <button
           type="button"
           class="btn btn-warning"
-          onclick="window.location.href='{% url 'recurringbase' %}'"
-          style="color: orangered; width: 100px; height: 35px"
+          onclick="clearForm()"
+          style="color: orangered; width: 100px; height: 35px" id="clearButton"
         >
           Cancel
         </button>
@@ -790,6 +790,16 @@
     </form>
   </div>
 </div> 
+
+
+
+<script>
+  document.getElementById("clearButton").addEventListener("click", clearForm);
+
+  function clearForm() {
+    document.getElementById("expenseForm").reset();
+  }
+</script>
 
   <script>
     // JavaScript to update the account number based on the selected bank
@@ -886,10 +896,9 @@
 
               $("#vemail").val(data.email);
               $("#emailid").show();
-              $("#destination").val(data.pos);
+             
               // Set the selected place of supply in the dropdown
-              var placeOfSupplySelect = $("#destination");
-              placeOfSupplySelect.val(data.pos);
+              
             },
             error: function (error) {
               console.log("Error fetching data:", error);
@@ -917,7 +926,7 @@
         if (selectedVendorId) {
           // Send an Ajax request to your server to retrieve the place of supply
           $.ajax({
-            url: "/get_vendor_place_of_supply/", // Replace with your actual URL
+            url: "{% url 'get_vendor_place_of_supply' %}", // Replace with your actual URL
             method: "GET",
             data: { vendor: selectedVendorId },
             success: function (data) {
@@ -956,8 +965,9 @@
             { customername: customer_id },
             function (data) {
               $("#cust_gst_tr").val(data.gst_trtmnt);
-              $("#c_destination").val(data.pos);
+             
               $("#cust_gst").val(data.gstin);
+               $("#c_destination").val(data.pos);
 
               // Check the GST treatment and show/hide the input field
               if (
@@ -1047,6 +1057,7 @@
         data: data,
         dataType: 'json',  // Expect JSON response
         success: function(response) {
+          $("#accountForm")[0].reset();
           updateDropdown(response);
           console.log('Data saved successfully');
         },
@@ -1106,7 +1117,8 @@
               class="needs-validation"
               novalidate
               autocomplete="off"
-              id="modalCustomer">
+              id="customerForm">
+              {% csrf_token %}
               <div class="row mt-2">
                 <div class="col-md-3 mt-2">
                   <label for="">Customer Type</label><br />
@@ -1971,7 +1983,7 @@
                       class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
                       type="submit"
                       data-dismiss="modal"
-                      id="customersave"
+                      id="addCustomerButton"
                     >
                       Submit
                     </button>
@@ -2011,7 +2023,7 @@
   </script>  
 
   <!-- Include jQuery library -->
-  {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script>
     $(document).ready(function () {
       // Handle clicking the "Add Customer" button in the modal
@@ -2093,7 +2105,7 @@
       <div class="modal-body" style="background: rgb(32, 35, 37)">
         <div class="card p-3 m-3">
           <form
-            action=""
+            action="{% url 'save_recurring_data' %}"
             method="post"
             class="needs-validation"
             novalidate
@@ -2189,7 +2201,7 @@
                 <button
                   type="submit"
                   class="btn btn-primary"
-                  id="accountSave">
+                  id="accountSave" data-dismiss="modal">
                   Save and Select
                 </button>
                 <button
