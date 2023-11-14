@@ -574,7 +574,7 @@ body {
                         <a href="" class="fa fa-envelope btns px-2 py-2" 
                             title="MAIL" data-toggle="modal" data-target="#emails" > </a>
 
-                        <a href="{% url 'covert_to_status' expense.id %}" class=" fa fa-arrows-h btns px-2 py-2"
+                        <a href="{% url 'covert_to_status' expense.id %}" class=" fa fa-arrows-h btns px-2 py-2 convert"
                             data-toggle="tooltip" title="CONVERT" > </a>
                              
                     </div>
@@ -919,6 +919,7 @@ body {
                                         {% comment %} {% endfor %} {% endcomment %}
                                     </div>
                                 </div>
+                                {% if expense.gst  != 'None' %}
                                 <div class="row mb-4 d-flex justify-content-between align-items-center">
                                     <div class="col-md-6 mt-3">
                                         <h6 class="mb-0 text-grey">Vendor GST Number :</h6>
@@ -926,8 +927,8 @@ body {
                                     <div class="col-md-6 mt-3">
                                         <p class="mb-0 text-capitalize" style="font-size: 16px; color: #434141;">{{ expense.gst }}</p>
                                     </div>
-
                                 </div>
+                            {% endif %}
                                 <div class="row mb-4 d-flex justify-content-between align-items-center">
                                     <div class="col-md-6 mt-3">
                                         <h6 class="mb-0 text-grey">Vendor Source of Supply :</h6>
@@ -992,6 +993,7 @@ body {
                                         </div>
                                     </div>
                                 </div>
+                                {% if expense.cust_gsttreatment != "Unregistered Business-not Registered under GST" %}
                                 <div class="justify-content-between mb-3 d-none" id="igst">
                                     <div class="col-md-4 mt-3">
                                         <h6 style="color: #ccc;">Customer GST Number :</h5><br>
@@ -1004,6 +1006,7 @@ body {
                                     
                                     </div>
                                 </div>
+                                {% endif %}
                                 {% comment %} <div class=" justify-content-between mb-5 d-none" id="cgst">
                                     <div class="col-md-4 mt-3">
                                         <h6 style="color: #ccc;">Paid Through :</h5><br>
@@ -1238,15 +1241,19 @@ body {
                                     <div class="col-md-6 text-left" style="display: inline-block; width: 50%;">Customer Name:</div>
                                     <div class="col-md-5 text-right" style="display: inline-block; width: 50%;">{{ expense.customer.customerName }}</div>
                                 </div>
-                                <div class="row">
+                                {% comment %} <div class="row">
                                     <div class="col-md-6 text-left" style="display: inline-block; width: 50%;">Start date: :</div>
                                     <div class="col-md-5 text-right" style="display: inline-block; width: 50%;">{{expense.start_date | date:'d-m-Y'}}</div>
-                                </div>
+                                </div> {% endcomment %}
                               
                             </div>
                             <div><br>
                                 <div class="equal-length-container" style="color: black; font-weight: bold;margin-top:10px;display: flex;align-items: center;  justify-content: space-between; height: 100%;  margin-left: 2vh;margin-right: 2vh;  ">
                                      
+                                    <div class="equal-length-item ml-2"  style=" text-align:center;flex: 1;">
+                                        Start Date
+                                         <hr style="border-bottom: 1px solid black; margin-top:1vh; width:85%;"> 
+                                    </div>
                                     <div class="equal-length-item ml-2"  style=" text-align:center;flex: 1;">
                                         Profile Name
                                          <hr style="border-bottom: 1px solid black; margin-top:1vh; width:85%;"> 
@@ -1263,6 +1270,9 @@ body {
                                 <div class="equal-length-container text-uppercase" style="color: black; font-size: small; word-wrap: break-word; margin-bottom:4vh;display: flex;align-items: center;  justify-content: space-between; height: 100%;  margin-left: 2vh;margin-right: 2vh;  ">
                                     {% comment %} <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">#
                                     </div> {% endcomment %}
+                                    <div class="equal-length-item" style="text-align: center;flex: 1;">
+                                        {{expense.start_date | date:'d-m-Y'}}
+                                    </div>
                                     <div class="equal-length-item" style="text-align: center;flex: 1;">
                                         {{expense.profile_name}}
                                     </div>
@@ -1294,7 +1304,17 @@ body {
     
     
     
-    
+    <script>
+        $(document).ready(function() {
+            let status = '{{ expense.status }}'
+            if(status == 'Save'){
+                $('.convert').hide()
+            }
+            else{
+                $('.convert').show()
+            }
+        });
+    </script>
     
    
     <script>
