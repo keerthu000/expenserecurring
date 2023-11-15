@@ -55,6 +55,7 @@
     overflow: scroll;
   }
   
+  
   </style>
   <div style="margin-top: 6rem; margin-left: 8rem;">
     <h2>Edit Expense</h2>
@@ -257,13 +258,16 @@
             </div>
           </div>
           
-          <!-- Vendor GSTIN -->
-          <div class="form-group row" id="textboxContainer">
+         <!-- Vendor GSTIN -->
+        <div id="textboxContainer" >
+          <div class="form-group row" >
             <label for="gst_num_inp" class="col-sm-3 col-form-label">Vendor GSTIN</label>
-            <div class="col-sm-6">
-              <input type="text" id="gst_num_inp" class="form-control bg-white text-dark" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" >
+            <div class="col-sm-6 offset-sm-3">
+                <input type="text" id="gst_num_inp" class="form-control bg-white text-dark {% if expense.gst %}has-gst{% endif %}" value="{{ expense.gst }}" name="gstin_inp" placeholder="Enter additional information" style="margin-left:-280px;" >
             </div>
           </div>
+        </div>
+      
           
 
       <div class="form-group row">
@@ -344,7 +348,7 @@
           <input type="text" name="cu_gst_trt" id="cust_gst_trt" class="form-control bg-white text-dark" style="width: 540px;" value="{{ expense.cust_gsttreatment }}">
       </div>
   </div>
-  <div class="form-group row mt-4" id="gstContainer" style="display: none">
+  <div class="form-group row mt-4" id="gstContainer" >
       <label class="col-sm-3 col-form-label" style="margin-top: 1rem">Customer GSTIN</label>
       <div class="col-sm-6">
           <input
@@ -353,7 +357,7 @@
               class="form-control bg-white text-dark"
               name="cust_gstin"
               placeholder="Enter additional information"
-              value=""
+              value="{{expense.cust_gstin}}"
               style="width: 540px; color: black; margin-top: 1rem"
           />
       </div>
@@ -419,6 +423,7 @@
               <div class="col-sm-6">
                  
                   <select name="tax[]" id="tax1" class="form-control bg-white text-dark" onclick="checkTax()">
+                    <option>Select any value</option>
                       <optgroup label="GST" >
                           <option value="GST0" {% if expense.tax == "GST0" %}selected{% endif %}>0% GST(0%)</option>
                           <option value="GST3" {% if expense.tax == "GST3" %}selected{% endif %}>3.0% GST(3%)</option>
@@ -671,7 +676,7 @@
                 $("#vemail").val(data.email);
                 $("#emailid").show();
   
-                if (data.gst_treatment === "unregistered Business") {
+                if (data.gst_treatment.toLowerCase().includes("unregistered business")) {
                   $("#textboxContainer").hide();
                 } else {
                   $("#textboxContainer").show();
@@ -693,7 +698,7 @@
             $("#gst_num_inp").val("");
             $("#vemail").val("");
             $("#destination").val("");
-            $("#textboxContainer").hide();
+           // $("#textboxContainer").hide();
             $("#emailid").hide();
           }
         });
@@ -701,6 +706,7 @@
         // Rest of your JavaScript code...
       });
     </script>
+  
 
 
       {% comment %} <script>
@@ -1656,29 +1662,19 @@
 
 
 
-<script>
+<script type="text/javascript">
   $(document).ready(function () {
-    // Trigger checkTax on page load
-    initializeTaxOptions();
     checkTax();
-  
-    // Attach event handlers for changes in customer information
-    $("#c_destination, #customer_name").change(function () {
+    $("#c_destination").change(function () {
       checkTax();
     });
   });
-  
-  // Store the original tax options on page load
-  function initializeTaxOptions() {
-    var taxDropdown = document.getElementById("tax1");
-    taxDropdown.originalOptions = taxDropdown.innerHTML;
-  }
   
   function checkTax() {
     // Get the selected place of supply
     var placeOfSupply = $("#c_destination")
       .val()
-      .split(" ")
+      .split("-")
       .slice(1)
       .join(" ")
       .trim();
@@ -1692,36 +1688,49 @@
     // Get the tax dropdown element
     var taxDropdown = document.getElementById("tax1");
   
-    // Restore original options
-    taxDropdown.innerHTML = taxDropdown.originalOptions;
+    // Store the currently selected value
+    var selectedValue = $("#tax1").val();
+  
+    // Remove all options from the dropdown
+    $("#tax1").empty();
+  
+    // Add the default "Select" option back to the dropdown
+    $("#tax1").append("<option value=''></option>");
   
     // Get the optgroup elements inside the tax dropdown
-    var gstOptgroup = taxDropdown.querySelector('optgroup[label="GST"]');
-    var igstOptgroup = taxDropdown.querySelector('optgroup[label="IGST"]');
+    var gstOptgroup = $("<optgroup label='GST'></optgroup>");
+    var igstOptgroup = $("<optgroup label='IGST'></optgroup>");
   
+    // Add options to the optgroups based on the condition
     if (placeOfSupply === "kerala" && companyState === "kerala") {
-      // If both company state and customer place of supply are Kerala, show GST options
-      if (gstOptgroup) {
-        gstOptgroup.style.display = "block";
-        
-      }
-      if (igstOptgroup) {
-        igstOptgroup.style.display = "none";
-      }
+      // If both company state and customer place of supply are Kerala, add GST options
+      gstOptgroup.append(" <option value='GST0'>0% GST(0%)</option>");
+      gstOptgroup.append(" <option value='GST3'>3.0% GST(3%)</option>");
+      gstOptgroup.append("<option value='GST5'>5.0% GST(5%)</option>");
+      gstOptgroup.append("<option value='GST12'>12.0% GST(12%)</option>");
+      gstOptgroup.append("<option value='GST18'>18.0% GST(18%)</option>");
+      gstOptgroup.append(" <option value='GST28'>28.0% GST(28%)</option>");
+      $("#tax1").append(gstOptgroup);
+  
+      // Select the previously selected value, if any
+      $("#tax1").val(selectedValue);
     } else {
-      // If any other condition, show IGST options
-      if (igstOptgroup) {
-        igstOptgroup.style.display = "block";
-      }
-      if (gstOptgroup) {
-        gstOptgroup.style.display = "none";
-      }
+      // If any other condition, add IGST options
+      
+      igstOptgroup.append(" <option value='IGST0'>0% IGST(0%)</option>");
+      igstOptgroup.append(" <option value='IGST3'>3.0% IGST(3%)</option>");
+      igstOptgroup.append(" <option value='IGST5'>5.0% IGST(5%)</option>");
+      igstOptgroup.append(" <option value='IGST12'>12.0% IGST(12%)</option>");
+      igstOptgroup.append(" <option value='IGST18'>18.0% IGST(18%)</option>");
+      igstOptgroup.append(" <option value='IGST28'>28.0% IGST(28%)</option>");
+      $("#tax1").append(igstOptgroup);
+  
+      // Select the previously selected value, if any
+      $("#tax1").val(selectedValue);
     }
   }
   
-  
-</script>
-
+</script>  
 
 
 
@@ -2431,64 +2440,51 @@
                       name="placesupply"
                     >
                       <option value="Nill" hidden></option>
-                      <option value="[AN] Andaman and Nicobar Islads">
-                        [AN] Andaman and Nicobar Islads
+                      <option value="[AN]-Andaman And Nicobar Islands">
+                        [AN]-Andaman And Nicobar Islands
                       </option>
-                      <option value="[AD] Andhra Pradhesh">
-                        [AD] Andhra Pradhesh
+                      <option value="[AD]-Andhra Pradesh">[AD]-Andhra Pradesh</option>
+                      <option value="[AR]-Arunachal Pradesh">
+                        [AR]-Arunachal Pradesh
                       </option>
-                      <option value="[AR] Arunachal Pradesh">
-                        [AR] Arunachal Pradesh
+                      <option value="[AS]-Assam">[AS]-Assam</option>
+                      <option value="[BR]-Bihar">[BR]-Bihar</option>
+                      <option value="[CH]-	Chandhigarh">[CH]- Chandhigarh</option>
+                      <option value="[CG]-Chattisgarh">[CG]-Chattisgarh</option>
+                      <option value="[DD]-Daman Diu">[DD]-Daman Diu</option>
+                      <option value="[DL]-	Delhi">[DL]- Delhi</option>
+                      <option value="[GA]-Goa">[GA]-Goa</option>
+                      <option value="[GJ]-Gujarat">[GJ]-Gujarat</option>
+                      <option value="[HR]-Haryana">[HR]-Haryana</option>
+                      <option value="[HP]-Himachal Pradesh">[HP]-Himachal Pradesh</option>
+                      <option value="[JK]-Jammu And Kashmir">
+                        [JK]-Jammu And Kashmir
                       </option>
-                      <option value="[AS] Assam">[AS] Assam</option>
-                      <option value="[BR] Bihar">[BR] Bihar</option>
-                      <option value="[CH] Chandigarh">[CH] Chandigarh</option>
-                      <option value="[CG] Chhattisgarh">[CG] Chhattisgarh</option>
-                      <option value="[DNH] Dadra and Nagar Haveli">
-                        [DNH] Dadra and Nagar Haveli
-                      </option>
-                      <option value="[DD] Damn anad Diu">
-                        [DD] Damn anad Diu
-                      </option>
-                      <option value="[DL] Delhi">[DL] Delhi</option>
-                      <option value="[GA] Goa">[GA] Goa</option>
-                      <option value="[GJ] Gujarat">[GJ] Gujarat</option>
-                      <option value="[HR] Haryana">[HR] Haryana</option>
-                      <option value="[HP] Himachal Pradesh">
-                        [HP] Himachal Pradesh
-                      </option>
-                      <option value="[JK] Jammu and Kashmir">
-                        [JK] Jammu and Kashmir
-                      </option>
-                      <option value="[JH] Jharkhand">[JH] Jharkhand</option>
-                      <option value="[KA] Karnataka">[KA] Karnataka</option>
-                      <option value="[KL] Kerala">[KL] Kerala</option>
-                      <option value="[LA] Ladakh">[LA] Ladakh</option>
-                      <option value="[LD] Lakshadweep">[LD] Lakshadweep</option>
-                      <option value="[MP] Madhya Pradesh">
-                        [MP] Madhya Pradesh
-                      </option>
-                      <option value="[MH] Maharashtra">[MH] Maharashtra</option>
-                      <option value="[MN] Manipur">[MN] Manipur</option>
-                      <option value="[ML] Meghalaya">[ML] Meghalaya</option>
-                      <option value="[MZ] Mizoram">[MZ] Mizoram</option>
-                      <option value="[NL] Nagaland">[NL] Nagaland</option>
-                      <option value="[OD] Odisha">[OD] Odisha</option>
-                      <option value="[PY] Puducherry">[PY] Puducherry</option>
-                      <option value="[PB] Punjab">[PB] Punjab</option>
-                      <option value="[RJ] Rajasthan">[RJ] Rajasthan</option>
-                      <option value="[SK] Sikkim">[SK] Sikkim</option>
-                      <option value="[TN] Tamil Nadu">[TN] Tamil Nadu</option>
-                      <option value="[TS] Telangana">[TS] Telangana</option>
-                      <option value="[TR] Tripura">[TR] Tripura</option>
-                      <option value="[UP] Uttar Pradesh">
-                        [UP] Uttar Pradesh
-                      </option>
-                      <option value="[UK] Uttarakhand">[UK] Uttarakhand</option>
-                      <option value="[WB] West Bengal">[WB] West Bengal</option>
-                      <option value="[OT] Other Territory">
-                        [OT] Other Territory
-                      </option>
+                      <option value="[JH]-Jharkand">[JH]-Jharkand</option>
+                      <option value="[KA]-Karnataka">[KA]-Karnataka</option>
+                      <option value="[KL]-Kerala">[KL]-Kerala</option>
+                      <option value="[LA]-Ladakh">[LA]-Ladakh</option>
+                      <option value="[LD]-Lakshadweep">[LD]-Lakshadweep</option>
+                      <option value="[MP]-Madhyapradesh">[MP]-Madhyapradesh</option>
+                      <option value="[MH]-Maharashtra">[MH]-Maharashtra</option>
+                      <option value="[MN]-Manipur">[MN]-Manipur</option>
+                      <option value="[ML]-Meghalaya">[ML]-Meghalaya</option>
+                      <option value="[MZ]-Mizoram">[MZ]-Mizoram</option>
+                      <option value="[NL]-Nagaland">[NL]-Nagaland</option>
+                      <option value="[NL]-Nagaland">[NL]-Nagaland</option>
+                      <option value="[OD]-Odisha">[OD]-Odisha</option>
+                      <option value="[PY]-Puducherry">[PY]-Puducherry</option>
+                      <option value="[PB]-Punjab">[PB]-Punjab.</option>
+                      <option value="[RL]-Rajasthan">[RL]-Rajasthan</option>
+                      <option value="[SK]-Sikkim">[SK]-Sikkim</option>
+                      <option value="[TN]-Tamilnadu">[TN]-Tamilnadu</option>
+                      <option value="[TS]-Telenghana">[TS]-Telenghana</option>
+                      <option value="[TR]-Tripura">[TR]-Tripura</option>
+                      <option value="[UP]-Uttar Pradesh">[UP]-Uttar Pradesh</option>
+                      <option value="[UK]-Utharakhand">[UK]-Utharakhand</option>
+                      <option value="[WB]-West Bengal">[WB]-West Bengal</option>
+                      <option value="[OT]-Other Territory">[OT]-Other Territory</option>
+                      
                     </select>
                   </div>
                 </div>
