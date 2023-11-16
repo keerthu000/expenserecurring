@@ -348,19 +348,21 @@
           <input type="text" name="cu_gst_trt" id="cust_gst_trt" class="form-control bg-white text-dark" style="width: 540px;" value="{{ expense.cust_gsttreatment }}">
       </div>
   </div>
-  <div class="form-group row mt-4" id="gstContainer" >
-      <label class="col-sm-3 col-form-label" style="margin-top: 1rem">Customer GSTIN</label>
-      <div class="col-sm-6">
-          <input
-              type="text"
-              id="cust_gst"
-              class="form-control bg-white text-dark"
-              name="cust_gstin"
-              placeholder="Enter additional information"
-              value="{{expense.cust_gstin}}"
-              style="width: 540px; color: black; margin-top: 1rem"
-          />
-      </div>
+  <div id="gstContainer"  style="display:none;">
+    <div class="form-group row mt-4" >
+        <label class="col-sm-3 col-form-label" style="margin-top: 1rem">Customer GSTIN</label>
+        <div class="col-sm-6">
+            <input
+                type="text"
+                id="cust_gst"
+                class="form-control bg-white text-dark"
+                name="cust_gstin"
+                placeholder="Enter additional information"
+                value="{{expense.cust_gstin}}"
+                style="width: 540px; color: black; margin-top: 1rem"
+            />
+        </div>
+    </div>
   </div>
   
   
@@ -590,11 +592,18 @@
                 // Check the GST treatment and show/hide the input field
                 if (data.gst_trtmnt.toLowerCase().includes("unregistered business")) {
                   $("#gstContainer").hide();
+                  
                 } else {
+                 
+                  $("#cust_gst").val(data.gstin);
                   $("#gstContainer").show();
                 }
+               
               }
+            
             );
+            $("#cust_gst_trt").val(" ");
+            $("#cust_gst").val(" ");
     
             // Make an AJAX request to get the customer's Place of Supply
             $.get(
@@ -675,6 +684,7 @@
                 $("#gst_trt_inp").val(data.gst_treatment);
                 $("#vemail").val(data.email);
                 $("#emailid").show();
+                
   
                 if (data.gst_treatment.toLowerCase().includes("unregistered business")) {
                   $("#textboxContainer").hide();
@@ -704,6 +714,31 @@
         });
   
         // Rest of your JavaScript code...
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#vendorSelect").on("change", function () {
+          var selectedVendorId = $(this).val();
+          if (selectedVendorId) {
+            // Send an Ajax request to your server to retrieve the place of supply
+            $.ajax({
+              url: "{% url 'get_vendor_place_of_supply' %}", // Replace with your actual URL
+              method: "GET",
+              data: { vendor: selectedVendorId },
+              success: function (data) {
+                // Update the "Vendor place of supply" select box with the retrieved information
+                $("#destination").val(data.source_supply);
+              },
+              error: function (xhr, status, error) {
+                console.error(error);
+              },
+            });
+          } else {
+            // Handle the case where no vendor is selected
+            $("#destination").val(""); // Clear the value
+          }
+        });
       });
     </script>
   
@@ -1230,44 +1265,51 @@
               <div class="col-md-6 mt-2">
                 <select class="form-control text-dark bg-light" id="v_srcsupply" name="v_sourceofsupply">
                   <option value="Nill"></option>
-                  <option value="[AN] Andaman and Nicobar Islads">[AN] Andaman and Nicobar Islads</option>
-                  <option value="[AD] Andhra Predhesh">[AD] Andhra Predhesh</option>
-                  <option value="[AR] Arunachal Predesh">[AR] Arunachal Predesh</option>
-                  <option value="[AS] Assam">[AS] Assam</option>
-                  <option value="[BR] Bihar">[BR] Bihar</option>
-                  <option value="[CH] Chandigarh">[CH] Chandigarh</option>
-                  <option value="[CG] Chhattisgarh">[CG] Chhattisgarh</option>
-                  <option value="[DNH] Dadra and Nagar Haveli">[DNH] Dadra and Nagar Haveli</option>
-                  <option value="[DD] Damn anad Diu">[DD] Damn anad Diu</option>
-                  <option value="[DL] Delhi">[DL] Delhi</option>
-                  <option value="[GA] Goa">[GA] Goa</option>
-                  <option value="[GJ] Gujarat">[GJ] Gujarat</option>
-                  <option value="[HR] Haryana">[HR] Haryana</option>
-                  <option value="[HP] Himachal Predesh">[HP] Himachal Predesh</option>
-                  <option value="[JK] Jammu and Kashmir">[JK] Jammu and Kashmir</option>
-                  <option value="[JH] Jharkhand">[JH] Jharkhand</option>
-                  <option value="[KA] Karnataka">[KA] Karnataka</option>
-                  <option value="[KL] Kerala">[KL] Kerala</option>
-                  <option value="[LA] Ladakh">[LA] Ladakh</option>
-                  <option value="[LD] Lakshadweep">[LD] Lakshadweep</option>
-                  <option value="[MP] Madhya Predesh">[MP] Madhya Predesh</option>
-                  <option value="[MH] Maharashtra">[MH] Maharashtra</option>
-                  <option value="[MN] Manipur">[MN] Manipur</option>
-                  <option value="[ML] Meghalaya">[ML] Meghalaya</option>
-                  <option value="[MZ] Mizoram">[MZ] Mizoram</option>
-                  <option value="[NL] Nagaland">[NL] Nagaland</option>
-                  <option value="[OD] Odisha">[OD] Odisha</option>
-                  <option value="[PY] Puducherry">[PY] Puducherry</option>
-                  <option value="[PB] Punjab">[PB] Punjab</option>
-                  <option value="[RJ] Rajasthan">[RJ] Rajasthan</option>
-                  <option value="[SK] Sikkim">[SK] Sikkim</option>
-                  <option value="[TN] Tamil Nadu">[TN] Tamil Nadu</option>
-                  <option value="[TS] Telangana">[TS] Telangana</option>
-                  <option value="[TR] Tripura">[TR] Tripura</option>
-                  <option value="[UP] Uttar Predesh">[UP] Uttar Predesh</option>
-                  <option value="[UK] Uttarakhand">[UK] Uttarakhand</option>
-                  <option value="[WB] West Bengal">[WB] West Bengal</option>
-                  <option value="[OT] Other Territory">[OT] Other Territory</option>
+                  <option value="[AN]-Andaman And Nicobar Islands">
+                    [AN]-Andaman And Nicobar Islands
+                  </option>
+                  <option value="[AD]-Andhra Pradesh">[AD]-Andhra Pradesh</option>
+                  <option value="[AR]-Arunachal Pradesh">
+                    [AR]-Arunachal Pradesh
+                  </option>
+                  <option value="[AS]-Assam">[AS]-Assam</option>
+                  <option value="[BR]-Bihar">[BR]-Bihar</option>
+                  <option value="[CH]-	Chandhigarh">[CH]- Chandhigarh</option>
+                  <option value="[CG]-Chattisgarh">[CG]-Chattisgarh</option>
+                  <option value="[DD]-Daman Diu">[DD]-Daman Diu</option>
+                  <option value="[DL]-	Delhi">[DL]- Delhi</option>
+                  <option value="[GA]-Goa">[GA]-Goa</option>
+                  <option value="[GJ]-Gujarat">[GJ]-Gujarat</option>
+                  <option value="[HR]-Haryana">[HR]-Haryana</option>
+                  <option value="[HP]-Himachal Pradesh">[HP]-Himachal Pradesh</option>
+                  <option value="[JK]-Jammu And Kashmir">
+                    [JK]-Jammu And Kashmir
+                  </option>
+                  <option value="[JH]-Jharkand">[JH]-Jharkand</option>
+                  <option value="[KA]-Karnataka">[KA]-Karnataka</option>
+                  <option value="[KL]-Kerala">[KL]-Kerala</option>
+                  <option value="[LA]-Ladakh">[LA]-Ladakh</option>
+                  <option value="[LD]-Lakshadweep">[LD]-Lakshadweep</option>
+                  <option value="[MP]-Madhyapradesh">[MP]-Madhyapradesh</option>
+                  <option value="[MH]-Maharashtra">[MH]-Maharashtra</option>
+                  <option value="[MN]-Manipur">[MN]-Manipur</option>
+                  <option value="[ML]-Meghalaya">[ML]-Meghalaya</option>
+                  <option value="[MZ]-Mizoram">[MZ]-Mizoram</option>
+                  <option value="[NL]-Nagaland">[NL]-Nagaland</option>
+                  <option value="[NL]-Nagaland">[NL]-Nagaland</option>
+                  <option value="[OD]-Odisha">[OD]-Odisha</option>
+                  <option value="[PY]-Puducherry">[PY]-Puducherry</option>
+                  <option value="[PB]-Punjab">[PB]-Punjab.</option>
+                  <option value="[RL]-Rajasthan">[RL]-Rajasthan</option>
+                  <option value="[SK]-Sikkim">[SK]-Sikkim</option>
+                  <option value="[TN]-Tamilnadu">[TN]-Tamilnadu</option>
+                  <option value="[TS]-Telenghana">[TS]-Telenghana</option>
+                  <option value="[TR]-Tripura">[TR]-Tripura</option>
+                  <option value="[UP]-Uttar Pradesh">[UP]-Uttar Pradesh</option>
+                  <option value="[UK]-Utharakhand">[UK]-Utharakhand</option>
+                  <option value="[WB]-West Bengal">[WB]-West Bengal</option>
+                  <option value="[OT]-Other Territory">[OT]-Other Territory</option>
+                  
                 </select>
               </div>       
             </div>
@@ -2376,7 +2418,7 @@
                       <option
                         value="Unregistered Business-not Registered under GST"
                       >
-                        Unregistered Business-not Registered under GST
+                      Unregistered Business-not Registered under GST
                       </option>
                       <option
                         value="Consumer- A customer who is a regular Consumer"

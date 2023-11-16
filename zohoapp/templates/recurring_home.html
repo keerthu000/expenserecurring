@@ -533,13 +533,13 @@
               id="customer-list"
               name="customername"
             >
-              <option disabled="disabled" selected="selected">
+              <option value="" >
                 --Choose option--
               </option>
               {% for c in customers %}
 
               <option
-                value="{{c.customerName}}"
+                value="{{c.id}}"
                 data-gst="{{ c.GSTTreatment }}"
               >
                 {{ c.customerName }}
@@ -887,6 +887,7 @@
               $("#gst_trt_inp").val(data.gst_treatment);
               $("#vemail").val(data.email);
               $("#emailid").show();
+              $("#destination").val(data.pos)
 
               if (data.gst_treatment.toLowerCase().includes("unregistered business")) {
                 $("#textboxContainer").hide();
@@ -953,42 +954,40 @@
           // Make an AJAX request to get the customer's email
           $.get(
             '{% url "get_customer_email" %}',
-            { customername: customer_id },
-            function (data) {
-              $("#email").val(data.email);
+            { customername: customer_id }
+          )
+          .then(function (data) {
+            $("#email").val(data.email);
+
+            // Make an AJAX request to get the customer's GST treatment
+            return $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id });
+          })
+          .then(function (data) {
+            $("#cust_gst_trt").val(data.gst_trtmnt);
+            $("#cust_gst").val(data.gstin);
+            $("#c_destination").val(data.pos);
+            
+            // Check the GST treatment and show/hide the input field
+            if (data.gst_trtmnt.toLowerCase().includes("unregistered business")) {
+              $("#gstContainer").hide();
+            } else {
+              $("#gstContainer").show();
             }
-          );
-  
-          // Make an AJAX request to get the customer's GST treatment
-          $.get(
-            '{% url "get_customer_gsttrmnt" %}',
-            { customername: customer_id },
-            function (data) {
-              $("#cust_gst_trt").val(data.gst_trtmnt);
-              $("#cust_gst").val(data.gstin);
-  
-              // Check the GST treatment and show/hide the input field
-              if (data.gst_trtmnt.toLowerCase().includes("unregistered business")) {
-                $("#gstContainer").hide();
-              } else {
-                $("#gstContainer").show();
-              }
-            }
-          );
-  
-          // Make an AJAX request to get the customer's Place of Supply
-          $.get(
-            '{% url "get_cust_pos" %}',
-            { customername: customer_id },
-            function (data) {
-              $("#c_destination").val(data.pos);
-            }
-          );
+
+            // Make an AJAX request to get the customer's Place of Supply
+            return $.get('{% url "get_cust_pos" %}', { customername: customer_id });
+          })
+          .then(function (data) {
+            $("#c_destination").val(data.pos);
+          })
+          .catch(function (error) {
+            console.log("Error fetching customer details:", error);
+          });
         }
       });
     });
-  </script>
-  
+</script>
+
   <script type="text/javascript">
     $(document).ready(function () {
       checkTax();
@@ -2111,62 +2110,120 @@
   </script>  
 
   <!-- Include jQuery library -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   <script>
+<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+  <script>
     $(document).ready(function () {
+      // Initial update of the customer dropdown list on page load
+      updateCustomerDropdown();
+  
       // Handle clicking the "Add Customer" button in the modal
       $("#addCustomerButton").on("click", function () {
-        var formData = $("#customerForm").serialize(); // Replace "customerForm" with the actual form ID
-
-        $.ajax({
-          url: "{% url 'entr_recurring_custmr' %}", // Change to the actual URL
-          type: "POST",
-          data: formData,
-          success: function (data) {
-            // Clear the form fields
-            $("#customerForm")[0].reset();
-
-            // Close the modal
-            $("#newcustomer").modal("hide");
-
-            // Update the customer dropdown list
-            updateCustomerDropdown();
-          },
-          error: function (error) {
-            console.log("Error:", error);
-          },
-        });
+          var formData = $("#customerForm").serialize();
+  
+          $.ajax({
+              url: "{% url 'entr_recurring_custmr' %}",
+              type: "POST",
+              data: formData,
+              success: function (data) {
+                  // Clear the form fields
+                  $("#customerForm")[0].reset();
+  
+                  // Close the modal
+                  $("#newcustomer").modal("hide");
+  
+                  // Update the customer dropdown list
+                  updateCustomerDropdown(data); // Pass the data object as a parameter
+              },
+              error: function (error) {
+                  console.log("Error:", error);
+              },
+          });
       });
-
+  
       // Function to update the customer dropdown list
-      function updateCustomerDropdown() {
-        var customerListSelect = $("#customer-list");
-
-        $.ajax({
-          url: "{% url 'get_customer_namess' %}", // Change to the actual URL
-          type: "GET",
-          success: function (data) {
-            customerListSelect.empty();
-            data.forEach(function (customer) {
-              customerListSelect.append(
-                "<option value='" +
-                  customer.id +
-                  "'>" +
-                  customer.name +
-                  "</option>"
-              );
-            });
-          },
-          error: function (error) {
-            console.log("Error:", error);
-          },
-        });
+      function updateCustomerDropdown(formData) {
+          var customerListSelect = $("#customer-list");
+  
+          $.ajax({
+              url: "{% url 'get_customer_namess' %}",
+              type: "GET",
+              success: function (data) {
+                  customerListSelect.empty();
+  
+                  // Add the default option
+                  customerListSelect.append("<option value=''>--Choose option--</option>");
+  
+                  // Add existing customers
+                  data.forEach(function (customer) {
+                      customerListSelect.append(
+                          "<option value='" +
+                          customer.id +
+                          "'>" +
+                          customer.name +
+                          "</option>"
+                      );
+                  });
+  
+                  // Check if formData is defined and not already in the dropdown
+                  if (formData && formData.id && formData.name && !customerExists(formData.id)) {
+                      // Append the newly added customer
+                      customerListSelect.append(
+                          "<option value='" + formData.id + "'>" + formData.name + "</option>"
+                      );
+  
+                      // Update the form fields based on the selected customer
+                      updateFormFields(formData.id);
+                  }
+  
+                  // Listen for the change event on the customer dropdown
+                  customerListSelect.on("change", function () {
+                      var selectedCustomerId = $(this).val();
+                      updateFormFields(selectedCustomerId);
+                  });
+              },
+              error: function (error) {
+                  console.log("Error:", error);
+              },
+          });
       }
+  
+      // Function to check if a customer with the given ID already exists in the dropdown
+      function customerExists(customerId) {
+          return $("#customer-list option[value='" + customerId + "']").length > 0;
+      }
+  
+      // Function to update form fields based on the selected customer
+      function updateFormFields(customerId) {
+          // Check if customerId is defined before making the AJAX call
+          if (customerId) {
+              // Add logic to fetch details for the selected customer and update form fields
+              $.ajax({
+                  url: "{% url 'get_customer_email' %}",
+                  type: "GET",
+                  data: { customer_id: customerId },
+                  success: function (data) {
+                      // Assuming data is an object containing customer details
+                      // Update the form fields with the fetched details
+                      $("#customer-list").val(data.name);
+                      $("#emailField").val(data.email);
+  
+                      // Trigger change event to update other fields
+                      $("#customer-list").change();
+                  },
+                  error: function (error) {
+                      console.log("Error fetching customer details:", error);
+                  },
+              });
+          } else {
+              // Handle the case where customerId is undefined (e.g., no customer selected)
+              // You might want to clear or reset the form fields in this case
+          }
+      }
+  });
+  
+  
+</script> 
 
-      // Initial update of the customer dropdown list
-      updateCustomerDropdown();
-    });
-  </script>
 
 
 
@@ -2604,64 +2661,51 @@
                     name="v_sourceofsupply"
                   >
                     <option value="Nill"></option>
-                    <option value="[AN] Andaman and Nicobar Islads">
-                      [AN] Andaman and Nicobar Islads
+                    <option value="[AN]-Andaman And Nicobar Islands">
+                      [AN]-Andaman And Nicobar Islands
                     </option>
-                    <option value="[AD] Andhra Predhesh">
-                      [AD] Andhra Predhesh
+                    <option value="[AD]-Andhra Pradesh">[AD]-Andhra Pradesh</option>
+                    <option value="[AR]-Arunachal Pradesh">
+                      [AR]-Arunachal Pradesh
                     </option>
-                    <option value="[AR] Arunachal Predesh">
-                      [AR] Arunachal Predesh
+                    <option value="[AS]-Assam">[AS]-Assam</option>
+                    <option value="[BR]-Bihar">[BR]-Bihar</option>
+                    <option value="[CH]-	Chandhigarh">[CH]- Chandhigarh</option>
+                    <option value="[CG]-Chattisgarh">[CG]-Chattisgarh</option>
+                    <option value="[DD]-Daman Diu">[DD]-Daman Diu</option>
+                    <option value="[DL]-	Delhi">[DL]- Delhi</option>
+                    <option value="[GA]-Goa">[GA]-Goa</option>
+                    <option value="[GJ]-Gujarat">[GJ]-Gujarat</option>
+                    <option value="[HR]-Haryana">[HR]-Haryana</option>
+                    <option value="[HP]-Himachal Pradesh">[HP]-Himachal Pradesh</option>
+                    <option value="[JK]-Jammu And Kashmir">
+                      [JK]-Jammu And Kashmir
                     </option>
-                    <option value="[AS] Assam">[AS] Assam</option>
-                    <option value="[BR] Bihar">[BR] Bihar</option>
-                    <option value="[CH] Chandigarh">[CH] Chandigarh</option>
-                    <option value="[CG] Chhattisgarh">[CG] Chhattisgarh</option>
-                    <option value="[DNH] Dadra and Nagar Haveli">
-                      [DNH] Dadra and Nagar Haveli
-                    </option>
-                    <option value="[DD] Damn anad Diu">
-                      [DD] Damn anad Diu
-                    </option>
-                    <option value="[DL] Delhi">[DL] Delhi</option>
-                    <option value="[GA] Goa">[GA] Goa</option>
-                    <option value="[GJ] Gujarat">[GJ] Gujarat</option>
-                    <option value="[HR] Haryana">[HR] Haryana</option>
-                    <option value="[HP] Himachal Predesh">
-                      [HP] Himachal Predesh
-                    </option>
-                    <option value="[JK] Jammu and Kashmir">
-                      [JK] Jammu and Kashmir
-                    </option>
-                    <option value="[JH] Jharkhand">[JH] Jharkhand</option>
-                    <option value="[KA] Karnataka">[KA] Karnataka</option>
-                    <option value="[KL] Kerala">[KL] Kerala</option>
-                    <option value="[LA] Ladakh">[LA] Ladakh</option>
-                    <option value="[LD] Lakshadweep">[LD] Lakshadweep</option>
-                    <option value="[MP] Madhya Predesh">
-                      [MP] Madhya Predesh
-                    </option>
-                    <option value="[MH] Maharashtra">[MH] Maharashtra</option>
-                    <option value="[MN] Manipur">[MN] Manipur</option>
-                    <option value="[ML] Meghalaya">[ML] Meghalaya</option>
-                    <option value="[MZ] Mizoram">[MZ] Mizoram</option>
-                    <option value="[NL] Nagaland">[NL] Nagaland</option>
-                    <option value="[OD] Odisha">[OD] Odisha</option>
-                    <option value="[PY] Puducherry">[PY] Puducherry</option>
-                    <option value="[PB] Punjab">[PB] Punjab</option>
-                    <option value="[RJ] Rajasthan">[RJ] Rajasthan</option>
-                    <option value="[SK] Sikkim">[SK] Sikkim</option>
-                    <option value="[TN] Tamil Nadu">[TN] Tamil Nadu</option>
-                    <option value="[TS] Telangana">[TS] Telangana</option>
-                    <option value="[TR] Tripura">[TR] Tripura</option>
-                    <option value="[UP] Uttar Predesh">
-                      [UP] Uttar Predesh
-                    </option>
-                    <option value="[UK] Uttarakhand">[UK] Uttarakhand</option>
-                    <option value="[WB] West Bengal">[WB] West Bengal</option>
-                    <option value="[OT] Other Territory">
-                      [OT] Other Territory
-                    </option>
+                    <option value="[JH]-Jharkand">[JH]-Jharkand</option>
+                    <option value="[KA]-Karnataka">[KA]-Karnataka</option>
+                    <option value="[KL]-Kerala">[KL]-Kerala</option>
+                    <option value="[LA]-Ladakh">[LA]-Ladakh</option>
+                    <option value="[LD]-Lakshadweep">[LD]-Lakshadweep</option>
+                    <option value="[MP]-Madhyapradesh">[MP]-Madhyapradesh</option>
+                    <option value="[MH]-Maharashtra">[MH]-Maharashtra</option>
+                    <option value="[MN]-Manipur">[MN]-Manipur</option>
+                    <option value="[ML]-Meghalaya">[ML]-Meghalaya</option>
+                    <option value="[MZ]-Mizoram">[MZ]-Mizoram</option>
+                    <option value="[NL]-Nagaland">[NL]-Nagaland</option>
+                    <option value="[NL]-Nagaland">[NL]-Nagaland</option>
+                    <option value="[OD]-Odisha">[OD]-Odisha</option>
+                    <option value="[PY]-Puducherry">[PY]-Puducherry</option>
+                    <option value="[PB]-Punjab">[PB]-Punjab.</option>
+                    <option value="[RL]-Rajasthan">[RL]-Rajasthan</option>
+                    <option value="[SK]-Sikkim">[SK]-Sikkim</option>
+                    <option value="[TN]-Tamilnadu">[TN]-Tamilnadu</option>
+                    <option value="[TS]-Telenghana">[TS]-Telenghana</option>
+                    <option value="[TR]-Tripura">[TR]-Tripura</option>
+                    <option value="[UP]-Uttar Pradesh">[UP]-Uttar Pradesh</option>
+                    <option value="[UK]-Utharakhand">[UK]-Utharakhand</option>
+                    <option value="[WB]-West Bengal">[WB]-West Bengal</option>
+                    <option value="[OT]-Other Territory">[OT]-Other Territory</option>
+                    
                   </select>
                 </div>
               </div>

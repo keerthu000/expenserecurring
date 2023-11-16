@@ -919,7 +919,7 @@ body {
                                         {% comment %} {% endfor %} {% endcomment %}
                                     </div>
                                 </div>
-                                {% if expense.gst  != 'None' %}
+                                {% if expense.gst and vendor.gst_number and expense.gst != 'None' and vendor.gst_number != 'None' %}
                                 <div class="row mb-4 d-flex justify-content-between align-items-center">
                                     <div class="col-md-6 mt-3">
                                         <h6 class="mb-0 text-grey">Vendor GST Number :</h6>
@@ -985,7 +985,7 @@ body {
 
                                 <div class="d-flex justify-content-between mb-5">
                                     <div class="col-md-7 mt-2">
-                                        <h6 style="color: #ccc;">Cust GST Treatment:</h6>
+                                        <h6 style="color: #ccc;">Customer GST Treatment:</h6>
                                     </div>
                                     <div class="col-md-5 mt-2">
                                         <div style="font-size: 14px; color: azure;">
@@ -1015,25 +1015,17 @@ body {
                                         <input type="text" value="{{ expense.paidthrough }} " class="amnt"
                                             style="font-size: 16px; color: azure;" readonly>
                                     </div>
-                                </div>
-                                <div class=" justify-content-between mb-5  d-none" id="sgst">
-                                    <div class="col-md-4 mt-3">
-                                        <h6 style="color: #ccc;">Paid Through  :</h5><br>
+                                </div>{% endcomment %}
+                                <div class="row justify-content-between mb-5">
+                                    <div class="col-md-4 mt-4">
+                                        <h6 style="color: #ccc;">Paid Through:</h6>
                                     </div>
-                                    <div class="col-md-8 mt-3 mx-3">
-                                        <input type="text" value="{{ expense.paidthrough }}" class="amnt"
-                                            style="font-size: 16px; color: azure;" readonly>
-                                    </div>
-                                </div> {% endcomment %}
-                                <div class="d-flex justify-content-between mb-5">
                                     <div class="col-md-8 mt-3">
-                                        <h6 style="color: #ccc;">Paid Through :</h5><br>
-                                    </div>
-                                    <div class="col-md-4 mt-3 mx-3">
-                                        <input type="text" value="{{ expense.paidthrough }} " class="amnt"
-                                            style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
+                                        <input type="text" value="{{ expense.paidthrough }}" class="amnt" style="font-size: 16px; color: azure;" readonly>
                                     </div>
                                 </div>
+                                
+                                
                                 {% if expense.paidthrough == 'UPI' %}
                                 <div class="d-flex justify-content-between mb-5">
                                     <div class="col-md-8 mt-3">
@@ -1052,6 +1044,17 @@ body {
                                         <input type="text" value="{{ expense.cheque_id }}" class="amnt" style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
                                     </div>
                                 </div>
+                            {% elif expense.paidthrough == 'Cash' %}
+                            <div class="d-flex justify-content-between mb-5" >
+                                <div class="col-md-8 mt-3">
+                                    <h6 style="color: #ccc;">Paid Through :</h5><br>
+                                </div>
+                                <div class="col-md-4 mt-3 mx-3">
+                                    <input type="text" value="{{ expense.paidthrough }} " class="amnt"
+                                        style="font-size: 16px; color: azure;margin-left:-2.8rem;margin-top:-2.5rem" readonly>
+                                </div>
+                            </div>
+
                             {% else %}
                                
                                 <div class="d-flex justify-content-between mb-5">
