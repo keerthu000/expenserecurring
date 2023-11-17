@@ -324,7 +324,7 @@
               <input type="hidden" value="{{ expense.customer.id }}" id="hid">
               <select name="customername" id="customer-list" class="form-control bg-white text-dark" style="width: 300px;">
                   {% for c in customers %}
-                      <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %}>{{ c.customerName }}</option>
+                      <option value="{{ c.id }}" {% if c.id == expense.customer.id %}selected{% endif %} data-gst-number="{{expense.cust_gstin}}">{{ c.customerName }}</option>
                   {% endfor %}
               </select>
               <div class="input-group-append">
@@ -580,6 +580,43 @@
                 $("#email").val(data.email);
               }
             );
+          }
+        });
+      });
+      </script>
+      <script type="text/javascript">
+        $(document).ready(function () {
+          // Function to toggle the visibility of the GSTIN input field
+          function toggleGstinInputField(gstTreatment) {
+            var gstinContainer = $("#gstContainer");
+            var gstinInput = $("#cust_gst");
+      
+            if (gstTreatment.toLowerCase().includes("unregistered business")) {
+              gstinContainer.hide();
+              gstinInput.val("");
+            } else {
+              gstinContainer.show();
+              gstinInput.val(getGstNumber());
+            }
+          }
+      
+          // Function to get the GST number from the selected customer
+          function getGstNumber() {
+            var customerSelect = $("#customer-list");
+            var selectedCustomerOption = customerSelect.find(":selected");
+            var gstNumber = selectedCustomerOption.data("gst-number");
+            return gstNumber || "";
+          }
+      
+          // Initial toggle based on the selected customer's GST treatment
+          toggleGstinInputField($("#cust_gst_trt").val());
+      
+          // Handle change event on the customer list
+          $("#customer-list").change(function () {
+            var customer_id = $(this).val();
+      
+            if (customer_id) {
+               
     
             // Make an AJAX request to get the customer's GST treatment
             $.get(
