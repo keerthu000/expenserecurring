@@ -467,16 +467,16 @@
         </div>
       </div>
       
-
-
       <div class="form-group row">
         <label for="v_destination" class="col-sm-3 col-form-label">Vendor Destination of Supply</label>
         <div class="col-sm-6">
          
             <select name="destination" id="v_destination" class="form-control bg-white text-dark">
+              
             {% comment %} <select name="destination" id="destination" class="form-control bg-white text-dark" style="margin-left: 6px; width: 547px;color:black;"> {% endcomment %}
               {% comment %} <option value="">Select a Place</option> {% endcomment %}
               {% for v in vendors %}
+              
               <option value="{{v.source_supply}}">{{v.source_supply}}</option> 
               {% endfor %}
               <option value="[AN]-Andaman And Nicobar Islands" >[AN]-Andaman And Nicobar Islands</option>
@@ -626,6 +626,7 @@
             <option disabled selected>Select a Place</option>
             {% for c in customers %}
             <option value="{{c.placeofsupply}}">{{c.placeofsupply}}</option>
+            {% endfor %}
             <option value="[AN]-Andaman And Nicobar Islands">
               [AN]-Andaman And Nicobar Islands
             </option>
@@ -670,7 +671,7 @@
             <option value="[UK]-Utharakhand">[UK]-Utharakhand</option>
             <option value="[WB]-West Bengal">[WB]-West Bengal</option>
             <option value="[OT]-Other Territory">[OT]-Other Territory</option>
-            {% endfor %}
+           
           </select>
         </div>
       </div>
@@ -921,7 +922,7 @@
   
 </script> 
 
- <script type="text/javascript">
+<script type="text/javascript">
   $(document).ready(function () {
     $("#customer-list").change(function () {
       var customer_id = $(this).val();
@@ -932,31 +933,7 @@
             $("#email").val(data.email);
 
             // Make an AJAX request to get the customer's GST treatment
-            return $.get('{% url "get_customer_gsttrmnt" %}', {
-              customername: customer_id,
-            });
-          })
-          .then(function (data) {
-            $("#cust_gst_trt").val(data.gst_trtmnt);
-            $("#cust_gst").val(data.gstin);
-            $("#c_destination").val(data.pos);
-
-            // Check the GST treatment and show/hide the input field
-            if (
-              data.gst_trtmnt.toLowerCase().includes("unregistered business")
-            ) {
-              $("#gstContainer").hide();
-            } else {
-              $("#gstContainer").show();
-            }
-
-            // Make an AJAX request to get the customer's Place of Supply
-            return $.get('{% url "get_cust_pos" %}', {
-              customername: customer_id,
-            });
-          })
-          .then(function (data) {
-            $("#c_destination").val(data.pos);
+            
           })
           .catch(function (error) {
             console.log("Error fetching customer details:", error);
@@ -964,7 +941,36 @@
       }
     });
   });
-</script> 
+</script>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#customer-list").change(function () {
+      var customer_id = $(this).val();
+      if (customer_id) {
+        // Make an AJAX request to get the customer's GST treatment
+        $.get('{% url "get_customer_gsttrmnt" %}', { customername: customer_id })
+          .then(function (data) {
+            console.log('pos', data.pos);
+            $("#cust_gst_trt").val(data.gst_trtmnt);
+            $("#cust_gst").val(data.gstin);
+            $("#c_destination").val(data.pos);
+
+            // Check the GST treatment and show/hide the input field
+            if (data.gst_trtmnt.toLowerCase().includes("unregistered business")) {
+              $("#gstContainer").hide();
+            } else {
+              $("#gstContainer").show();
+            }
+          })
+          .catch(function (error) {
+            console.log("Error fetching customer details:", error);
+          });
+      }
+    });
+  });
+</script>
+
+
 
 <script type="text/javascript">
   $(document).ready(function () {

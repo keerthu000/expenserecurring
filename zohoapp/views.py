@@ -3123,9 +3123,8 @@ def recurringhome(request):
     customers=customer.objects.filter(user=user_id)
     payments=payment_terms.objects.filter(user=user_id)
     company = company_details.objects.get(user = request.user)
-    last_id = Expense.objects.filter(user=user_id).order_by('-id').values('id').first()
+    last_id = Expense.objects.filter(user=user_id).count()
     if last_id:
-        last_id = last_id['id']
         next_no = last_id+1
     else:
         next_no = 1
@@ -3192,6 +3191,7 @@ def add_expense(request):
         currency = request.POST['currency']
         paidthrough = request.POST['paidthrough']
         cheque_id = request.POST.get('chequeId')
+        print('cheque_id',cheque_id)
         upi_number = request.POST.get('upiNumber')
         bank_account = request.POST.get('bankAccount')
         vendor_id = request.POST['vendor']
@@ -3387,11 +3387,11 @@ def get_customer_gsttrmnt(request):
         customer_id = request.GET.get('customername')
         custmer = customer.objects.get(id=customer_id)
         gst_treatmnt=custmer.GSTTreatment
-        
+        pos=custmer.placeofsupply
         gstin=custmer.GSTIN
       
         
-        return JsonResponse({'gst_trtmnt': gst_treatmnt, 'gstin': gstin, })  
+        return JsonResponse({'gst_trtmnt': gst_treatmnt, 'gstin': gstin,'pos':pos })  
     
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 def get_cust_pos(request):
@@ -3406,14 +3406,12 @@ def get_cust_pos(request):
     
 def get_vendor_gst(request, vendor_id):
     
-    vendor = vendor_table.objects.get(pk=vendor_id)
+    vendor = vendor_table.objects.get(id=vendor_id)
     
-    return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email,'pos':vendor.source_supply})
+    return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email,'source_supply':vendor.source_supply})
 
-def get_vendor_place_of_supply(request):
+def get_vendor_place_of_supply(request, vendor_id):
     if request.method == 'GET':
-        vendor_id = request.GET.get('vendor')
-        
         try:
             vendor = vendor_table.objects.get(pk=vendor_id)
             source_supply = vendor.source_supply
@@ -3532,7 +3530,7 @@ def edit_expense(request, expense_id):
     payments=payment_terms.objects.all()
     company = company_details.objects.get(user = request.user)
     repeat_list = repeat_every.objects.all()
-    
+    bank=Bankcreation.objects.filter(user=user_id)
     
     
     if request.method == 'POST':
@@ -3587,7 +3585,7 @@ def edit_expense(request, expense_id):
     
     else:
         
-        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments,'company':company,'repeat_list':repeat_list})
+        return render(request, 'edit_expense.html', {'expense': expense, 'vendors': vendors, 'customers': customers,'accounts': accounts,'selected_account': selected_account,'items':  account_types,'payments':payments,'company':company,'repeat_list':repeat_list,'bank':bank})
         
 @login_required(login_url='login')
 def newexp(request):
@@ -6724,14 +6722,7 @@ def dashboard(request):
             Purchase(Account_type='Fixed Asset',Account_name='Furniture and Equipment',Account_desc='Furniture and Equipment').save() 
 
   
-    if not Account.objects.filter(accountName='Advance Tax').exists():
-        Account(accountType='Other Current Asset',accountName='Advance Tax',description='Advance Tax').save()
-    if not Account.objects.filter(accountName='Employee Advance').exists():
-        Account(accountType='Other Current Asset',accountName='Employee Advance',description='Employee Advance').save()
-    if not Account.objects.filter(accountName='Furniture and Equipment').exists():
-            Account(accountType='Fixed Asset',accountName='Furniture and Equipment',description='Furniture and Equipment').save()
-    if not Account.objects.filter(accountName='Employee Reimbursement').exists():
-        Account(accountType='Other Current Liability',accountName='Employee Reimbursement',description='Employee Reimbursement').save()
+   
     if not Account.objects.filter(accountName='Advertising & Marketing').exists():
         Account(accountType='Expenses',accountName='Advertising & Marketing',description='Advertising & Marketing').save()
     if not Account.objects.filter(accountName='Automobile Expense').exists():
@@ -13556,9 +13547,9 @@ def expense_comment(request,expense_id):
 def get_vendor_gst(request, vendor_id):
     try:
         vendor = vendor_table.objects.get(pk=vendor_id)
-        return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email})
+        return JsonResponse({'gst_treatment': vendor.gst_treatment,'gst_number':vendor.gst_number,'email':vendor.vendor_email,'source_supply':vendor.source_supply})
     except vendor_table.DoesNotExist:
-        return JsonResponse({'gst_treatment': '','gst_number':'','email':''})
+        return JsonResponse({'gst_treatment': '','gst_number':'','email':'','source_supply':''})
         
 @login_required(login_url='login')
 def delete_expense_comment(request, expense_id, comment_id):

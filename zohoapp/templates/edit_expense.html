@@ -187,42 +187,42 @@
               <label>Paid Through</label>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6">
-              <select name="paidthrough" id="paidthrough" class="form-control bg-white text-dark" style="width: 550px;">
+              <select name="paidthrough" id="paidthrough" class="form-control bg-white text-dark" style="width: 550px;"  onchange="togglePaymentFields()">
                 <option value="{{ expense.paidthrough }}">{{ expense.paidthrough }}</option>
                 <option value="Cash">Cash</option>
                 <option value="Cheque">Cheque</option>
                 <option value="UPI">UPI</option>
                 {% for b in bank %}
-                <option value="b.name">{{ b.name }}</option>
+                <option value="{{b.name}}"    data-account="{{ b.ac_no }}">{{ b.name }}</option>
                 {% endfor %}
               </select>
             </div>
           </div>
           
-          <div class="form-group row mt-4" id="chequeField" style="display: none;">
+          <div class="form-group row mt-4" id="chequeField" >
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
               <label>Cheque Number</label>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="text" name="chequeId" id="chequeId" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.cheque_id }}">
+              <input type="text" name="chequeId" id="chequeId" class="form-control bg-white text-dark" style="width: 550px; margin-left:280px; margin-top: -35px;" value="{{ expense.cheque_id }}">
             </div>
           </div>
           
-          <div class="form-group row mt-4" id="upiField" style="display: none;">
+          <div class="form-group row mt-4" id="upiField" >
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
               <label>UPI ID</label>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="text" name="upiNumber" id="upiNumber" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.upi_number }}">
+              <input type="text" name="upiNumber" id="upiNumber" class="form-control bg-white text-dark" style="width: 550px; margin-left:280px; margin-top:-35px;" value="{{ expense.upi_number }}">
             </div>
           </div>
           
-          <div class="form-group row mt-4" id="bankField" style="display: none;">
+          <div class="form-group row mt-4" id="bankField">
             <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
               <label>Bank Account</label>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6">
-              <input type="text" name="bankAccount" id="bankAccount" class="form-control bg-white text-dark" style="width: 550px; margin-left: 280px; margin-top: -35px;" value="{{ expense.bank_account }}">
+              <input type="text" name="bankAccount" id="bankAccount" class="form-control bg-white text-dark" style="width: 550px; margin-left:280px; margin-top: -35px;" value="{{ expense.bank_account }}">
             </div>
           </div>
           <div class="form-group row">
@@ -542,30 +542,73 @@
         </div>
       </div>  
     </div>  
+    <script type="text/javascript">
+      function togglePaymentFields() {
+        var paymentMethod = document.getElementById("paidthrough").value;
+    
+        // Hide all fields initially
+        document.getElementById("chequeField").style.display = "none";
+        document.getElementById("upiField").style.display = "none";
+        document.getElementById("bankField").style.display = "none";
+    
+        // Show the selected field, unless it's "Cash"
+        if (paymentMethod === "Cheque") {
+          document.getElementById("chequeField").style.display = "block";
+        } else if (paymentMethod === "UPI") {
+          document.getElementById("upiField").style.display = "block";
+        } else if (paymentMethod === "Cash") {
+          document.getElementById("chequeField").style.display = "none";
+          document.getElementById("upiField").style.display = "none";
+          document.getElementById("bankField").style.display = "none";
+        }else {
+          document.getElementById("bankField").style.display = "block";
+        }
+
+      }
+    
+      // Call the function initially to set the initial state based on the selected payment method
+      togglePaymentFields();
+    </script>
+    
+    <script>
+      var paidthroughSelect = document.getElementById("paidthrough");
+      var chequeField = document.getElementById("chequeField");
+      var upiField = document.getElementById("upiField");
+      var bankField = document.getElementById("bankField");
+    
+      paidthroughSelect.addEventListener("change", function () {
+        var selectedOption = paidthroughSelect.value;
+    
+        chequeField.style.display = selectedOption === "Cheque" ? "block" : "none";
+        upiField.style.display = selectedOption === "UPI" ? "block" : "none";
+        bankField.style.display =
+          selectedOption !== "Cash" &&
+          selectedOption !== "Cheque" &&
+          selectedOption !== "UPI"
+            ? "block"
+            : "none";
+      });
+    </script> 
 
 
     <script>
-      var paidthroughSelect = document.getElementById('paidthrough');
-      var chequeField = document.getElementById('chequeField');
-      var upiField = document.getElementById('upiField');
-      var bankField = document.getElementById('bankField');
-
-      // Function to toggle input fields based on the selected option
-      function toggleInputFields() {
-          var selectedOption = paidthroughSelect.value;
-
-          chequeField.style.display = (selectedOption === 'Cheque') ? 'block' : 'none';
-          upiField.style.display = (selectedOption === 'UPI') ? 'block' : 'none';
-          bankField.style.display = (selectedOption !== 'Cash' && selectedOption !== 'Cheque' && selectedOption !== 'UPI') ? 'block' : 'none';
-      }
-
-      // Add an event listener to run the function when the page loads
-      window.addEventListener('load', toggleInputFields);
-
-      // Add an event listener to run the function when the select changes
-      paidthroughSelect.addEventListener('change', toggleInputFields);
-    </script>
-
+      // JavaScript to update the account number based on the selected bank
+      document
+        .getElementById("paidthrough")
+        .addEventListener("change", function () {
+          var selectedBank = this.value;
+          var accountNumberInput = document.getElementById("bankAccount");
+    
+          // Find the selected option and get the associated account number
+          var selectedOption = this.options[this.selectedIndex];
+          var accountNumber = selectedOption.getAttribute("data-account");
+    
+          // Update the account number input field
+          accountNumberInput.value = accountNumber;
+        });
+    </script> 
+    
+    
 
     <script type="text/javascript">
       $(document).ready(function () {
